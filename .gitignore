@@ -1,0 +1,37 @@
+.env
+# commands.txt
+venv
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
+*.sqlite3
+*.db
+
+# VSCode or other editor settings
+.vscode/
+.idea/
+
+# Node
+node_modules/
+package-lock.json
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# App uploads
+uploads/
+
+# Compiled or temporary files
+*.log
+*.tmp
+
+# Python virtual environments
+venv/
+env/
+.venv/

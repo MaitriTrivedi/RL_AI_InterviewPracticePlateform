@@ -1,0 +1,17 @@
+cd frontend/rl-interview-ui && npm start
+
+python3 app.py
+
+cd /home/maitri/Study/RLproject/RL_AI_InterviewPracticePlateform/
+
+export GEMINI_API_KEY='AIzaSyBgNbVmPEqatz9KVXre-HbOMThfZW0-XHU'
+
+
+During Daily Training:
+python rl_agent/train_ppo_with_dataset.py --mode train --interviews 10
+
+After Training, Evaluate in Detail:
+python rl_agent/train_ppo_with_dataset.py --mode evaluate --version YOUR_VERSION
+
+Compare All Models:
+python rl_agent/train_ppo_with_dataset.py --mode list
