@@ -8,6 +8,7 @@ import InterviewPage from './pages/InterviewPage';
 import ResultsPage from './pages/ResultsPage';
 import ResumeUploadPage from './pages/ResumeUploadPage';
 import InterviewSetupPage from './pages/InterviewSetupPage';
+import InterviewCompletionPage from './pages/InterviewCompletionPage';
 import { AppProvider } from './contexts/AppContext';
 
 // Create a theme instance
@@ -60,7 +61,8 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/interview/setup" element={<InterviewSetupPage />} />
                 <Route path="/interview" element={<InterviewPage />} />
-                <Route path="/results" element={<ResultsPage />} />
+                <Route path="/interview/complete" element={<InterviewCompletionPage />} />
+                <Route path="/interview/results" element={<ResultsPage />} />
                 <Route path="/resume-upload" element={<ResumeUploadPage />} />
               </Routes>
             </Container>

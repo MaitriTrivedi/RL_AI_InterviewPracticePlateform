@@ -1,156 +1,145 @@
 import os
-import json
 import numpy as np
 from datetime import datetime
 
 class ModelHandler:
-    def __init__(self, model_dir='models'):
-        """Initialize model handler with directory structure."""
-        self.model_dir = model_dir
-        self.checkpoints_dir = os.path.join(model_dir, 'checkpoints')
-        self.versions_dir = os.path.join(model_dir, 'versions')
-        
-        # Create directories if they don't exist
-        os.makedirs(self.model_dir, exist_ok=True)
+    def __init__(self, base_dir="models"):
+        """Initialize model handler."""
+        self.base_dir = base_dir
+        self.checkpoints_dir = os.path.join(base_dir, "checkpoints")
+        os.makedirs(self.base_dir, exist_ok=True)
         os.makedirs(self.checkpoints_dir, exist_ok=True)
-        os.makedirs(self.versions_dir, exist_ok=True)
     
-    def _save_network_weights(self, network, prefix, save_path):
-        """Save weights for a single network."""
-        weights_dict = {}
-        for i, layer in enumerate(network.layers):
-            weights_dict[f'{prefix}_layer_{i}_weights'] = layer.weights
-            weights_dict[f'{prefix}_layer_{i}_biases'] = layer.biases
-        np.savez(save_path, **weights_dict)
+    def save_checkpoint(self, agent, metadata):
+        """Save training checkpoint."""
+        # Create checkpoint filename
+        timestamp = metadata.get('timestamp', datetime.now().strftime('%Y%m%d_%H%M%S'))
+        interview_num = metadata.get('interview_num', 0)
+        filename = f"checkpoint_interview_{interview_num}_{timestamp}.npy"
+        path = os.path.join(self.checkpoints_dir, filename)
+        
+        # Save checkpoint
+        agent.save_checkpoint(path)
+        return path
     
-    def _load_network_weights(self, network, prefix, load_path):
-        """Load weights for a single network."""
-        weights_dict = np.load(load_path)
-        for i, layer in enumerate(network.layers):
-            layer.weights = weights_dict[f'{prefix}_layer_{i}_weights']
-            layer.biases = weights_dict[f'{prefix}_layer_{i}_biases']
-    
-    def save_model(self, policy_net, value_net, metrics=None, version=None):
-        """Save model with optional metrics and version."""
-        if version is None:
-            version = datetime.now().strftime('%Y%m%d_%H%M%S')
+    def save_model(self, policy_net, value_net, metrics):
+        """Save final model."""
+        # Create version string
+        timestamp = metrics.get('timestamp', datetime.now().strftime('%Y%m%d_%H%M%S'))
+        mean_reward = metrics.get('mean_reward', 0.0)
+        version = f"model_v1_{timestamp}_reward_{mean_reward:.3f}"
         
-        save_dir = os.path.join(self.versions_dir, str(version))
-        os.makedirs(save_dir, exist_ok=True)
+        # Save model
+        model_dir = os.path.join(self.base_dir, version)
+        os.makedirs(model_dir, exist_ok=True)
         
-        # Save network weights
-        weights_path = os.path.join(save_dir, 'weights.npz')
-        weights_dict = {}
+        # Save networks and metrics
+        np.save(os.path.join(model_dir, "policy_net.npy"), {
+            'W1': policy_net.W1,
+            'b1': policy_net.b1,
+            'W2': policy_net.W2,
+            'b2': policy_net.b2,
+            'W_mean': policy_net.W_mean,
+            'b_mean': policy_net.b_mean,
+            'W_std': policy_net.W_std,
+            'b_std': policy_net.b_std
+        })
         
-        # Save policy network weights
-        for i, layer in enumerate(policy_net.layers):
-            weights_dict[f'policy_layer_{i}_weights'] = layer.weights
-            weights_dict[f'policy_layer_{i}_biases'] = layer.biases
+        np.save(os.path.join(model_dir, "value_net.npy"), {
+            'W1': value_net.W1,
+            'b1': value_net.b1,
+            'W2': value_net.W2,
+            'b2': value_net.b2,
+            'W3': value_net.W3,
+            'b3': value_net.b3
+        })
         
-        # Save value network weights
-        for i, layer in enumerate(value_net.layers):
-            weights_dict[f'value_layer_{i}_weights'] = layer.weights
-            weights_dict[f'value_layer_{i}_biases'] = layer.biases
-        
-        np.savez(weights_path, **weights_dict)
-        
-        # Save metrics if provided
-        if metrics is not None:
-            metrics_path = os.path.join(save_dir, 'metrics.json')
-            with open(metrics_path, 'w') as f:
-                json.dump(metrics, f)
-        
+        np.save(os.path.join(model_dir, "metrics.npy"), metrics)
         return version
+    
+    def load_model(self, policy_net, value_net, version):
+        """Load model from version."""
+        try:
+            model_dir = os.path.join(self.base_dir, version)
+            
+            # Load policy network weights
+            policy_weights = np.load(os.path.join(model_dir, "policy_net.npy"), allow_pickle=True).item()
+            policy_net.W1 = policy_weights['W1']
+            policy_net.b1 = policy_weights['b1']
+            policy_net.W2 = policy_weights['W2']
+            policy_net.b2 = policy_weights['b2']
+            policy_net.W_mean = policy_weights['W_mean']
+            policy_net.b_mean = policy_weights['b_mean']
+            policy_net.W_std = policy_weights['W_std']
+            policy_net.b_std = policy_weights['b_std']
+            
+            # Load value network weights
+            value_weights = np.load(os.path.join(model_dir, "value_net.npy"), allow_pickle=True).item()
+            value_net.W1 = value_weights['W1']
+            value_net.b1 = value_weights['b1']
+            value_net.W2 = value_weights['W2']
+            value_net.b2 = value_weights['b2']
+            value_net.W3 = value_weights['W3']
+            value_net.b3 = value_weights['b3']
+            
+            return True
+        except Exception as e:
+            print(f"Error loading model: {e}")
+            return False
+    
+    def get_training_progress(self):
+        """Get training progress statistics."""
+        if not self.history['versions']:
+            return None
+        
+        latest = self.history['versions'][-1]
+        first = self.history['versions'][0]
+        
+        return {
+            'current_version': self.history['current_version'],
+            'total_episodes': self.history['total_episodes'],
+            'last_update': self.history['last_update'],
+            'total_versions': len(self.history['versions']),
+            'latest_metrics': latest.get('metrics'),
+            'overall_improvement': {
+                'mean_reward': latest['metrics']['mean_reward'] - first['metrics']['mean_reward']
+                if latest.get('metrics') and first.get('metrics') else None
+            }
+        }
     
     def save_checkpoint(self, policy_net, value_net, metrics=None):
         """Save training checkpoint."""
         checkpoint_id = datetime.now().strftime('%Y%m%d_%H%M%S')
-        save_dir = os.path.join(self.checkpoints_dir, checkpoint_id)
-        os.makedirs(save_dir, exist_ok=True)
+        checkpoint_dir = os.path.join(self.checkpoints_dir, checkpoint_id)
+        os.makedirs(checkpoint_dir, exist_ok=True)
         
         # Save network weights
-        weights_path = os.path.join(save_dir, 'weights.npz')
-        weights_dict = {}
-        
-        # Save policy network weights
-        for i, layer in enumerate(policy_net.layers):
-            weights_dict[f'policy_layer_{i}_weights'] = layer.weights
-            weights_dict[f'policy_layer_{i}_biases'] = layer.biases
-        
-        # Save value network weights
-        for i, layer in enumerate(value_net.layers):
-            weights_dict[f'value_layer_{i}_weights'] = layer.weights
-            weights_dict[f'value_layer_{i}_biases'] = layer.biases
-        
-        np.savez(weights_path, **weights_dict)
+        self._save_network_weights(policy_net, 'policy', os.path.join(checkpoint_dir, 'policy_weights.json'))
+        self._save_network_weights(value_net, 'value', os.path.join(checkpoint_dir, 'value_weights.json'))
         
         # Save metrics if provided
-        if metrics is not None:
-            metrics_path = os.path.join(save_dir, 'metrics.json')
-            with open(metrics_path, 'w') as f:
-                json.dump(metrics, f)
+        if metrics:
+            with open(os.path.join(checkpoint_dir, 'metrics.json'), 'w') as f:
+                json.dump(metrics, f, indent=2)
         
         return checkpoint_id
     
-    def load_model(self, policy_net, value_net, version):
-        """Load model from version."""
-        load_dir = os.path.join(self.versions_dir, str(version))
-        weights_path = os.path.join(load_dir, 'weights.npz')
-        
-        if not os.path.exists(weights_path):
-            raise FileNotFoundError(f"No model found for version {version}")
-        
-        # Load weights
-        weights_dict = np.load(weights_path)
-        
-        # Load policy network weights
-        for i, layer in enumerate(policy_net.layers):
-            layer.weights = weights_dict[f'policy_layer_{i}_weights']
-            layer.biases = weights_dict[f'policy_layer_{i}_biases']
-        
-        # Load value network weights
-        for i, layer in enumerate(value_net.layers):
-            layer.weights = weights_dict[f'value_layer_{i}_weights']
-            layer.biases = weights_dict[f'value_layer_{i}_biases']
-        
-        # Load metrics if available
-        metrics_path = os.path.join(load_dir, 'metrics.json')
-        metrics = None
-        if os.path.exists(metrics_path):
-            with open(metrics_path, 'r') as f:
-                metrics = json.load(f)
-        
-        return metrics
-    
     def load_checkpoint(self, policy_net, value_net, checkpoint_id):
         """Load checkpoint."""
-        load_dir = os.path.join(self.checkpoints_dir, checkpoint_id)
-        weights_path = os.path.join(load_dir, 'weights.npz')
-        
-        if not os.path.exists(weights_path):
+        checkpoint_dir = os.path.join(self.checkpoints_dir, checkpoint_id)
+        if not os.path.exists(checkpoint_dir):
             raise FileNotFoundError(f"No checkpoint found with ID {checkpoint_id}")
         
-        # Load weights
-        weights_dict = np.load(weights_path)
-        
-        # Load policy network weights
-        for i, layer in enumerate(policy_net.layers):
-            layer.weights = weights_dict[f'policy_layer_{i}_weights']
-            layer.biases = weights_dict[f'policy_layer_{i}_biases']
-        
-        # Load value network weights
-        for i, layer in enumerate(value_net.layers):
-            layer.weights = weights_dict[f'value_layer_{i}_weights']
-            layer.biases = weights_dict[f'value_layer_{i}_biases']
+        # Load network weights
+        self._load_network_weights(policy_net, 'policy', os.path.join(checkpoint_dir, 'policy_weights.json'))
+        self._load_network_weights(value_net, 'value', os.path.join(checkpoint_dir, 'value_weights.json'))
         
         # Load metrics if available
-        metrics_path = os.path.join(load_dir, 'metrics.json')
-        metrics = None
+        metrics_path = os.path.join(checkpoint_dir, 'metrics.json')
         if os.path.exists(metrics_path):
             with open(metrics_path, 'r') as f:
-                metrics = json.load(f)
-        
-        return metrics
+                return json.load(f)
+        return None
     
     def list_versions(self):
         """List available model versions."""

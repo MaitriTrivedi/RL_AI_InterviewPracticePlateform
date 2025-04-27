@@ -96,14 +96,25 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
   const [error, setError] = useState<string | null>(null);
   const [totalScore, setTotalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     if (!currentInterview?.interviewId) {
       navigate('/');
       return;
     }
-    fetchNextQuestion();
-  }, [currentInterview?.interviewId, navigate]);
+    
+    if (!isInitialized) {
+      fetchNextQuestion();
+      setIsInitialized(true);
+    }
+  }, [currentInterview?.interviewId, isInitialized, navigate]);
+
+  useEffect(() => {
+    if (currentInterview && questionsAnswered >= currentInterview.maxQuestions) {
+      onEnd();
+    }
+  }, [questionsAnswered, currentInterview, onEnd]);
 
   const fetchNextQuestion = async () => {
     if (!currentInterview?.interviewId) return;
@@ -255,7 +266,7 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
         </Typography>
         
         <Box mb={3}>
-          <ReactMarkdown>{currentQuestion?.question || ''}</ReactMarkdown>
+          <ReactMarkdown>{currentQuestion?.content || ''}</ReactMarkdown>
         </Box>
 
         <AnswerBox
@@ -283,7 +294,7 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => navigate('/next-question')}
+              onClick={fetchNextQuestion}
             >
               Next Question
             </Button>

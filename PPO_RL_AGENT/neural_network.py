@@ -50,104 +50,216 @@ class Layer:
     
     def backward(self, grad_output):
         """Backward pass through the layer."""
-        # Gradient of activation
-        grad_activation = grad_output * self.activation_derivative(self.output_pre_activation)
-        
-        # Gradient of weights and biases
-        self.gradients['weights'] = np.dot(self.input.T, grad_activation)
-        self.gradients['biases'] = np.sum(grad_activation, axis=0)
-        
-        # Gradient for next layer
-        grad_input = np.dot(grad_activation, self.weights.T)
-        return grad_input
+        try:
+            # Ensure grad_output has correct shape
+            if len(grad_output.shape) == 1:
+                grad_output = grad_output.reshape(1, -1)
+            
+            # Gradient of activation
+            grad_activation = grad_output * self.activation_derivative(self.output_pre_activation)
+            
+            # Ensure input has correct shape for batch processing
+            if len(self.input.shape) == 1:
+                self.input = self.input.reshape(1, -1)
+            
+            # Gradient of weights and biases
+            self.gradients['weights'] = np.dot(self.input.T, grad_activation)
+            self.gradients['biases'] = np.sum(grad_activation, axis=0)
+            
+            # Gradient for next layer
+            grad_input = np.dot(grad_activation, self.weights.T)
+            
+            return grad_input
+            
+        except Exception as e:
+            print(f"Error in Layer backward: {e}")
+            print(f"grad_output shape: {grad_output.shape}")
+            print(f"input shape: {self.input.shape}")
+            print(f"weights shape: {self.weights.shape}")
+            return np.zeros_like(self.input)
 
 class GaussianPolicy:
-    def __init__(self, state_dim, hidden_dim=64, learning_rate=0.001):
-        """Initialize Gaussian policy network."""
-        self.layers = [
-            Layer(state_dim, hidden_dim, 'relu'),
-            Layer(hidden_dim, hidden_dim, 'relu'),
-            Layer(hidden_dim, 2)  # Output mean and log_std
-        ]
-        self.learning_rate = learning_rate
+    def __init__(self, state_dim, action_dim, hidden_dim=64):
+        """Initialize policy network."""
+        self.state_dim = state_dim
+        self.action_dim = action_dim
+        self.hidden_dim = hidden_dim
+        
+        # Initialize weights and biases
+        self.W1 = np.random.randn(state_dim, hidden_dim) / np.sqrt(state_dim)
+        self.b1 = np.zeros(hidden_dim)
+        
+        self.W2 = np.random.randn(hidden_dim, hidden_dim) / np.sqrt(hidden_dim)
+        self.b2 = np.zeros(hidden_dim)
+        
+        self.W_mean = np.random.randn(hidden_dim, action_dim) / np.sqrt(hidden_dim)
+        self.b_mean = np.zeros(action_dim)
+        
+        self.W_std = np.random.randn(hidden_dim, action_dim) / np.sqrt(hidden_dim)
+        self.b_std = np.zeros(action_dim)
     
     def forward(self, state):
-        """Forward pass to get mean and standard deviation."""
-        x = np.array(state).reshape(-1, state.shape[-1])
-        for layer in self.layers[:-1]:
-            x = layer.forward(x)
+        """Forward pass through network."""
+        # First hidden layer
+        x = np.dot(state, self.W1) + self.b1
+        x = np.tanh(x)
         
-        output = self.layers[-1].forward(x)
-        mean = output[:, 0]
-        log_std = np.clip(output[:, 1], -20, 2)  # Clip log_std for numerical stability
-        std = np.exp(log_std)
+        # Second hidden layer
+        x = np.dot(x, self.W2) + self.b2
+        x = np.tanh(x)
+        
+        # Output layers
+        mean = np.dot(x, self.W_mean) + self.b_mean
+        mean = np.tanh(mean) * 0.5 + 0.5  # Scale to [0, 1]
+        
+        std = np.dot(x, self.W_std) + self.b_std
+        std = np.exp(np.clip(std, -20, 2))  # Ensure positive and reasonable
         
         return mean, std
     
     def sample(self, mean, std):
         """Sample action from Gaussian distribution."""
-        noise = np.random.randn(*mean.shape)
-        action = mean + std * noise
-        return np.clip(action, -3, 3)  # Clip actions for stability
+        return mean + std * np.random.randn(*mean.shape)
     
     def log_prob(self, action, mean, std):
         """Compute log probability of action under Gaussian distribution."""
-        var = np.maximum(std ** 2, 1e-6)  # Add small constant for numerical stability
-        log_density = -0.5 * (
-            ((action - mean) ** 2) / var + 
-            2 * np.log(std) + 
-            np.log(2 * np.pi)
-        )
-        return np.clip(log_density, -20, 20)  # Clip for numerical stability
+        return -0.5 * (np.log(2 * np.pi) + 2 * np.log(std) + ((action - mean) / std) ** 2)
     
-    def backward(self, policy_grad, entropy_grad):
-        """Backward pass through the network."""
-        grad = np.stack([policy_grad, entropy_grad], axis=-1)
-        grad = np.clip(grad, -1, 1)  # Clip gradients for stability
+    def get_gradients(self, state, delta):
+        """Compute gradients for policy update."""
+        # Forward pass storing intermediates
+        h1 = np.dot(state, self.W1) + self.b1
+        h1_act = np.tanh(h1)
         
-        for layer in reversed(self.layers):
-            grad = layer.backward(grad)
-            
-            # Update weights and biases with gradient clipping
-            for param in ['weights', 'biases']:
-                grad_norm = np.linalg.norm(layer.gradients[param])
-                if grad_norm > 1:
-                    layer.gradients[param] *= 1 / grad_norm
-                layer.weights -= self.learning_rate * layer.gradients[param]
-                layer.biases -= self.learning_rate * layer.gradients[param]
+        h2 = np.dot(h1_act, self.W2) + self.b2
+        h2_act = np.tanh(h2)
+        
+        mean = np.dot(h2_act, self.W_mean) + self.b_mean
+        mean = np.tanh(mean) * 0.5 + 0.5
+        
+        std = np.dot(h2_act, self.W_std) + self.b_std
+        std = np.exp(np.clip(std, -20, 2))
+        
+        # Backward pass
+        d_mean = delta
+        d_std = delta
+        
+        # Mean path
+        d_h2_mean = np.dot(d_mean, self.W_mean.T)
+        d_W_mean = np.dot(h2_act.T, d_mean)
+        d_b_mean = np.sum(d_mean, axis=0)
+        
+        # Std path
+        d_h2_std = np.dot(d_std, self.W_std.T)
+        d_W_std = np.dot(h2_act.T, d_std)
+        d_b_std = np.sum(d_std, axis=0)
+        
+        # Combined gradients for h2
+        d_h2 = d_h2_mean + d_h2_std
+        d_h2_act = d_h2 * (1 - h2_act**2)
+        
+        # Second layer
+        d_h1 = np.dot(d_h2_act, self.W2.T)
+        d_W2 = np.dot(h1_act.T, d_h2_act)
+        d_b2 = np.sum(d_h2_act, axis=0)
+        
+        # First layer
+        d_h1_act = d_h1 * (1 - h1_act**2)
+        d_W1 = np.dot(state.T, d_h1_act)
+        d_b1 = np.sum(d_h1_act, axis=0)
+        
+        return {
+            'W1': d_W1, 'b1': d_b1,
+            'W2': d_W2, 'b2': d_b2,
+            'W_mean': d_W_mean, 'b_mean': d_b_mean,
+            'W_std': d_W_std, 'b_std': d_b_std
+        }
+    
+    def apply_gradients(self, grads, learning_rate):
+        """Apply computed gradients."""
+        self.W1 += learning_rate * grads['W1']
+        self.b1 += learning_rate * grads['b1']
+        self.W2 += learning_rate * grads['W2']
+        self.b2 += learning_rate * grads['b2']
+        self.W_mean += learning_rate * grads['W_mean']
+        self.b_mean += learning_rate * grads['b_mean']
+        self.W_std += learning_rate * grads['W_std']
+        self.b_std += learning_rate * grads['b_std']
 
 class ValueNetwork:
-    def __init__(self, state_dim, hidden_dim=64, learning_rate=0.001):
+    def __init__(self, state_dim, hidden_dim=64):
         """Initialize value network."""
-        self.layers = [
-            Layer(state_dim, hidden_dim, 'relu'),
-            Layer(hidden_dim, hidden_dim, 'relu'),
-            Layer(hidden_dim, 1)
-        ]
-        self.learning_rate = learning_rate
+        self.state_dim = state_dim
+        self.hidden_dim = hidden_dim
+        
+        # Initialize weights and biases
+        self.W1 = np.random.randn(state_dim, hidden_dim) / np.sqrt(state_dim)
+        self.b1 = np.zeros(hidden_dim)
+        
+        self.W2 = np.random.randn(hidden_dim, hidden_dim) / np.sqrt(hidden_dim)
+        self.b2 = np.zeros(hidden_dim)
+        
+        self.W3 = np.random.randn(hidden_dim, 1) / np.sqrt(hidden_dim)
+        self.b3 = np.zeros(1)
     
     def forward(self, state):
-        """Forward pass to get value estimate."""
-        x = np.array(state).reshape(-1, state.shape[-1])
-        for layer in self.layers:
-            x = layer.forward(x)
-        return x.squeeze()
-    
-    def backward(self, value_grad):
-        """Backward pass through the network."""
-        grad = value_grad.reshape(-1, 1)
-        grad = np.clip(grad, -1, 1)  # Clip gradients for stability
+        """Forward pass through network."""
+        # First hidden layer
+        x = np.dot(state, self.W1) + self.b1
+        x = np.tanh(x)
         
-        for layer in reversed(self.layers):
-            grad = layer.backward(grad)
-            
-            # Update weights and biases with gradient clipping
-            for param in ['weights', 'biases']:
-                grad_norm = np.linalg.norm(layer.gradients[param])
-                if grad_norm > 1:
-                    layer.gradients[param] *= 1 / grad_norm
-                layer.weights -= self.learning_rate * layer.gradients[param]
-                layer.biases -= self.learning_rate * layer.gradients[param]
+        # Second hidden layer
+        x = np.dot(x, self.W2) + self.b2
+        x = np.tanh(x)
+        
+        # Output layer
+        value = np.dot(x, self.W3) + self.b3
+        return value
+    
+    def get_gradients(self, state, delta):
+        """Compute gradients for value update."""
+        # Forward pass storing intermediates
+        h1 = np.dot(state, self.W1) + self.b1
+        h1_act = np.tanh(h1)
+        
+        h2 = np.dot(h1_act, self.W2) + self.b2
+        h2_act = np.tanh(h2)
+        
+        value = np.dot(h2_act, self.W3) + self.b3
+        
+        # Backward pass
+        d_value = delta
+        
+        # Output layer
+        d_h2 = np.dot(d_value, self.W3.T)
+        d_W3 = np.dot(h2_act.T, d_value)
+        d_b3 = np.sum(d_value, axis=0)
+        
+        # Second layer
+        d_h2_act = d_h2 * (1 - h2_act**2)
+        d_h1 = np.dot(d_h2_act, self.W2.T)
+        d_W2 = np.dot(h1_act.T, d_h2_act)
+        d_b2 = np.sum(d_h2_act, axis=0)
+        
+        # First layer
+        d_h1_act = d_h1 * (1 - h1_act**2)
+        d_W1 = np.dot(state.T, d_h1_act)
+        d_b1 = np.sum(d_h1_act, axis=0)
+        
+        return {
+            'W1': d_W1, 'b1': d_b1,
+            'W2': d_W2, 'b2': d_b2,
+            'W3': d_W3, 'b3': d_b3
+        }
+    
+    def apply_gradients(self, grads, learning_rate):
+        """Apply computed gradients."""
+        self.W1 += learning_rate * grads['W1']
+        self.b1 += learning_rate * grads['b1']
+        self.W2 += learning_rate * grads['W2']
+        self.b2 += learning_rate * grads['b2']
+        self.W3 += learning_rate * grads['W3']
+        self.b3 += learning_rate * grads['b3']
 
 def compute_gae(rewards, values, dones, gamma=0.99, lam=0.95):
     """Compute Generalized Advantage Estimation."""

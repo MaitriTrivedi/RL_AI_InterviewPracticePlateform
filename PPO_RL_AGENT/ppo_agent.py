@@ -1,51 +1,33 @@
 import numpy as np
 from collections import deque
-from .neural_network import GaussianPolicy, ValueNetwork, compute_gae
+from neural_network import GaussianPolicy, ValueNetwork, compute_gae
 
 class PPOAgent:
-    def __init__(
-        self,
-        state_dim,
-        action_dim,
-        hidden_dim=64,
-        learning_rate=3e-4,
-        gamma=0.99,
-        gae_lambda=0.95,
-        clip_ratio=0.2,
-        value_coef=0.5,
-        entropy_coef=0.01,
-        max_grad_norm=0.5,
-        batch_size=64,
-        epochs=10,
-        buffer_size=2048
-    ):
-        """Initialize PPO agent with hyperparameters."""
+    def __init__(self, state_dim=9, action_dim=1, hidden_dim=64, 
+                 lr_actor=0.0003, lr_critic=0.001, gamma=0.99, 
+                 gae_lambda=0.95, clip_ratio=0.2, target_kl=0.01,
+                 train_actor_iterations=10, train_critic_iterations=10):
+        """Initialize PPO agent with policy and value networks."""
         self.state_dim = state_dim
         self.action_dim = action_dim
+        self.hidden_dim = hidden_dim
+        
+        # Initialize neural networks
+        self.policy = GaussianPolicy(state_dim, action_dim, hidden_dim)
+        self.value_net = ValueNetwork(state_dim, hidden_dim)
+        
+        # Training parameters
+        self.lr_actor = lr_actor
+        self.lr_critic = lr_critic
         self.gamma = gamma
         self.gae_lambda = gae_lambda
         self.clip_ratio = clip_ratio
-        self.value_coef = value_coef
-        self.entropy_coef = entropy_coef
-        self.max_grad_norm = max_grad_norm
-        self.batch_size = batch_size
-        self.epochs = epochs
-        self.buffer_size = buffer_size
+        self.target_kl = target_kl
+        self.train_actor_iterations = train_actor_iterations
+        self.train_critic_iterations = train_critic_iterations
         
-        # Initialize neural networks
-        self.policy = GaussianPolicy(
-            state_dim=state_dim,
-            hidden_dim=hidden_dim,
-            learning_rate=learning_rate
-        )
-        self.value = ValueNetwork(
-            state_dim=state_dim,
-            hidden_dim=hidden_dim,
-            learning_rate=learning_rate
-        )
-        
-        # Initialize experience buffers
-        self.reset_buffers()
+        # Initialize memory buffers
+        self.clear_memory()
         
         # Initialize metrics with deque for efficient tracking
         self.metrics = {
@@ -58,200 +40,160 @@ class PPOAgent:
             'approx_kl': deque(maxlen=100)
         }
     
-    def reset_buffers(self):
-        """Reset experience replay buffers."""
+    def clear_memory(self):
+        """Clear memory buffers."""
         self.states = []
         self.actions = []
         self.rewards = []
         self.values = []
         self.log_probs = []
         self.dones = []
-        self.advantages = None
-        self.returns = None
     
     def select_action(self, state):
-        """Select action based on current policy."""
+        """Select action using the policy network."""
         try:
-            # Ensure state is correctly shaped
-            if len(state.shape) == 1:
-                state = state.reshape(1, -1)
+            # Ensure state is properly shaped
+            state = np.array(state).reshape(1, -1)
             
             # Get action distribution parameters
             mean, std = self.policy.forward(state)
             
-            # Sample action and clip to valid range [1, 10]
+            # Sample action and compute log probability
             action = self.policy.sample(mean, std)
-            action = np.clip(action, 1.0, 10.0)
-            
-            # Get value estimate and log probability
-            value = self.value.forward(state)
             log_prob = self.policy.log_prob(action, mean, std)
             
-            return action, value, log_prob
-        except Exception as e:
-            print(f"Error in select_action: {e}")
-            # Return safe default values
-            return np.array([5.0]), 0.0, 0.0
-    
-    def store_transition(self, state, action, reward, value, log_prob, done):
-        """Store transition in experience replay buffer."""
-        try:
+            # Get value estimate
+            value = self.value_net.forward(state)
+            
+            # Store in memory
             self.states.append(state)
             self.actions.append(action)
-            self.rewards.append(reward)
-            self.values.append(value)
             self.log_probs.append(log_prob)
-            self.dones.append(done)
+            self.values.append(value)
             
-            # Clear oldest transitions if buffer is full
-            if len(self.states) > self.buffer_size:
-                self.states = self.states[-self.buffer_size:]
-                self.actions = self.actions[-self.buffer_size:]
-                self.rewards = self.rewards[-self.buffer_size:]
-                self.values = self.values[-self.buffer_size:]
-                self.log_probs = self.log_probs[-self.buffer_size:]
-                self.dones = self.dones[-self.buffer_size:]
+            # Return tuple of (action, value, log_prob)
+            return np.array([action.flatten()[0]]), float(value), float(log_prob)
         except Exception as e:
-            print(f"Error in store_transition: {e}")
+            print(f"Error in select_action: {e}")
+            return np.array([0.5]), 0.0, 0.0  # Return safe default values
     
-    def _compute_advantages_and_returns(self):
-        """Compute advantages and returns using GAE."""
-        try:
-            states = np.array(self.states)
-            values = np.array(self.values)
-            rewards = np.array(self.rewards)
-            dones = np.array(self.dones)
-            
-            # Get final value estimate for bootstrapping
-            next_value = self.value.forward(states[-1:])
-            
-            # Compute advantages and returns
-            self.advantages, self.returns = compute_gae(
-                rewards, values, dones,
-                gamma=self.gamma, lam=self.gae_lambda
-            )
-            
-            # Normalize advantages for training stability
-            self.advantages = (self.advantages - self.advantages.mean()) / (self.advantages.std() + 1e-8)
-        except Exception as e:
-            print(f"Error in _compute_advantages_and_returns: {e}")
-            self.advantages = np.zeros_like(self.rewards)
-            self.returns = np.zeros_like(self.rewards)
+    def store_transition(self, reward, done):
+        """Store transition information."""
+        self.rewards.append(reward)
+        self.dones.append(done)
     
-    def _get_minibatch(self, indices):
-        """Get minibatch of experiences."""
-        try:
-            states = np.array(self.states)[indices]
-            actions = np.array(self.actions)[indices]
-            old_log_probs = np.array(self.log_probs)[indices]
-            advantages = self.advantages[indices]
-            returns = self.returns[indices]
-            return states, actions, old_log_probs, advantages, returns
-        except Exception as e:
-            print(f"Error in _get_minibatch: {e}")
-            return None
+    def train(self):
+        """Train policy and value networks using PPO."""
+        # Convert lists to numpy arrays
+        states = np.vstack(self.states)
+        actions = np.vstack(self.actions)
+        old_log_probs = np.vstack(self.log_probs)
+        values = np.vstack(self.values)
+        rewards = np.array(self.rewards).reshape(-1, 1)
+        dones = np.array(self.dones).reshape(-1, 1)
+        
+        # Compute advantages using GAE
+        advantages, returns = compute_gae(
+            rewards, values, dones, 
+            self.gamma, self.gae_lambda
+        )
+        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        
+        # Compute returns for value function training
+        returns = advantages + values
+        
+        # PPO training loop
+        for _ in range(self.train_actor_iterations):
+            # Forward pass through policy
+            mean, std = self.policy.forward(states)
+            new_log_probs = self.policy.log_prob(actions, mean, std)
+            
+            # Compute ratio and clipped ratio
+            ratio = np.exp(new_log_probs - old_log_probs)
+            clipped_ratio = np.clip(ratio, 1-self.clip_ratio, 1+self.clip_ratio)
+            
+            # Compute losses
+            surrogate1 = ratio * advantages
+            surrogate2 = clipped_ratio * advantages
+            actor_loss = -np.minimum(surrogate1, surrogate2).mean()
+            
+            # Compute KL divergence
+            approx_kl = ((old_log_probs - new_log_probs) ** 2).mean()
+            if approx_kl > self.target_kl:
+                break
+            
+            # Update policy
+            policy_grads = self.policy.get_gradients(states, -advantages)
+            self.policy.apply_gradients(policy_grads, self.lr_actor)
+        
+        # Value function training
+        for _ in range(self.train_critic_iterations):
+            # Compute value loss
+            values = self.value_net.forward(states)
+            value_loss = ((values - returns) ** 2).mean()
+            
+            # Update value network
+            value_grads = self.value_net.get_gradients(states, 2*(values - returns))
+            self.value_net.apply_gradients(value_grads, self.lr_critic)
+        
+        # Clear memory after training
+        self.clear_memory()
+        
+        # Calculate mean reward
+        mean_reward = float(np.mean(self.rewards)) if self.rewards else 0.0
+        
+        return {
+            'actor_loss': float(actor_loss),
+            'value_loss': float(value_loss),
+            'approx_kl': float(approx_kl),
+            'mean_episode_reward': mean_reward
+        }
     
-    def update(self):
-        """Update policy and value networks using PPO."""
-        if len(self.states) < self.batch_size:
-            return None
-            
-        try:
-            # Compute advantages and returns
-            self._compute_advantages_and_returns()
-            
-            n_samples = len(self.states)
-            batch_indices = np.arange(n_samples)
-            n_batches = max(n_samples // self.batch_size, 1)
-            
-            metrics = {
-                'policy_loss': 0,
-                'value_loss': 0,
-                'entropy_loss': 0,
-                'total_loss': 0,
-                'clip_fraction': 0,
-                'approx_kl': 0
+    def save_checkpoint(self, path):
+        """Save neural network weights."""
+        checkpoint = {
+            'policy': {
+                'W1': self.policy.W1,
+                'b1': self.policy.b1,
+                'W2': self.policy.W2,
+                'b2': self.policy.b2,
+                'W_mean': self.policy.W_mean,
+                'b_mean': self.policy.b_mean,
+                'W_std': self.policy.W_std,
+                'b_std': self.policy.b_std
+            },
+            'value_net': {
+                'W1': self.value_net.W1,
+                'b1': self.value_net.b1,
+                'W2': self.value_net.W2,
+                'b2': self.value_net.b2,
+                'W3': self.value_net.W3,
+                'b3': self.value_net.b3
             }
-            
-            # Perform multiple epochs of updates
-            for _ in range(self.epochs):
-                np.random.shuffle(batch_indices)
-                
-                # Process minibatches
-                for i in range(n_batches):
-                    start_idx = i * self.batch_size
-                    end_idx = min(start_idx + self.batch_size, n_samples)
-                    mb_indices = batch_indices[start_idx:end_idx]
-                    
-                    # Get minibatch data
-                    batch_data = self._get_minibatch(mb_indices)
-                    if batch_data is None:
-                        continue
-                    states, actions, old_log_probs, advantages, returns = batch_data
-                    
-                    # Get current action probabilities and values
-                    mean, std = self.policy.forward(states)
-                    new_log_probs = self.policy.log_prob(actions, mean, std)
-                    values = self.value.forward(states)
-                    
-                    # Compute probability ratio and clipped ratio
-                    ratio = np.exp(new_log_probs - old_log_probs)
-                    clipped_ratio = np.clip(ratio, 1 - self.clip_ratio, 1 + self.clip_ratio)
-                    
-                    # Compute policy loss
-                    policy_loss = -np.minimum(
-                        ratio * advantages,
-                        clipped_ratio * advantages
-                    ).mean()
-                    
-                    # Compute value loss
-                    value_loss = 0.5 * ((values - returns) ** 2).mean()
-                    
-                    # Compute entropy loss (encourage exploration)
-                    entropy_loss = -np.mean(np.log(std))
-                    
-                    # Compute total loss
-                    total_loss = (
-                        policy_loss +
-                        self.value_coef * value_loss +
-                        self.entropy_coef * entropy_loss
-                    )
-                    
-                    # Compute metrics
-                    clip_fraction = np.mean(np.abs(ratio - 1.0) > self.clip_ratio)
-                    approx_kl = 0.5 * np.mean((new_log_probs - old_log_probs) ** 2)
-                    
-                    # Update networks with gradient clipping
-                    self.policy.backward(policy_loss, entropy_loss)
-                    self.value.backward(value_loss)
-                    
-                    # Update metrics
-                    metrics['policy_loss'] += policy_loss
-                    metrics['value_loss'] += value_loss
-                    metrics['entropy_loss'] += entropy_loss
-                    metrics['total_loss'] += total_loss
-                    metrics['clip_fraction'] += clip_fraction
-                    metrics['approx_kl'] += approx_kl
-            
-            # Average metrics over all updates
-            total_updates = self.epochs * n_batches
-            if total_updates > 0:
-                for key in metrics:
-                    metrics[key] /= total_updates
-                    self.metrics[key].append(metrics[key])
-            
-            # Compute mean reward
-            mean_reward = np.mean(self.rewards)
-            metrics['mean_reward'] = mean_reward
-            self.metrics['mean_reward'].append(mean_reward)
-            
-            # Reset buffers
-            self.reset_buffers()
-            
-            return metrics
-        except Exception as e:
-            print(f"Error in update: {e}")
-            return None
+        }
+        np.save(path, checkpoint)
+    
+    def load_checkpoint(self, path):
+        """Load neural network weights."""
+        checkpoint = np.load(path, allow_pickle=True).item()
+        
+        # Load policy weights
+        self.policy.W1 = checkpoint['policy']['W1']
+        self.policy.b1 = checkpoint['policy']['b1']
+        self.policy.W2 = checkpoint['policy']['W2']
+        self.policy.b2 = checkpoint['policy']['b2']
+        self.policy.W_mean = checkpoint['policy']['W_mean']
+        self.policy.b_mean = checkpoint['policy']['b_mean']
+        self.policy.W_std = checkpoint['policy']['W_std']
+        self.policy.b_std = checkpoint['policy']['b_std']
+        
+        # Load value network weights
+        self.value_net.W1 = checkpoint['value_net']['W1']
+        self.value_net.b1 = checkpoint['value_net']['b1']
+        self.value_net.W2 = checkpoint['value_net']['W2']
+        self.value_net.b2 = checkpoint['value_net']['b2']
+        self.value_net.W3 = checkpoint['value_net']['W3']
+        self.value_net.b3 = checkpoint['value_net']['b3']
     
     def get_metrics(self):
         """Get current training metrics."""

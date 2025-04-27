@@ -7,6 +7,7 @@ export const API_ENDPOINTS = {
   CREATE_INTERVIEW: `${BASE_URL}/interview/start`,
   NEXT_QUESTION: (interviewId: string) => `${BASE_URL}/interview/${interviewId}/next-question`,
   SUBMIT_ANSWER: (interviewId: string) => `${BASE_URL}/interview/${interviewId}/submit-answer`,
+  END_INTERVIEW: (interviewId: string) => `${BASE_URL}/interview/${interviewId}/end`,
   GET_RESULTS: (interviewId: string) => `${BASE_URL}/interview/${interviewId}/results`,
 };
 

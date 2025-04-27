@@ -15,3 +15,9 @@ python rl_agent/train_ppo_with_dataset.py --mode evaluate --version YOUR_VERSION
 
 Compare All Models:
 python rl_agent/train_ppo_with_dataset.py --mode list
+
+Basic Training :
+python -m PPO_RL_AGENT.train_ppo_with_dataset --episodes 10
+
+Later to continue Training on t     he same model :
+python -m PPO_RL_AGENT.train_ppo_with_dataset --episodes 10 --model-version latest

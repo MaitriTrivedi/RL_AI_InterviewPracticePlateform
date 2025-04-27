@@ -11,88 +11,62 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { API_ENDPOINTS } from '../config/api';
 import Layout from '../components/layout/Layout';
+import { SubmitAnswerResponse } from '../types';
 
 const InterviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { state, setCurrentInterview, setLoading, setError } = useAppContext();
   const [answer, setAnswer] = useState('');
-  const [evaluation, setEvaluation] = useState<string | null>(null);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setSubmitting] = useState(false);
 
   const handleSubmitAnswer = async () => {
-    if (!state.currentInterview?.currentQuestion) return;
+    if (!state.currentInterview) return;
     
-    setLoading(true);
+    setSubmitting(true);
     try {
-      const response = await fetch(API_ENDPOINTS.SUBMIT_ANSWER(state.currentInterview.interviewId), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          answer: answer,
-          question_id: state.currentInterview.currentQuestion.questionId
-        })
-      });
+      const response = await fetch(
+        API_ENDPOINTS.SUBMIT_ANSWER(state.currentInterview.interviewId),
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            question_id: state.currentInterview.currentQuestion.questionId,
+            answer: answer
+          })
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to submit answer');
       }
 
-      const data = await response.json();
-      setEvaluation(data.feedback);
-      setIsSubmitted(true);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit answer');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleNextQuestion = async () => {
-    if (!state.currentInterview) return;
-    
-    setLoading(true);
-    try {
-      const response = await fetch(API_ENDPOINTS.NEXT_QUESTION(state.currentInterview.interviewId), {
-        method: 'GET'
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to get next question');
-      }
-
-      const data = await response.json();
+      const data: SubmitAnswerResponse = await response.json();
       
-      if (data.interview_complete) {
-        navigate('/results');
+      // Check if interview is complete
+      if (data.next_state.interview_complete) {
+        navigate('/interview/complete');
         return;
       }
 
-      const updatedInterview = {
-        ...state.currentInterview,
-        currentQuestion: {
-          questionId: data.question.id,
-          topic: data.question.topic,
-          difficulty: data.question.difficulty,
-          question: data.question.content,
-          expected_time: data.question.expected_time_minutes,
-          follow_up_questions: data.question.follow_up_questions,
-          evaluation_points: data.question.evaluation_points,
-          subtopic: data.question.subtopic
-        },
-        currentQuestionIdx: state.currentInterview.currentQuestionIdx + 1,
-        questions: [...state.currentInterview.questions, data.question]
-      };
-
-      setCurrentInterview(updatedInterview);
-      setAnswer('');
-      setEvaluation(null);
-      setIsSubmitted(false);
+      // Update interview state with next question
+      if (state.currentInterview) {
+        const updatedInterview = {
+          ...state.currentInterview,
+          currentQuestion: data.next_state.next_question,
+          questions: [...state.currentInterview.questions, data.next_state.next_question],
+          currentQuestionIdx: state.currentInterview.currentQuestionIdx + 1,
+          stats: data.current_state.session_stats
+        };
+        setCurrentInterview(updatedInterview);
+        setAnswer('');
+      }
+      
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to get next question');
+      setError(err instanceof Error ? err.message : 'Failed to submit answer');
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
@@ -116,7 +90,7 @@ const InterviewPage: React.FC = () => {
             Question {state.currentInterview.currentQuestionIdx + 1} of {state.currentInterview.maxQuestions}
           </Typography>
           <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 2 }}>
-            {state.currentInterview.currentQuestion.question}
+            {state.currentInterview.currentQuestion.content}
           </Typography>
           
           {/* Follow-up Questions */}
@@ -134,6 +108,22 @@ const InterviewPage: React.FC = () => {
               </ul>
             </Box>
           )}
+
+          {/* Evaluation Points */}
+          {state.currentInterview.currentQuestion.evaluation_points && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="subtitle2" gutterBottom>
+                Key Points to Address:
+              </Typography>
+              <ul>
+                {state.currentInterview.currentQuestion.evaluation_points.map((point, idx) => (
+                  <li key={idx}>
+                    <Typography variant="body2">{point}</Typography>
+                  </li>
+                ))}
+              </ul>
+            </Box>
+          )}
         </Paper>
 
         {/* Answer Section */}
@@ -146,42 +136,23 @@ const InterviewPage: React.FC = () => {
             label="Your Answer"
             value={answer}
             onChange={(e) => setAnswer(e.target.value)}
-            disabled={isSubmitted}
+            disabled={isSubmitting}
             sx={{ mb: 2 }}
           />
           
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
-            {!isSubmitted ? (
-              <Button
-                variant="contained"
-                onClick={handleSubmitAnswer}
-                disabled={!answer.trim()}
-              >
-                Submit Answer
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                onClick={handleNextQuestion}
-                color="primary"
-              >
-                Next Question
-              </Button>
-            )}
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              Topic: {state.currentInterview.currentQuestion.topic} - {state.currentInterview.currentQuestion.subtopic}
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={handleSubmitAnswer}
+              disabled={!answer.trim() || isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit Answer'}
+            </Button>
           </Box>
         </Paper>
-
-        {/* Evaluation Section */}
-        {evaluation && (
-          <Paper sx={{ p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Evaluation
-            </Typography>
-            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-              {evaluation}
-            </Typography>
-          </Paper>
-        )}
 
         {/* Loading Overlay */}
         {state.loading && (

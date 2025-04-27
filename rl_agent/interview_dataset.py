@@ -1,9 +1,13 @@
 import json
 from typing import Dict, List
 import random
+import asyncio
+from vertexai.language_models import TextGenerationModel
 
 class InterviewQuestionBank:
     def __init__(self):
+        # Initialize Gemini model
+        self.model = TextGenerationModel.from_pretrained("text-bison@001")
         # Define topics with their sequence
         self.sde_topics = {
             "ds": [
@@ -105,26 +109,74 @@ class InterviewQuestionBank:
         # Generate questions based on topic sequence
         self._generate_sequential_questions()
     
+    def _generate_prompt(self, topic: str, subtopic: str, difficulty: int) -> str:
+        """Generate prompt for Gemini based on difficulty level"""
+        base_prompt = f"""Generate a technical interview question about {subtopic} (under {topic}) with difficulty level {difficulty}/10.
+
+For difficulty {difficulty}:
+- Levels 1-3: Focus on basic concepts, definitions, and simple examples
+- Levels 4-6: Focus on implementation details, internal workings, and practical applications
+- Levels 7-10: Focus on complex problems, optimizations, and system design considerations
+
+The question should:
+1. Be clear and unambiguous
+2. Match the appropriate difficulty level
+3. Include 2-3 relevant follow-up questions
+4. For implementation questions, mention any constraints or requirements
+5. For system design questions, include scale and performance considerations
+
+Format the response as a JSON object with fields:
+{
+    "question": "main question text",
+    "follow_up_questions": ["question1", "question2"],
+    "expected_time_minutes": number,
+    "constraints": ["constraint1", "constraint2"] // if applicable
+}"""
+        return base_prompt
+
+    async def _generate_question_with_gemini(self, topic: str, subtopic: str, difficulty: int) -> Dict:
+        """Generate a question using Gemini"""
+        prompt = self._generate_prompt(topic, subtopic, difficulty)
+        
+        try:
+            response = await self.model.generate_content_async(prompt)
+            question_data = json.loads(response.text)
+            
+            return {
+                "id": f"{topic}_{difficulty:02d}_{random.randint(1000, 9999)}",
+                "topic": topic,
+                "subtopic": subtopic,
+                "difficulty": difficulty,
+                "question": question_data["question"],
+                "follow_up_questions": question_data["follow_up_questions"],
+                "expected_time_minutes": question_data["expected_time_minutes"],
+                "constraints": question_data.get("constraints", [])
+            }
+        except Exception as e:
+            print(f"Error generating question: {e}")
+            # Fallback to a basic question if Gemini fails
+            return {
+                "id": f"{topic}_{difficulty:02d}_{random.randint(1000, 9999)}",
+                "topic": topic,
+                "subtopic": subtopic,
+                "difficulty": difficulty,
+                "question": f"Explain {subtopic} and its practical applications.",
+                "follow_up_questions": [
+                    f"What are the common challenges in implementing {subtopic}?",
+                    f"How would you optimize {subtopic} for better performance?"
+                ],
+                "expected_time_minutes": 5 + difficulty * 2
+            }
+
     def _generate_sequential_questions(self):
         """Generate questions based on topic sequence where index determines difficulty"""
+        loop = asyncio.get_event_loop()
         for topic, subtopics in self.sde_topics.items():
             for idx, subtopic in enumerate(subtopics):
-                # Calculate difficulty (1-10) based on position in sequence
                 difficulty = max(1, min(10, (idx + 1)))
-                
-                question = {
-                    "id": f"{topic}_{idx+1:03d}",
-                    "topic": topic,
-                    "subtopic": subtopic,
-                    "difficulty": difficulty,
-                    "question": f"Explain {subtopic} and its practical applications.",
-                    "expected_answer": f"Detailed explanation of {subtopic}...",
-                    "expected_time_minutes": 5 + difficulty * 2,  # Time increases with difficulty
-                    "follow_up_questions": [
-                        f"What are the common challenges in implementing {subtopic}?",
-                        f"How would you optimize {subtopic} for better performance?"
-                    ]
-                }
+                question = loop.run_until_complete(
+                    self._generate_question_with_gemini(topic, subtopic, difficulty)
+                )
                 self.questions[topic][difficulty].append(question)
     
     def add_question(self, question: Dict):

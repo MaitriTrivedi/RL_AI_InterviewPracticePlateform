@@ -28,11 +28,12 @@ export interface ResumeData {
 export interface Question {
   questionId: string;
   topic: string;
+  subtopic: string;
   difficulty: number;
-  question: string;
+  content: string;
   follow_up_questions: string[];
   evaluation_points: string[];
-  subtopic: string;
+  expected_time?: number;
 }
 
 export interface Answer {
@@ -50,23 +51,53 @@ export interface Answer {
 }
 
 // Interview Types
+export interface InterviewStats {
+  questions_asked: number;
+  average_performance: number;
+  current_topic: string;
+  current_subtopic: string;
+  max_questions: number;
+  current_difficulty: number;
+}
+
 export interface Interview {
   interviewId: string;
   userId: string;
-  resumeId?: string;
-  topic: string;
-  currentQuestion: Question | null;
+  currentQuestion: Question;
   currentQuestionIdx: number;
   maxQuestions: number;
   questions: Question[];
   answers: string[];
-  status: 'not_started' | 'in_progress' | 'completed';
+  status: 'in_progress' | 'completed';
   difficulty: number;
-  stats: {
-    questions_asked: number;
-    average_performance: number;
-    max_questions: number;
+  stats: InterviewStats;
+}
+
+export interface SubmitAnswerResponse {
+  evaluation: {
+    score: number;
+    feedback: string;
+    strengths: string[];
+    improvements: string[];
   };
+  current_state: {
+    current_question: Question;
+    session_stats: InterviewStats;
+  };
+  next_state: {
+    next_question: Question;
+    next_difficulty: number;
+    next_topic: string;
+    next_subtopic: string;
+    interview_complete: boolean;
+  };
+}
+
+export interface FinalStats {
+  questions_asked: number;
+  average_performance: number;
+  final_difficulty: number;
+  topics_covered: string[];
 }
 
 // User Interface Types

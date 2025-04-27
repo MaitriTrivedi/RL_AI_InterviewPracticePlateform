@@ -1,137 +1,146 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
   Paper,
+  Stack,
   Button,
-  Grid,
-  Card,
-  CardContent,
-  Divider,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
   Chip,
-  Stack
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import Layout from '../components/layout/Layout';
+import { Interview } from '../types';
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(3),
-  marginBottom: theme.spacing(3)
-}));
+const getPerformanceColor = (score: number): 'success' | 'primary' | 'warning' | 'error' => {
+  if (score >= 8) return 'success';
+  if (score >= 6) return 'primary';
+  if (score >= 4) return 'warning';
+  return 'error';
+};
 
-const ResultCard = styled(Card)(({ theme }) => ({
-  height: '100%',
-  display: 'flex',
-  flexDirection: 'column',
-  backgroundColor: theme.palette.grey[50]
-}));
+const getPerformanceText = (score: number): string => {
+  if (score >= 8) return 'Excellent';
+  if (score >= 6) return 'Good';
+  if (score >= 4) return 'Fair';
+  return 'Needs Improvement';
+};
 
-const ResultsPage: React.FC = (): JSX.Element => {
+const ResultsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { state: { currentInterview } } = useAppContext();
+  const { state } = useAppContext();
+  const currentInterview = state.currentInterview;
 
   if (!currentInterview) {
     return (
       <Layout>
-        <Typography variant="h4" gutterBottom>
-          No Interview Results Available
-        </Typography>
-        <Button variant="contained" onClick={() => navigate('/')}>
-          Return to Home
-        </Button>
-      </Layout>
-    );
-  }
-
-  const averageScore = currentInterview.stats.average_performance * 10;
-  const totalQuestions = currentInterview.stats.questions_asked;
-
-  return (
-    <Layout>
-      <StyledPaper>
-        <Typography variant="h4" gutterBottom>
-          Interview Results
-        </Typography>
-
-        <Stack direction="row" spacing={2} mb={3}>
-          <Chip
-            label={`Topic: ${currentInterview.topic}`}
-            color="primary"
-            variant="outlined"
-          />
-          <Chip
-            label={`Questions: ${totalQuestions}`}
-            color="secondary"
-            variant="outlined"
-          />
-          <Chip
-            label={`Average Score: ${averageScore.toFixed(1)}/10`}
-            color="info"
-            variant="outlined"
-          />
-        </Stack>
-
-        <Grid container spacing={3}>
-          {/* Performance Summary */}
-          <Grid item xs={12} md={6}>
-            <ResultCard>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Performance Summary
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Box sx={{ mb: 2 }}>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Questions Answered: {totalQuestions}
-                  </Typography>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Average Score: {averageScore.toFixed(1)}/10
-                  </Typography>
-                  <Typography variant="subtitle1" gutterBottom>
-                    Final Difficulty Level: {currentInterview.difficulty.toFixed(1)}/10
-                  </Typography>
-                </Box>
-              </CardContent>
-            </ResultCard>
-          </Grid>
-
-          {/* Recommendations */}
-          <Grid item xs={12} md={6}>
-            <ResultCard>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  Recommendations
-                </Typography>
-                <Divider sx={{ my: 2 }} />
-                <Typography variant="body1" paragraph>
-                  {averageScore >= 8
-                    ? "Excellent performance! You're well-prepared for technical interviews. Consider tackling more challenging questions to further enhance your skills."
-                    : averageScore >= 6
-                    ? "Good performance! Focus on strengthening your understanding of core concepts and practice more complex problem-solving scenarios."
-                    : "Keep practicing! Focus on understanding fundamental concepts and work through problems step by step. Consider reviewing basic data structures and algorithms."}
-                </Typography>
-              </CardContent>
-            </ResultCard>
-          </Grid>
-        </Grid>
-
-        <Box sx={{ mt: 4, display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
-          <Button
-            variant="outlined"
-            onClick={() => navigate('/')}
-          >
-            Return to Home
-          </Button>
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            No interview results available
+          </Typography>
           <Button
             variant="contained"
             onClick={() => navigate('/interview/setup')}
+            sx={{ mt: 2 }}
           >
             Start New Interview
           </Button>
         </Box>
-      </StyledPaper>
+      </Layout>
+    );
+  }
+
+  const averagePerformance = currentInterview.stats.average_performance;
+  const performanceColor = getPerformanceColor(averagePerformance);
+  const performanceText = getPerformanceText(averagePerformance);
+
+  return (
+    <Layout>
+      <Typography variant="h4" component="h1" gutterBottom>
+        Interview Results
+      </Typography>
+
+      {/* Overall Performance */}
+      <Paper sx={{ p: 3, mb: 3 }}>
+        <Stack spacing={2}>
+          <Typography variant="h6">Overall Performance</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Chip
+              label={performanceText}
+              color={performanceColor}
+              sx={{ fontWeight: 'bold' }}
+            />
+            <Typography>
+              Average Score: {averagePerformance.toFixed(1)}/10
+            </Typography>
+          </Box>
+          <Typography>
+            Questions Completed: {currentInterview.questions.length} of {currentInterview.maxQuestions}
+          </Typography>
+          <Typography>
+            Final Difficulty: {currentInterview.difficulty.toFixed(1)}/10
+          </Typography>
+        </Stack>
+      </Paper>
+
+      {/* Question History */}
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          Question History
+        </Typography>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>#</TableCell>
+                <TableCell>Topic</TableCell>
+                <TableCell>Subtopic</TableCell>
+                <TableCell>Difficulty</TableCell>
+                <TableCell>Performance</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {currentInterview.questions.map((question, index) => (
+                <TableRow key={question.questionId}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{question.topic}</TableCell>
+                  <TableCell>{question.subtopic}</TableCell>
+                  <TableCell>{question.difficulty.toFixed(1)}</TableCell>
+                  <TableCell>
+                    {currentInterview.answers[index] && (
+                      <Chip
+                        size="small"
+                        label={`${(Number(currentInterview.answers[index]) * 10).toFixed(1)}/10`}
+                        color={getPerformanceColor(Number(currentInterview.answers[index]) * 10)}
+                      />
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Paper>
+
+      {/* Action Buttons */}
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 3 }}>
+        <Button variant="outlined" onClick={() => navigate('/')}>
+          Return Home
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate('/interview/setup')}
+        >
+          Start New Interview
+        </Button>
+      </Box>
     </Layout>
   );
 };

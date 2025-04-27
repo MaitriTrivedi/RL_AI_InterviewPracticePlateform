@@ -1,21 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Box, 
   Typography, 
-  Button,
+  Button, 
   Paper,
   Stack,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Slider,
+  CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { API_ENDPOINTS } from '../config/api';
 import Layout from '../components/layout/Layout';
-import LoadingSpinner from '../components/common/LoadingSpinner';
-import { Interview, Question } from '../types/index';
+import { Interview, Question, StartInterviewFormData, ApiResponse } from '../types';
+import { INTERVIEW_CONFIG } from '../config/interview';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 const InterviewSetupPage: React.FC = () => {
   const navigate = useNavigate();
   const { state, setCurrentInterview, setLoading, setError } = useAppContext();
+  
+  const [formData, setFormData] = useState<StartInterviewFormData>({
+    resumeId: state.resumeId || '',
+    topic: INTERVIEW_CONFIG.DEFAULT_TOPIC,
+    difficulty: INTERVIEW_CONFIG.DEFAULT_DIFFICULTY,
+    maxQuestions: INTERVIEW_CONFIG.MAX_QUESTIONS
+  });
 
   const handleStartInterview = async () => {
     setLoading(true);
@@ -28,9 +42,9 @@ const InterviewSetupPage: React.FC = () => {
         },
         body: JSON.stringify({
           user_id: userId,
-          topic: "data_structures", // Default topic
-          difficulty: 5, // Medium difficulty
-          maxQuestions: 10 // Default max questions
+          topic: formData.topic,
+          difficulty: formData.difficulty,
+          maxQuestions: formData.maxQuestions
         })
       });
 
@@ -46,20 +60,20 @@ const InterviewSetupPage: React.FC = () => {
         questionId: data.first_question.id,
         topic: data.first_question.topic,
         difficulty: data.first_question.difficulty,
-        question: data.first_question.content,  // backend sends as 'content'
+        content: data.first_question.content,
         follow_up_questions: data.first_question.follow_up_questions,
         evaluation_points: data.first_question.evaluation_points,
-        subtopic: data.first_question.subtopic
+        subtopic: data.first_question.subtopic,
+        expected_time: data.first_question.expected_time_minutes
       };
-
+  
       // Create interview object matching the Interview interface
       const newInterview: Interview = {
-        interviewId: data.session_id || userId, // Use session_id from backend if available, fallback to userId
-        userId: userId, // Store the user ID separately
-        topic: data.first_question.topic,  // Use the topic from the first question
+        interviewId: data.session_id || userId,
+        userId: userId,
         currentQuestion: firstQuestion,
         currentQuestionIdx: 0,
-        maxQuestions: data.session_stats.max_questions || 10, // Use max_questions from session
+        maxQuestions: data.session_stats.max_questions || formData.maxQuestions,
         questions: [firstQuestion],
         answers: [],
         status: 'in_progress',
@@ -76,6 +90,14 @@ const InterviewSetupPage: React.FC = () => {
       setLoading(false);
     }
   };
+
+  const handleTopicChange = (event: SelectChangeEvent) => {
+    setFormData(prev => ({ ...prev, topic: event.target.value }));
+  };
+
+  const handleDifficultyChange = (event: Event, newValue: number | number[]) => {
+    setFormData(prev => ({ ...prev, difficulty: newValue as number }));
+  };
   
   return (
     <Layout>
@@ -84,10 +106,51 @@ const InterviewSetupPage: React.FC = () => {
       </Typography>
 
       <Box sx={{ display: 'flex', gap: 3, mt: 3 }}>
-        {/* RL Agent Info */}
         <Box sx={{ flex: 1 }}>
-          {/* RL Agent Configuration */}
-          <Paper sx={{ p: 3, bgcolor: 'primary.main', color: 'white', mb: 3 }}>
+          {/* Interview Settings */}
+          <Paper sx={{ p: 3, mb: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Interview Settings
+            </Typography>
+            <Stack spacing={3}>
+              <FormControl fullWidth>
+                <InputLabel>Topic</InputLabel>
+                <Select
+                  value={formData.topic}
+                  onChange={handleTopicChange}
+                  label="Topic"
+                >
+                  <MenuItem value="ds">Data Structures</MenuItem>
+                  <MenuItem value="algo">Algorithms</MenuItem>
+                  <MenuItem value="system_design">System Design</MenuItem>
+                  <MenuItem value="dbms">Databases</MenuItem>
+                  <MenuItem value="oops">Object-Oriented Programming</MenuItem>
+                  <MenuItem value="os">Operating Systems</MenuItem>
+                  <MenuItem value="cn">Computer Networks</MenuItem>
+                </Select>
+              </FormControl>
+
+              <Box>
+                <Typography gutterBottom>Difficulty Level</Typography>
+                <Slider
+                  value={formData.difficulty}
+                  onChange={handleDifficultyChange}
+                  min={1}
+                  max={10}
+                  step={1}
+                  marks
+                  valueLabelDisplay="auto"
+                />
+              </Box>
+
+              <Typography variant="body2" color="text.secondary">
+                Number of Questions: {formData.maxQuestions}
+              </Typography>
+            </Stack>
+          </Paper>
+
+          {/* RL Agent Info */}
+          <Paper sx={{ p: 3, bgcolor: 'primary.main', color: 'white' }}>
             <Typography variant="h6" gutterBottom>
               RL Agent Configuration
             </Typography>
@@ -102,27 +165,6 @@ const InterviewSetupPage: React.FC = () => {
               The system will learn from your answers and adapt to your skill level
             </Typography>
           </Paper>
-
-          {/* Resume Information */}
-          <Paper variant="outlined" sx={{ p: 3 }}>
-            <Typography variant="subtitle1" gutterBottom>
-              Resume Information
-            </Typography>
-            <Stack spacing={2}>
-              <Box>
-                <Typography variant="subtitle2">Education:</Typography>
-                <Typography variant="body2">0 entries</Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2">Work Experience:</Typography>
-                <Typography variant="body2">0 entries</Typography>
-              </Box>
-              <Box>
-                <Typography variant="subtitle2">Projects:</Typography>
-                <Typography variant="body2">0 entries</Typography>
-              </Box>
-            </Stack>
-          </Paper>
         </Box>
       </Box>
 
@@ -135,13 +177,11 @@ const InterviewSetupPage: React.FC = () => {
           variant="contained"
           color="primary"
           onClick={handleStartInterview}
+          disabled={state.loading}
         >
-          Start Interview
+          {state.loading ? <CircularProgress size={24} /> : 'Start Interview'}
         </Button>
       </Box>
-
-      {/* Loading Overlay */}
-      {state.loading && <LoadingSpinner message="Setting up your interview..." />}
     </Layout>
   );
 };
