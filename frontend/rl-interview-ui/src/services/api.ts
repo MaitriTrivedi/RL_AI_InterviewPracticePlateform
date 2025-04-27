@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Interview, Question, Answer } from '../types/index';
 
 // Base URL for our API
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -11,7 +12,7 @@ const api = axios.create({
   }
 });
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export interface ResumeData {
   education: Array<{
@@ -32,36 +33,13 @@ export interface ResumeData {
   }>;
 }
 
-export interface Question {
-  questionId: string;
-  question: string;
-  difficulty: string;
-}
-
-export interface Answer {
-  questionId: string;
-  answer: string;
-  score: number;
-}
-
-export interface Interview {
-  interviewId: string;
-  topic: string;
-  difficulty: number;
-  maxQuestions: number;
-  currentQuestionIdx: number;
-  questions: Question[];
-  answers: Answer[];
-  status: 'in_progress' | 'completed';
-}
-
 // Resume API
 export const resumeApi = {
   uploadResume: async (file: File) => {
     const formData = new FormData();
     formData.append('resume', file);
     
-    const response = await axios.post(`${API_BASE_URL}/resume/upload`, formData, {
+    const response = await axios.post(`${API_URL}/resume/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -71,7 +49,7 @@ export const resumeApi = {
   },
   
   getResume: async (resumeId: string) => {
-    const response = await axios.get(`${API_BASE_URL}/resume/${resumeId}`);
+    const response = await axios.get(`${API_URL}/resume/${resumeId}`);
     return response;
   },
 };
@@ -98,7 +76,7 @@ export const questionApi = {
 // RL Agent API
 export const rlAgentApi = {
   createInterview: async (topic: string, difficulty: number = 5, maxQuestions: number = 10) => {
-    const response = await axios.post(`${API_BASE_URL}/interview/new`, {
+    const response = await axios.post(`${API_URL}/interview/new`, {
       topic,
       difficulty,
       maxQuestions,
@@ -107,12 +85,12 @@ export const rlAgentApi = {
   },
   
   getNextQuestion: async (interviewId: string) => {
-    const response = await axios.get(`${API_BASE_URL}/interview/${interviewId}/next-question`);
+    const response = await axios.get(`${API_URL}/interview/${interviewId}/next-question`);
     return response;
   },
   
   submitAnswer: async (interviewId: string, questionId: string, answer: string) => {
-    const response = await axios.post(`${API_BASE_URL}/interview/${interviewId}/submit-answer`, {
+    const response = await axios.post(`${API_URL}/interview/${interviewId}/submit-answer`, {
       questionId,
       answer,
     });
@@ -120,7 +98,7 @@ export const rlAgentApi = {
   },
   
   getResults: async (interviewId: string) => {
-    const response = await axios.get(`${API_BASE_URL}/interview/${interviewId}/results`);
+    const response = await axios.get(`${API_URL}/interview/${interviewId}/results`);
     return response;
   },
 };

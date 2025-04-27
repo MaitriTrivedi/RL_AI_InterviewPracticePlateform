@@ -10,9 +10,10 @@ from dotenv import load_dotenv
 import json
 import random  # For initial random selection, will be replaced with RL
 import numpy as np
-from rl_agent.ppo_agent import PPOAgent
-from rl_agent.interview_agent import InterviewAgent
+from rl_agent.model_inference import InterviewAgent
 import time
+from PPO_RL_AGENT.ppo_agent import PPOAgent
+from rl_agent.interview_dataset import InterviewQuestionBank, InterviewSimulator
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -40,7 +41,14 @@ except Exception as e:
     raise
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# Enable CORS with specific configuration
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:3000"],  # Add your frontend URL
+        "methods": ["GET", "POST", "OPTIONS"],
+        "allow_headers": ["Content-Type"]
+    }
+})
 
 # Configure upload folder
 UPLOAD_FOLDER = 'uploads'
@@ -51,21 +59,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Define allowed extensions
 ALLOWED_EXTENSIONS = {'pdf'}
 
-# In-memory storage for interviews (replace with database in production)
-interviews = {}
+# Initialize question bank and simulator
+question_bank = InterviewQuestionBank()
+interview_simulator = InterviewSimulator(question_bank)
 
-# Initialize PPO agent
-STATE_DIM = 17  # [avg_score, num_questions, current_difficulty, time_trend, performance_trend] + 12 topic weights
-ACTION_DIM = 1  # Desired difficulty level
-ppo_agent = PPOAgent(STATE_DIM, ACTION_DIM)
-
-# Initialize RL agent
-interview_agent = InterviewAgent()
-
-# Load pre-trained model if exists
-model_path = "rl_agent/interview_model.pth"
-if os.path.exists(model_path):
-    interview_agent.load(model_path)
+# Store active sessions
+active_sessions = {}
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -139,299 +138,469 @@ def get_resume(resume_id):
         }
     }), 200
 
-def generate_question(topic, params):
-    """Generate a single question based on RL agent's parameters"""
+def create_agent():
+    """Create a new PPO agent instance."""
+    state_dim = 3  # [difficulty, topic_idx, avg_performance]
+    action_dim = 1  # Difficulty adjustment
+    return PPOAgent(state_dim=state_dim, action_dim=action_dim)
+
+def create_fallback_question(topic: str, difficulty: float) -> dict:
+    """Create a fallback question when Gemini fails."""
+    return {
+        "id": str(uuid.uuid4()),
+        "topic": topic,
+        "difficulty": difficulty,
+        "content": f"Explain the core concepts of {topic} and provide examples of its practical applications.",
+        "follow_up_questions": [
+            f"What are the main challenges when working with {topic}?",
+            f"How would you optimize a solution involving {topic}?",
+            "Can you compare this with alternative approaches?"
+        ],
+        "evaluation_points": [
+            "Understanding of core concepts",
+            "Quality of examples provided",
+            "Analysis of trade-offs"
+        ],
+        "subtopic": "fundamentals"
+    }
+
+def generate_question(topic: str, difficulty: float) -> dict:
+    """Generate a question using Gemini based on topic and difficulty."""
     try:
-        prompt = f"""Generate a {params['depth']} technical interview question about {params['topic']} in {topic}.
-        Focus on {params['focus']}.
-        The question should:
-        1. Be at difficulty level {params['difficulty']}/10
-        2. Test practical knowledge and problem-solving
-        3. Be clearly stated and unambiguous
-        4. Include specific requirements or constraints
-        
-        Format the response as:
-        Question: [The actual question]
-        Expected Time: [Estimated time to solve]
-        Topic Focus: [Specific aspect of {params['topic']} being tested]
-        """
-        
-        response = model.generate_content(prompt)
-        if response and response.text:
-            return {
-                'questionId': str(uuid.uuid4()),
-                'question': response.text,
-                'difficulty': params['difficulty'],
-                'topic': params['topic'],
-                'depth': params['depth']
-            }
-        else:
-            raise Exception("Failed to generate question")
-            
-    except Exception as e:
-        logger.error(f"Error generating question: {str(e)}")
-        raise
+        # Construct prompt for Gemini with strict formatting instructions
+        prompt = f"""You MUST respond with ONLY a JSON object in the following format, with no additional text or explanation:
 
-def select_next_question(interview):
-    """Use RL agent to determine next question parameters and generate question"""
-    try:
-        # Get next question parameters from RL agent
-        question_params = ppo_agent.get_next_question_params(interview)
-        
-        # Generate question based on these parameters
-        question = generate_question(interview['topic'], question_params)
-        
-        # Update interview state
-        interview['current_question'] = question
-        if 'questions' not in interview:
-            interview['questions'] = []
-        interview['questions'].append(question)
-        
-        return interview
-    except Exception as e:
-        logger.error(f"Error in select_next_question: {str(e)}")
-        raise
-
-@app.route('/api/interview/new', methods=['POST'])
-def create_interview():
-    try:
-        data = request.json
-        if not data:
-            logger.error("No JSON data received in request")
-            return jsonify({'error': 'No data provided'}), 400
-            
-        if 'topic' not in data:
-            logger.error("Topic not found in request data")
-            return jsonify({'error': 'Topic is required'}), 400
-        
-        interview_id = str(uuid.uuid4())
-        interview = {
-            'interviewId': interview_id,
-            'topic': data['topic'],
-            'current_question': None,
-            'questions': [],
-            'answers': [],
-            'status': 'in_progress'
-        }
-        
-        # Generate questions
-        interview = select_next_question(interview)
-        interviews[interview_id] = interview
-        
-        return jsonify(interview), 200
-        
-    except Exception as e:
-        logger.error(f"Error in create_interview: {str(e)}")
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/interview/<interview_id>/next-question', methods=['GET'])
-def get_next_question(interview_id):
-    if interview_id not in interviews:
-        return jsonify({'error': 'Interview not found'}), 404
-    
-    interview = interviews[interview_id]
-    if interview['status'] == 'completed':
-        return jsonify({'error': 'Interview is already completed'}), 400
-    
-    # Select next question using RL
-    interview = select_next_question(interview)
-    interviews[interview_id] = interview
-    
-    return jsonify(interview), 200
-
-def evaluate_answer(question: dict, answer: str) -> dict:
-    """Evaluate the candidate's answer using Gemini."""
-    prompt = f"""You are an expert technical interviewer evaluating a candidate's answer. Your response must be in valid JSON format.
-
-Question:
-{question['content']}
-
-Candidate's Answer:
-{answer}
-
-Evaluate the answer and respond with ONLY a JSON object in the following format (no other text):
 {{
-    "score": <number between 1-10>,
-    "feedback": "<your detailed feedback>",
-    "correct_answer": "<brief sample solution if score < 7, otherwise null>"
+    "question": "<insert main technical interview question here>",
+    "follow_up_questions": [
+        "<insert follow-up question 1>",
+        "<insert follow-up question 2>",
+        "<insert follow-up question 3>"
+    ],
+    "expected_time_minutes": <number>,
+    "evaluation_points": [
+        "<insert evaluation point 1>",
+        "<insert evaluation point 2>",
+        "<insert evaluation point 3>"
+    ],
+    "subtopic": "<insert specific subtopic>"
 }}
 
-Base the score on:
-- Technical accuracy (40%)
-- Problem-solving approach (30%)
-- Communication clarity (20%)
-- Edge case consideration (10%)
+Generate a technical interview question for:
+Topic: {topic}
+Difficulty: {difficulty}/10 (where 1 is easiest and 10 is hardest)
 
-IMPORTANT: 
-1. Your entire response must be ONLY the JSON object
-2. Use double quotes for strings
-3. Use null instead of empty strings
-4. Do not include any explanatory text outside the JSON
-5. Ensure the feedback is a single line with escaped quotes"""
-
-    try:
+The question should be challenging but clear for the given difficulty level.
+Remember: Respond with ONLY the JSON object, no other text."""
+        
+        # Generate response from Gemini
         response = model.generate_content(prompt)
-        if not response or not response.text:
-            raise ValueError("Empty response from Gemini")
+        logger.info(f"Raw Gemini response: {response.text}")
+        
+        if not response.text:
+            logger.warning("Empty response from Gemini, using fallback")
+            return create_fallback_question(topic, difficulty)
             
-        # Clean the response text
+        # Remove Markdown code block formatting if present
         response_text = response.text.strip()
-        if not response_text.startswith('{'):
-            # Try to find the JSON object in the response
-            start = response_text.find('{')
-            end = response_text.rfind('}')
-            if start != -1 and end != -1:
-                response_text = response_text[start:end+1]
-            else:
-                raise ValueError("No valid JSON object found in response")
-
-        # Parse the JSON
-        evaluation = json.loads(response_text)
+        if response_text.startswith('```json\n'):
+            response_text = response_text[8:]  # Remove ```json\n prefix
+        if response_text.endswith('\n```'):
+            response_text = response_text[:-4]  # Remove \n``` suffix
         
-        # Validate the required fields
-        if not isinstance(evaluation.get('score'), (int, float)):
-            raise ValueError("Invalid score format")
-        if not isinstance(evaluation.get('feedback'), str):
-            raise ValueError("Invalid feedback format")
-            
-        # Ensure score is within bounds
-        evaluation['score'] = max(1, min(10, float(evaluation['score'])))
+        try:
+            question_data = json.loads(response_text)
+        except json.JSONDecodeError as e:
+            logger.error(f"Invalid JSON from Gemini: {response_text}")
+            logger.error(f"JSON parse error: {str(e)}")
+            return create_fallback_question(topic, difficulty)
         
-        return evaluation
+        # Validate required fields
+        required_fields = ['question', 'follow_up_questions', 'expected_time_minutes', 'evaluation_points', 'subtopic']
+        missing_fields = [field for field in required_fields if field not in question_data]
+        if missing_fields:
+            logger.warning(f"Missing required fields in response: {', '.join(missing_fields)}")
+            return create_fallback_question(topic, difficulty)
+        
+        # Add metadata
+        question_data['id'] = str(uuid.uuid4())
+        question_data['topic'] = topic
+        question_data['difficulty'] = difficulty
+        
+        return question_data
     except Exception as e:
-        logger.error(f"Error evaluating answer: {str(e)}")
-        logger.error(f"Raw response: {response.text if response else 'No response'}")
-        return {
-            "score": 0,
-            "feedback": "Error evaluating answer. Please try again.",
-            "correct_answer": None
-        }
+        logger.error(f"Failed to generate question: {str(e)}")
+        logger.error(f"Full error context: {e.__class__.__name__}")
+        return create_fallback_question(topic, difficulty)
 
-@app.route('/api/interview/<interview_id>/submit-answer', methods=['POST'])
-def submit_answer(interview_id):
+@app.route('/api/interview/start', methods=['POST'])
+def start_interview():
+    """Start a new interview session with first medium difficulty question."""
     try:
-        if interview_id not in interviews:
-            return jsonify({'error': 'Interview not found'}), 404
-            
-        data = request.json
-        if not data or 'answer' not in data or 'questionId' not in data:
-            return jsonify({'error': 'Answer and questionId are required'}), 400
-            
-        interview = interviews[interview_id]
-        question = next((q for q in interview['questions'] if q['questionId'] == data['questionId']), None)
+        data = request.get_json()
+        user_id = data.get('user_id')
+        topic = data.get('topic', 'data_structures')  # Default to data structures
+        difficulty = float(data.get('difficulty', 5.0))  # Default to medium difficulty
+        max_questions = int(data.get('maxQuestions', 10))  # Default to 10 questions
         
-        if not question:
-            return jsonify({'error': 'Question not found'}), 404
+        if not user_id:
+            return jsonify({'error': 'user_id is required'}), 400
             
-        # Evaluate the answer using Gemini
-        evaluation = evaluate_answer(question, data['answer'])
+        # Available topics
+        topics = ['data_structures', 'algorithms', 'system_design', 'databases', 'operating_systems', 'networking']
         
-        # Store the answer with evaluation
-        answer = {
-            'questionId': data['questionId'],
-            'answer': data['answer'],
-            'score': evaluation['score'],
-            'feedback': evaluation['feedback'],
-            'correct_answer': evaluation['correct_answer']
+        # Create new agent for this session
+        agent = create_agent()
+        
+        # Initialize session state
+        active_sessions[user_id] = {
+            'agent': agent,
+            'current_difficulty': difficulty,
+            'questions_asked': 0,
+            'total_performance': 0.0,
+            'topics': topics,
+            'current_topic_index': topics.index(topic) if topic in topics else 0,
+            'max_questions': max_questions,
+            'history': []
         }
         
-        interview['answers'].append(answer)
+        session = active_sessions[user_id]
         
-        return jsonify({
-            'interview': interview,
-            'evaluation': evaluation
-        }), 200
+        try:
+            # Generate first question using Gemini
+            question = generate_question(topic, difficulty)
+            session['current_question'] = question
+            
+            # Format response
+            response = {
+                'message': 'Interview session started',
+                'initial_difficulty': difficulty,
+                'session_stats': {
+                    'questions_asked': 0,
+                    'average_performance': 0.0,
+                    'max_questions': max_questions
+                },
+                'first_question': {
+                    'id': question['id'],
+                    'topic': topic,
+                    'difficulty': difficulty,
+                    'content': question['question'],
+                    'follow_up_questions': question['follow_up_questions'],
+                    'evaluation_points': question['evaluation_points'],
+                    'subtopic': question['subtopic']
+                }
+            }
+            
+            return jsonify(response)
+            
+        except ValueError as e:
+            return jsonify({'error': str(e)}), 500
         
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/interview/<interview_id>/next-question', methods=['GET', 'OPTIONS'])
+def get_next_question(interview_id):
+    """Get the next question's difficulty based on performance."""
+    try:
+        if request.method == 'OPTIONS':
+            # Handle CORS preflight request
+            response = jsonify({})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+            response.headers.add('Access-Control-Allow-Methods', 'GET')
+            return response
+            
+        session = active_sessions.get(interview_id)
+        if not session:
+            return jsonify({'error': 'No active interview session found'}), 404
+            
+        # Check if we have a current question
+        if not session.get('current_question'):
+            return jsonify({'error': 'No current question found'}), 404
+            
+        # Get next difficulty from agent
+        state = np.array([
+            session['current_difficulty'] / 10.0,
+            session['current_topic_index'] / len(session['topics']),
+            session['total_performance'] / max(1, session['questions_asked'])
+        ])
+        
+        # Get action from agent
+        action, value, _ = session['agent'].select_action(state)
+        
+        # Update difficulty
+        new_difficulty = float(np.clip(action[0] * 10.0, 1.0, 10.0))
+        session['current_difficulty'] = new_difficulty
+        
+        # Move to next topic
+        session['current_topic_index'] = (session['current_topic_index'] + 1) % len(session['topics'])
+        
+        # Generate next question
+        try:
+            next_question = generate_question(
+                session['topics'][session['current_topic_index']], 
+                new_difficulty
+            )
+            session['current_question'] = next_question
+            
+            return jsonify({
+                'question': {
+                    'id': next_question['id'],
+                    'topic': next_question['topic'],
+                    'difficulty': next_question['difficulty'],
+                    'content': next_question['question'],
+                    'follow_up_questions': next_question['follow_up_questions'],
+                    'evaluation_points': next_question['evaluation_points'],
+                    'subtopic': next_question['subtopic']
+                },
+                'stats': {
+                    'questions_asked': session['questions_asked'],
+                    'average_performance': session['total_performance'] / max(1, session['questions_asked'])
+                }
+            })
+            
+        except Exception as e:
+            logger.error(f"Error generating next question: {str(e)}")
+            return jsonify({'error': f"Failed to generate next question: {str(e)}"}), 500
+            
+    except Exception as e:
+        logger.error(f"Error in get_next_question: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/interview/<interview_id>/submit-answer', methods=['POST', 'OPTIONS'])
+def submit_answer(interview_id):
+    """Submit answer performance and update agent."""
+    print("submit_answer called")
+    
+    try:
+        if request.method == 'OPTIONS':
+            # Handle CORS preflight request
+            response = jsonify({})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+            response.headers.add('Access-Control-Allow-Methods', 'POST')
+            return response
+            
+        data = request.get_json()
+        answer = data.get('answer')
+        question_id = data.get('question_id')
+
+        if not answer:
+            return jsonify({'error': 'answer is required'}), 400
+
+        session = active_sessions.get(interview_id)
+        if not session:
+            return jsonify({'error': 'No active interview session found'}), 404
+
+        # Evaluate answer using Gemini
+        try:
+            prompt = f"""You are an expert technical interviewer. Evaluate the following answer for a technical interview question.
+            
+                Question: {session['current_question']['question']}
+                Answer: {answer}
+
+                Evaluation points to consider:
+                {session['current_question']['evaluation_points']}
+
+                Provide evaluation in the following JSON format:
+                {{
+                    "score": <score from 0-10>,
+                    "feedback": "detailed feedback explaining the score",
+                    "strengths": ["list of strong points"],
+                    "improvements": ["list of areas for improvement"]
+                }}
+
+                Remember to be fair and constructive in your feedback."""
+            
+            response = model.generate_content(prompt)
+            
+            # Remove Markdown code block formatting if present
+            response_text = response.text.strip()
+            if response_text.startswith('```json\n'):
+                response_text = response_text[8:]  # Remove ```json\n prefix
+            if response_text.endswith('\n```'):
+                response_text = response_text[:-4]  # Remove \n``` suffix
+            
+            evaluation = json.loads(response_text)
+            
+            # Normalize score to 0-1 range for the RL agent
+            normalized_score = float(evaluation['score']) / 10.0
+            
+            # Update session statistics
+            session['questions_asked'] += 1
+            session['total_performance'] += normalized_score
+            
+            # Calculate average performance
+            avg_performance = session['total_performance'] / session['questions_asked']
+            
+            # State with 3 dimensions
+            state = np.array([
+                session['current_difficulty'] / 10.0,  # Normalize difficulty
+                session['current_topic_index'] / len(session['topics']),  # Normalize topic index
+                avg_performance  # Average performance
+            ])
+            
+            # Calculate reward (simplified)
+            reward = normalized_score
+            
+            # Store transition in agent's buffer
+            done = session['questions_asked'] >= session['max_questions']
+            session['agent'].store_transition(
+                state=state,
+                action=np.array([session['current_difficulty'] / 10.0]),  # Normalize action
+                reward=reward,
+                value=0.0,  # Will be computed in update
+                log_prob=0.0,  # Will be computed in update
+                done=done
+            )
+            
+            # Get next difficulty from agent
+            next_state = np.array([
+                session['current_difficulty'] / 10.0,
+                session['current_topic_index'] / len(session['topics']),
+                avg_performance
+            ])
+            
+            next_action, value, _ = session['agent'].select_action(next_state)
+            next_difficulty = float(np.clip(next_action[0] * 10.0, 1.0, 10.0))
+            
+            # Update session state
+            session['current_difficulty'] = next_difficulty
+            session['current_topic_index'] = (session['current_topic_index'] + 1) % len(session['topics'])
+            
+            # Generate next question if not done
+            if not done:
+                next_question = generate_question(
+                    session['topics'][session['current_topic_index']], 
+                    next_difficulty
+                )
+                session['current_question'] = next_question
+            
+            return jsonify({
+                'evaluation': evaluation,
+                'next_difficulty': next_difficulty,
+                'next_topic': session['topics'][session['current_topic_index']],
+                'interview_complete': done
+            })
+            
+        except Exception as e:
+            logger.error(f"Error evaluating answer: {str(e)}")
+            return jsonify({'error': f"Failed to evaluate answer: {str(e)}"}), 500
+            
     except Exception as e:
         logger.error(f"Error in submit_answer: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/interview/<interview_id>/results', methods=['GET'])
-def get_results(interview_id):
-    if interview_id not in interviews:
-        return jsonify({'error': 'Interview not found'}), 404
-    
-    interview = interviews[interview_id]
-    return jsonify(interview), 200
+@app.route('/api/interview/end', methods=['POST'])
+def end_interview():
+    """End the interview session."""
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id')
+        
+        if not user_id:
+            return jsonify({'error': 'user_id is required'}), 400
+            
+        session = active_sessions.get(user_id)
+        if not session:
+            return jsonify({'error': 'No active interview session found'}), 404
+            
+        # Get final statistics
+        stats = {
+            'questions_asked': session['questions_asked'],
+            'average_performance': session['total_performance'] / max(1, session['questions_asked']),
+            'final_difficulty': session['current_difficulty']
+        }
+        
+        # Clean up session
+        del active_sessions[user_id]
+        
+        return jsonify({
+            'message': 'Interview session ended',
+            'final_stats': stats
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/next-question', methods=['POST'])
-def get_next_question_rl():
-    """Get the next interview question based on RL agent's selection."""
+def legacy_next_question():
+    """Legacy endpoint for getting the next question's difficulty."""
     try:
         data = request.get_json()
-        previous_score = data.get('previousScore')
-        previous_topic = data.get('previousTopic')
-        time_taken = data.get('timeTaken', 300)  # Default to 5 minutes if not provided
-        
-        question = interview_agent.select_next_question(
-            previous_score=previous_score,
-            time_taken=time_taken,
-            previous_topic=previous_topic
-        )
-        
-        return jsonify(question)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        if not data:
+            return jsonify({
+                'error': 'Request body is required',
+                'expected_format': {
+                    'user_id': 'string',
+                    'question': {
+                        'topic_index': 'number (optional, default: 0)',
+                        'time_allocated': 'number (optional, default: 15)'
+                    }
+                }
+            }), 400
 
-@app.route('/api/evaluate-answer', methods=['POST'])
-def evaluate_submission():
-    """Evaluate the candidate's answer and update the RL agent."""
-    try:
-        data = request.get_json()
-        question_id = data.get('questionId')
-        answer = data.get('answer')
+        user_id = data.get('user_id')
+        if not user_id:
+            return jsonify({'error': 'user_id is required'}), 400
+            
+        # Create a new session if one doesn't exist
+        if user_id not in active_sessions:
+            active_sessions[user_id] = {
+                'agent': create_agent(),
+                'current_difficulty': 5.0,
+                'questions_asked': 0,
+                'total_performance': 0.0,
+                'history': [],
+                'current_topic_index': 0
+            }
         
-        # Find the question from the dataset
-        question = next(
-            (q for q in interview_agent.questions if q['id'] == question_id),
-            None
-        )
-        if not question:
-            return jsonify({"error": "Question not found"}), 404
+        session = active_sessions[user_id]
         
-        # Evaluate the answer
-        start_time = time.time()
-        evaluation = evaluate_answer(question, answer)
-        time_taken = time.time() - start_time
+        # Get current topic based on sequence
+        topic = interview_simulator.topic_sequence[session['current_topic_index']]
         
-        # Update RL agent's state and policy
-        current_state = interview_agent.current_state.copy()
-        next_state = interview_agent.current_state.copy()
-        next_state['avg_score'] = (current_state['avg_score'] * current_state['num_questions'] + evaluation['score']) / (current_state['num_questions'] + 1)
-        next_state['num_questions'] += 1
+        # Get question details with defaults
+        question_data = data.get('question', {})
+        if not isinstance(question_data, dict):
+            question_data = {}
+            
+        time_allocated = question_data.get('time_allocated', 15)
         
-        # Calculate reward based on score and adaptation
-        base_reward = evaluation['score'] / 10.0  # Normalize to 0-1
-        adaptation_bonus = 0.1 if abs(question['difficulty'] - current_state['current_difficulty']) <= 2 else -0.1
-        reward = base_reward + adaptation_bonus
-        
-        # Train the agent
-        interview_agent.train_step(
-            state=current_state,
-            action=question['difficulty'],
-            reward=reward,
-            next_state=next_state,
-            done=False
-        )
-        
-        # Save the updated model
-        interview_agent.save(model_path)
-        
-        return jsonify(evaluation)
+        # Get question from question bank
+        try:
+            question = question_bank.get_question(topic, int(session['current_difficulty']))
+            
+            # Format response
+            response = {
+                'id': question['id'],
+                'topic': topic,
+                'difficulty': session['current_difficulty'],
+                'content': question['question'],
+                'expected_time': question['expected_time_minutes'],
+                'follow_up_questions': question['follow_up_questions'],
+                'subtopic': question['subtopic'],
+                'session_stats': {
+                    'questions_asked': session['questions_asked'],
+                    'average_performance': session['total_performance'] / max(1, session['questions_asked']),
+                    'current_topic': topic
+                }
+            }
+            
+            return jsonify(response)
+            
+        except ValueError as e:
+            return jsonify({
+                'error': str(e),
+                'help': 'Failed to get question. The topic might not be available.'
+            }), 404
+            
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/end-interview', methods=['POST'])
-def end_interview():
-    """End the interview and reset the agent's state."""
-    try:
-        # Save final model state
-        interview_agent.save(model_path)
-        # Reset agent for next interview
-        interview_agent.reset_state()
-        return jsonify({"message": "Interview ended successfully"})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({
+            'error': str(e),
+            'help': 'Make sure to send a POST request with user_id and optionally question details'
+        }), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000) 

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { AppState, ResumeData, Interview } from '../types';
+import { AppState, ResumeData, Interview } from '../types/index';
 
 // Create initial state
 const initialState: AppState = {
@@ -30,34 +30,41 @@ const AppContext = createContext<{
   addInterviewToHistory: () => {},
 });
 
-// Create provider component
-export const AppProvider = ({ children }: { children: ReactNode }) => {
+export const useAppContext = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useAppContext must be used within an AppProvider');
+  }
+  return context;
+};
+
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, setState] = useState<AppState>(initialState);
 
   const setLoading = (loading: boolean) => {
-    setState(prevState => ({ ...prevState, loading }));
+    setState(prev => ({ ...prev, loading }));
   };
 
   const setError = (error: string | null) => {
-    setState(prevState => ({ ...prevState, error }));
+    setState(prev => ({ ...prev, error }));
   };
 
-  const setCurrentInterview = (currentInterview: Interview | null) => {
-    setState(prevState => ({ ...prevState, currentInterview }));
+  const setCurrentInterview = (interview: Interview | null) => {
+    setState(prev => ({ ...prev, currentInterview: interview }));
   };
 
-  const setCurrentResume = (currentResume: ResumeData | null) => {
-    setState(prevState => ({ ...prevState, currentResume }));
+  const setCurrentResume = (resume: ResumeData | null) => {
+    setState(prev => ({ ...prev, currentResume: resume }));
   };
 
   const setResumeId = (resumeId: string | null) => {
-    setState(prevState => ({ ...prevState, resumeId }));
+    setState(prev => ({ ...prev, resumeId }));
   };
 
   const addInterviewToHistory = (interview: Interview) => {
-    setState(prevState => ({
-      ...prevState,
-      interviewHistory: [...prevState.interviewHistory, interview],
+    setState(prev => ({
+      ...prev,
+      interviewHistory: [...prev.interviewHistory, interview],
     }));
   };
 
@@ -77,8 +84,5 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     </AppContext.Provider>
   );
 };
-
-// Create a custom hook for using the context
-export const useAppContext = () => useContext(AppContext);
 
 export default AppContext; 

@@ -26,30 +26,47 @@ export interface ResumeData {
 
 // Question Types
 export interface Question {
-  questionId?: string;
+  questionId: string;
+  topic: string;
+  difficulty: number;
   question: string;
-  difficulty: string;
-  questionNo: string;
+  follow_up_questions: string[];
+  evaluation_points: string[];
+  subtopic: string;
 }
 
 export interface Answer {
   questionId: string;
   answer: string;
   score?: number;
-  feedback?: string;
+  feedback?: {
+    [criterion: string]: {
+      score: number;
+      comment: string;
+    };
+  };
+  improvement_suggestions?: string[];
+  overall_feedback?: string;
 }
 
 // Interview Types
 export interface Interview {
   interviewId: string;
-  resumeId: string;
+  userId: string;
+  resumeId?: string;
   topic: string;
+  currentQuestion: Question | null;
   currentQuestionIdx: number;
   maxQuestions: number;
   questions: Question[];
-  answers: Answer[];
-  status: 'in_progress' | 'completed';
-  averageScore?: number;
+  answers: string[];
+  status: 'not_started' | 'in_progress' | 'completed';
+  difficulty: number;
+  stats: {
+    questions_asked: number;
+    average_performance: number;
+    max_questions: number;
+  };
 }
 
 // User Interface Types

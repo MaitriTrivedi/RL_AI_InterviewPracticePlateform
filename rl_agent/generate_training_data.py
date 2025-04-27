@@ -87,7 +87,7 @@ def generate_training_dataset(num_episodes: int = 10):
         "episodes": episodes
     }
     
-    with open('training_episodes.json', 'w') as f:
+    with open('training_episodes                                                                                                                            .json', 'w') as f:
         json.dump(dataset, f, indent=2)
     
     # Print summary statistics

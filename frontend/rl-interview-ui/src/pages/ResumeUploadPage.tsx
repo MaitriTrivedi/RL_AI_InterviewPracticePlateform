@@ -20,7 +20,7 @@ import {
   CheckCircleOutline as CheckIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useAppContext } from '../contexts/AppContext';
 import { resumeApi } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import Layout from '../components/layout/Layout';

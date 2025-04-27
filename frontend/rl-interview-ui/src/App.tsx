@@ -1,8 +1,14 @@
 import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Container, Box, Typography } from '@mui/material';
-import { InterviewInterface } from './components/InterviewInterface';
+import { Container, Box } from '@mui/material';
+import HomePage from './pages/HomePage';
+import InterviewPage from './pages/InterviewPage';
+import ResultsPage from './pages/ResultsPage';
+import ResumeUploadPage from './pages/ResumeUploadPage';
+import InterviewSetupPage from './pages/InterviewSetupPage';
+import { AppProvider } from './contexts/AppContext';
 
 // Create a theme instance
 const theme = createTheme({
@@ -37,30 +43,30 @@ const theme = createTheme({
 });
 
 function App() {
-  const handleEndInterview = () => {
-    // Handle interview end
-    console.log('Interview ended');
-  };
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box
-        sx={{
-          minHeight: '100vh',
-          backgroundColor: 'background.default',
-          py: 4,
-        }}
-      >
-        <Container maxWidth="lg">
-          <Box sx={{ mb: 4 }}>
-            <Typography variant="h3" component="h1" gutterBottom>
-              AI Interview Practice Platform
-            </Typography>
+      <AppProvider>
+        <Router>
+          <Box
+            sx={{
+              minHeight: '100vh',
+              backgroundColor: 'background.default',
+              py: 4,
+            }}
+          >
+            <Container maxWidth="lg">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/interview/setup" element={<InterviewSetupPage />} />
+                <Route path="/interview" element={<InterviewPage />} />
+                <Route path="/results" element={<ResultsPage />} />
+                <Route path="/resume-upload" element={<ResumeUploadPage />} />
+              </Routes>
+            </Container>
           </Box>
-          <InterviewInterface onEnd={handleEndInterview} />
-        </Container>
-      </Box>
+        </Router>
+      </AppProvider>
     </ThemeProvider>
   );
 }

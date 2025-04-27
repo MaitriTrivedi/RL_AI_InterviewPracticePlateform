@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Paper,
@@ -15,6 +16,9 @@ import {
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ReactMarkdown from 'react-markdown';
+import { useAppContext } from '../contexts/AppContext';
+import { API_ENDPOINTS } from '../config/api';
+import { Question as AppQuestion } from '../types';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -40,11 +44,15 @@ interface InterviewInterfaceProps {
   onEnd: () => void;
 }
 
-interface Question {
-  id: string;
-  topic: string;
-  difficulty: number;
+interface Question extends AppQuestion {
   content: string;
+  follow_up_questions: string[];
+  subtopic: string;
+  session_stats: {
+    questions_asked: number;
+    average_performance: number;
+    current_topic: string;
+  };
 }
 
 interface EvaluationResult {
@@ -53,7 +61,33 @@ interface EvaluationResult {
   correctAnswer?: string;
 }
 
-export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd }) => {
+interface RawEvaluationResponse {
+  score: number;
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+}
+
+interface EvaluationResponse {
+  evaluation: {
+    score: number;
+    overall_feedback: string;
+    correct_answer?: string;
+    strengths: string[];
+    improvements: string[];
+  };
+  error?: string;
+}
+
+interface AnswerSubmissionRequest {
+  question_id: string;
+  answer: string;
+  session_id: string;
+}
+
+export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd }): JSX.Element => {
+  const navigate = useNavigate();
+  const { state: { currentInterview }, setCurrentInterview, setError: setAppError } = useAppContext();
   const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [answer, setAnswer] = useState('');
   const [isEvaluating, setIsEvaluating] = useState(false);
@@ -63,7 +97,17 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
   const [totalScore, setTotalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
 
+  useEffect(() => {
+    if (!currentInterview?.interviewId) {
+      navigate('/');
+      return;
+    }
+    fetchNextQuestion();
+  }, [currentInterview?.interviewId, navigate]);
+
   const fetchNextQuestion = async () => {
+    if (!currentInterview?.interviewId) return;
+    
     setIsLoading(true);
     setError(null);
     try {
@@ -73,57 +117,96 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          previousScore: result?.score,
-          previousTopic: currentQuestion?.topic,
-          previousDifficulty: currentQuestion?.difficulty
+          user_id: currentInterview.interviewId,
+          question: {
+            time_allocated: 15,
+            topic_index: 0
+          }
         })
       });
       
-      if (!response.ok) throw new Error('Failed to fetch next question');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch next question');
+      }
       
       const question = await response.json();
       setCurrentQuestion(question);
       setResult(null);
       setAnswer('');
     } catch (err) {
-      setError('Failed to load next question. Please try again.');
+      setError(err instanceof Error ? err.message : 'Failed to load next question. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSubmit = async () => {
-    if (!answer.trim()) return;
+    if (!answer.trim() || !currentInterview?.interviewId || !currentQuestion?.questionId) return;
     
     setIsEvaluating(true);
+    setError(null);
+    
     try {
-      const response = await fetch('/api/evaluate-answer', {
+      const response = await fetch(`${API_ENDPOINTS.SUBMIT_ANSWER(currentInterview.interviewId)}`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify({
-          questionId: currentQuestion?.id,
-          answer: answer.trim()
+          question_id: currentQuestion.questionId,
+          answer: answer.trim(),
+          session_id: currentInterview.interviewId
         })
       });
-      
-      if (!response.ok) throw new Error('Evaluation failed');
-      
-      const evaluationResult = await response.json();
-      setResult(evaluationResult);
-      setTotalScore(prev => prev + evaluationResult.score);
-      setQuestionsAnswered(prev => prev + 1);
-    } catch (err) {
-      setError('Failed to evaluate answer. Please try again.');
+
+      const responseText = await response.text();
+      console.log('Raw response text:', responseText);
+
+      // Remove Markdown code block formatting if present
+      const cleanResponseText = responseText
+        .replace(/^```json\n/, '')  // Remove opening ```json
+        .replace(/\n```$/, '')      // Remove closing ```
+        .trim();
+
+      let responseData: EvaluationResponse;
+      try {
+        if (!cleanResponseText) {
+          throw new Error('Empty response from server');
+        }
+        const rawResponse: RawEvaluationResponse = JSON.parse(cleanResponseText);
+        console.log('Parsed response data:', rawResponse);
+
+        responseData = {
+          evaluation: {
+            score: rawResponse.score || 0,
+            overall_feedback: rawResponse.feedback || 'No feedback provided',
+            correct_answer: undefined,
+            strengths: rawResponse.strengths || [],
+            improvements: rawResponse.improvements || []
+          }
+        };
+
+        setResult({
+          score: responseData.evaluation.score,
+          feedback: `${responseData.evaluation.overall_feedback}\n\nStrengths:\n${responseData.evaluation.strengths.map(s => `• ${s}`).join('\n')}\n\nPossible Improvements:\n${responseData.evaluation.improvements.map(i => `• ${i}`).join('\n')}`,
+          correctAnswer: responseData.evaluation.correct_answer
+        });
+
+        setTotalScore(prev => prev + responseData.evaluation.score);
+        setQuestionsAnswered(prev => prev + 1);
+      } catch (error) {
+        console.error('JSON parse error:', error);
+        throw new Error('Failed to parse server response');
+      }
+    } catch (error) {
+      console.error('Error in submit handler:', error);
+      setError(error instanceof Error ? error.message : 'Failed to submit answer');
     } finally {
       setIsEvaluating(false);
     }
   };
-
-  useEffect(() => {
-    fetchNextQuestion();
-  }, []);
 
   if (isLoading) {
     return (
@@ -134,7 +217,16 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
   }
 
   if (error) {
-    return <Alert severity="error">{error}</Alert>;
+    return (
+      <Box>
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+        <Button variant="contained" onClick={() => navigate('/')}>
+          Return to Home
+        </Button>
+      </Box>
+    );
   }
 
   return (
@@ -163,7 +255,7 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
         </Typography>
         
         <Box mb={3}>
-          <ReactMarkdown>{currentQuestion?.content || ''}</ReactMarkdown>
+          <ReactMarkdown>{currentQuestion?.question || ''}</ReactMarkdown>
         </Box>
 
         <AnswerBox
@@ -191,7 +283,7 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
             <Button
               variant="contained"
               color="secondary"
-              onClick={fetchNextQuestion}
+              onClick={() => navigate('/next-question')}
             >
               Next Question
             </Button>
@@ -235,4 +327,4 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
       )}
     </Box>
   );
-}; 
+};

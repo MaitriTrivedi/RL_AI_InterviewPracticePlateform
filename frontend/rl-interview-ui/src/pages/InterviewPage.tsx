@@ -1,308 +1,209 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import {
   Box,
-  Container,
   Typography,
   TextField,
   Button,
   Paper,
   CircularProgress,
-  Alert,
-  Stack,
 } from '@mui/material';
-import QuestionGrid from '../components/QuestionGrid';
-import { useInterview } from '../contexts/InterviewContext';
+import { useNavigate } from 'react-router-dom';
+import { useAppContext } from '../contexts/AppContext';
 import { API_ENDPOINTS } from '../config/api';
-
-interface Question {
-  questionId: string;
-  question: string;
-  difficulty: number;
-}
-
-interface Answer {
-  questionId: string;
-  answer: string;
-  score: number;
-  feedback?: {
-    correctness: { score: number; comment: string };
-    efficiency: { score: number; comment: string };
-    code_quality: { score: number; comment: string };
-    understanding: { score: number; comment: string };
-  };
-  improvement_suggestions?: string[];
-  overall_feedback?: string;
-}
-
-interface Interview {
-  interviewId: string;
-  topic: string;
-  current_question: Question | null;
-  questions: Question[];
-  answers: Answer[];
-  status: 'in_progress' | 'completed';
-}
+import Layout from '../components/layout/Layout';
 
 const InterviewPage: React.FC = () => {
   const navigate = useNavigate();
-  const {
-    currentInterview,
-    setCurrentInterview,
-    loading,
-    error,
-    setError,
-    setLoading,
-  } = useInterview();
-
-  const [selectedQuestionId, setSelectedQuestionId] = useState<string | undefined>();
+  const { state, setCurrentInterview, setLoading, setError } = useAppContext();
   const [answer, setAnswer] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [currentAnswer, setCurrentAnswer] = useState<Answer | null>(null);
-
-  useEffect(() => {
-    if (!currentInterview?.interviewId && !loading) {
-      navigate('/');
-    }
-  }, [currentInterview, loading, navigate]);
-
-  const handleQuestionSelect = (questionId: string) => {
-    setSelectedQuestionId(questionId);
-    setAnswer('');
-    setCurrentAnswer(null);
-  };
+  const [evaluation, setEvaluation] = useState<string | null>(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmitAnswer = async () => {
-    if (!selectedQuestionId || !answer.trim() || !currentInterview?.interviewId) return;
-
-    setSubmitting(true);
+    if (!state.currentInterview?.currentQuestion) return;
+    
+    setLoading(true);
     try {
-      const response = await fetch(API_ENDPOINTS.SUBMIT_ANSWER(currentInterview.interviewId), {
+      const response = await fetch(API_ENDPOINTS.SUBMIT_ANSWER(state.currentInterview.interviewId), {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          questionId: selectedQuestionId,
           answer: answer,
-        }),
+          question_id: state.currentInterview.currentQuestion.questionId
+        })
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to submit answer');
+        throw new Error('Failed to submit answer');
       }
 
       const data = await response.json();
-      setCurrentInterview(data.interview);
-      setCurrentAnswer(data.evaluation);
+      setEvaluation(data.feedback);
+      setIsSubmitted(true);
     } catch (err) {
-      console.error('Error submitting answer:', err);
-      setError('Failed to submit answer. Please try again.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleEndInterview = () => {
-    // Navigate to results page with the current interview data
-    navigate('/results');
-  };
-
-  const handleNextQuestion = async () => {
-    if (!currentInterview?.interviewId) {
-      setError('No active interview found');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await fetch(API_ENDPOINTS.NEXT_QUESTION(currentInterview.interviewId), {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to get next question');
-      }
-
-      const data = await response.json();
-      setCurrentInterview(data);
-      setSelectedQuestionId(undefined);
-      setAnswer('');
-      setCurrentAnswer(null);
-    } catch (error) {
-      console.error('Error getting next question:', error);
-      setError('Failed to get next question. Please try again.');
+      setError(err instanceof Error ? err.message : 'Failed to submit answer');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return (
-      <Container maxWidth="lg">
-        <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
-  }
+  const handleNextQuestion = async () => {
+    if (!state.currentInterview) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch(API_ENDPOINTS.NEXT_QUESTION(state.currentInterview.interviewId), {
+        method: 'GET'
+      });
 
-  if (!currentInterview) {
-    return (
-      <Container maxWidth="lg">
-        <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="80vh">
-          <Typography variant="h5" gutterBottom>
-            No active interview found
-          </Typography>
-          <Button variant="contained" color="primary" onClick={() => navigate('/')}>
-            Start New Interview
-          </Button>
-        </Box>
-      </Container>
-    );
-  }
+      if (!response.ok) {
+        throw new Error('Failed to get next question');
+      }
 
-  if (error) {
+      const data = await response.json();
+      
+      if (data.interview_complete) {
+        navigate('/results');
+        return;
+      }
+
+      const updatedInterview = {
+        ...state.currentInterview,
+        currentQuestion: {
+          questionId: data.question.id,
+          topic: data.question.topic,
+          difficulty: data.question.difficulty,
+          question: data.question.content,
+          expected_time: data.question.expected_time_minutes,
+          follow_up_questions: data.question.follow_up_questions,
+          evaluation_points: data.question.evaluation_points,
+          subtopic: data.question.subtopic
+        },
+        currentQuestionIdx: state.currentInterview.currentQuestionIdx + 1,
+        questions: [...state.currentInterview.questions, data.question]
+      };
+
+      setCurrentInterview(updatedInterview);
+      setAnswer('');
+      setEvaluation(null);
+      setIsSubmitted(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to get next question');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!state.currentInterview?.currentQuestion) {
     return (
-      <Container maxWidth="lg">
-        <Alert 
-          severity="error" 
-          sx={{ mt: 3 }}
-          action={
-            <Button color="inherit" size="small" onClick={() => navigate('/')}>
-              Go Back
-            </Button>
-          }
-        >
-          {error}
-        </Alert>
-      </Container>
+      <Layout>
+        <Typography>No active interview found. Please start a new interview.</Typography>
+        <Button variant="contained" onClick={() => navigate('/')}>
+          Go to Home
+        </Button>
+      </Layout>
     );
   }
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ py: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h4">
-            Technical Interview: {currentInterview.topic}
+    <Layout>
+      <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+        {/* Question Section */}
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            Question {state.currentInterview.currentQuestionIdx + 1} of {state.currentInterview.maxQuestions}
           </Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={handleEndInterview}
-          >
-            End Interview & Show Results
-          </Button>
-        </Box>
-        
-        {/* Display all questions in a grid */}
-        <QuestionGrid
-          questions={currentInterview.questions}
-          onSelectQuestion={handleQuestionSelect}
-          selectedQuestionId={selectedQuestionId}
-        />
+          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 2 }}>
+            {state.currentInterview.currentQuestion.question}
+          </Typography>
+          
+          {/* Follow-up Questions */}
+          {state.currentInterview.currentQuestion.follow_up_questions && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="subtitle2" gutterBottom>
+                Follow-up Questions:
+              </Typography>
+              <ul>
+                {state.currentInterview.currentQuestion.follow_up_questions.map((q, idx) => (
+                  <li key={idx}>
+                    <Typography variant="body2">{q}</Typography>
+                  </li>
+                ))}
+              </ul>
+            </Box>
+          )}
+        </Paper>
 
-        {/* Answer section */}
-        {selectedQuestionId && (
-          <Paper sx={{ mt: 4, p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Your Answer
-            </Typography>
-            <TextField
-              fullWidth
-              multiline
-              rows={6}
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              placeholder="Type your answer here..."
-              variant="outlined"
-              sx={{ mb: 2 }}
-            />
-            <Stack direction="row" spacing={2}>
+        {/* Answer Section */}
+        <Paper sx={{ p: 3, mb: 3 }}>
+          <TextField
+            fullWidth
+            multiline
+            rows={6}
+            variant="outlined"
+            label="Your Answer"
+            value={answer}
+            onChange={(e) => setAnswer(e.target.value)}
+            disabled={isSubmitted}
+            sx={{ mb: 2 }}
+          />
+          
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2 }}>
+            {!isSubmitted ? (
               <Button
                 variant="contained"
-                color="primary"
                 onClick={handleSubmitAnswer}
-                disabled={submitting || !answer.trim()}
+                disabled={!answer.trim()}
               >
-                {submitting ? <CircularProgress size={24} /> : 'Submit Answer'}
+                Submit Answer
               </Button>
-              {currentAnswer && (
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={handleNextQuestion}
-                >
-                  Next Question
-                </Button>
-              )}
-            </Stack>
+            ) : (
+              <Button
+                variant="contained"
+                onClick={handleNextQuestion}
+                color="primary"
+              >
+                Next Question
+              </Button>
+            )}
+          </Box>
+        </Paper>
+
+        {/* Evaluation Section */}
+        {evaluation && (
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h6" gutterBottom>
+              Evaluation
+            </Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+              {evaluation}
+            </Typography>
           </Paper>
         )}
 
-        {/* Feedback section */}
-        {currentAnswer && (
-          <Paper sx={{ mt: 4, p: 3 }}>
-            <Typography variant="h6" gutterBottom>
-              Feedback
-            </Typography>
-            <Typography variant="h4" color="primary" gutterBottom>
-              Score: {currentAnswer.score}/10
-            </Typography>
-            
-            {currentAnswer.feedback && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Detailed Feedback:
-                </Typography>
-                {Object.entries(currentAnswer.feedback).map(([criterion, feedback]) => (
-                  <Box key={criterion} sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
-                      {criterion}: {feedback.score}/10
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {feedback.comment}
-                    </Typography>
-                  </Box>
-                ))}
-              </Box>
-            )}
-            
-            {currentAnswer.improvement_suggestions && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Improvement Suggestions:
-                </Typography>
-                <ul>
-                  {currentAnswer.improvement_suggestions.map((suggestion, index) => (
-                    <li key={index}>
-                      <Typography variant="body2">{suggestion}</Typography>
-                    </li>
-                  ))}
-                </ul>
-              </Box>
-            )}
-            
-            {currentAnswer.overall_feedback && (
-              <Box sx={{ mt: 2 }}>
-                <Typography variant="subtitle1" gutterBottom>
-                  Overall Feedback:
-                </Typography>
-                <Typography variant="body2">
-                  {currentAnswer.overall_feedback}
-                </Typography>
-              </Box>
-            )}
-          </Paper>
+        {/* Loading Overlay */}
+        {state.loading && (
+          <Box
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'rgba(0, 0, 0, 0.5)',
+              zIndex: 9999,
+            }}
+          >
+            <CircularProgress />
+          </Box>
         )}
       </Box>
-    </Container>
+    </Layout>
   );
 };
 

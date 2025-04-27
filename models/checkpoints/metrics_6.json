@@ -1,0 +1,12 @@
+{
+  "interviews_completed": 6,
+  "timestep": 60,
+  "mean_reward": 6.913495960831642,
+  "std_reward": 1.2365888044692448,
+  "training_params": {
+    "learning_rate": 0.0003,
+    "n_steps": 2048,
+    "batch_size": 64,
+    "n_epochs": 10
+  }
+}

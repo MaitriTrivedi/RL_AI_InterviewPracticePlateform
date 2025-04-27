@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Box, 
   Typography, 
@@ -11,6 +11,9 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Container,
+  CircularProgress,
+  Alert
 } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles';
@@ -28,38 +31,12 @@ import { API_ENDPOINTS } from '../config/api';
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
-  const { setCurrentInterview, setLoading, setError } = useInterview();
+  const { setUserId } = useInterview();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleStartInterview = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await fetch(API_ENDPOINTS.CREATE_INTERVIEW, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          topic: 'Data Structures',
-          maxQuestions: 10
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Failed to create interview');
-      }
-
-      const data = await response.json();
-      setCurrentInterview(data);
-      navigate('/interview');
-    } catch (error) {
-      console.error('Error starting interview:', error);
-      setError('Failed to start interview. Please try again.');
-    } finally {
-      setLoading(false);
-    }
+  const handleStartPractice = () => {
+    navigate('/interview/setup');
   };
 
   return (
@@ -99,10 +76,18 @@ const HomePage: React.FC = () => {
               variant="outlined"
               color="inherit"
               size="large"
-              onClick={handleStartInterview}
+              onClick={handleStartPractice}
               sx={{ bgcolor: 'rgba(255,255,255,0.1)', fontWeight: 'bold' }}
+              disabled={isLoading}
             >
-              Start Practice Interview
+              {isLoading ? (
+                <>
+                  <CircularProgress size={24} sx={{ mr: 1 }} />
+                  Starting...
+                </>
+              ) : (
+                'Start Practice'
+              )}
             </Button>
           </Box>
         </Paper>

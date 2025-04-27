@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, type ReactNode } from 'react';
+import { Interview } from '../types';
 
 interface Question {
   questionId: string;
@@ -20,53 +21,26 @@ interface Answer {
   overall_feedback?: string;
 }
 
-interface Interview {
-  interviewId: string;
-  topic: string;
-  current_question: Question | null;
-  questions: Question[];
-  answers: Answer[];
-  status: 'in_progress' | 'completed';
-}
-
 interface InterviewContextType {
-  currentInterview: Interview | null;
-  setCurrentInterview: (interview: Interview | null) => void;
-  loading: boolean;
-  setLoading: (loading: boolean) => void;
-  error: string | null;
-  setError: (error: string | null) => void;
+  userId: string | null;
+  setUserId: (id: string | null) => void;
 }
 
-const InterviewContext = createContext<InterviewContextType | undefined>(undefined);
+const InterviewContext = createContext<InterviewContextType>({
+  userId: null,
+  setUserId: () => {},
+});
+
+export const useInterview = () => useContext(InterviewContext);
 
 export const InterviewProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [currentInterview, setCurrentInterview] = useState<Interview | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
 
   return (
-    <InterviewContext.Provider
-      value={{
-        currentInterview,
-        setCurrentInterview,
-        loading,
-        setLoading,
-        error,
-        setError,
-      }}
-    >
+    <InterviewContext.Provider value={{ userId, setUserId }}>
       {children}
     </InterviewContext.Provider>
   );
-};
-
-export const useInterview = () => {
-  const context = useContext(InterviewContext);
-  if (context === undefined) {
-    throw new Error('useInterview must be used within an InterviewProvider');
-  }
-  return context;
 };
 
 export default InterviewContext; 

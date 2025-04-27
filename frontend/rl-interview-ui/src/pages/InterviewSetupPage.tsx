@@ -1,53 +1,79 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Box, 
   Typography, 
-  Button, 
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  SelectChangeEvent,
-  Slider,
-  FormHelperText,
+  Button,
   Paper,
   Stack,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { useAppContext } from '../context/AppContext';
+import { useAppContext } from '../contexts/AppContext';
+import { API_ENDPOINTS } from '../config/api';
 import Layout from '../components/layout/Layout';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-
-const difficultyMarks = [
-  { value: 1, label: 'Easy' },
-  { value: 5, label: 'Medium' },
-  { value: 10, label: 'Hard' },
-];
+import { Interview, Question } from '../types/index';
 
 const InterviewSetupPage: React.FC = () => {
   const navigate = useNavigate();
-  const { state } = useAppContext();
-  
-  const [topic, setTopic] = useState('');
-  const [difficulty, setDifficulty] = useState<number>(5);
-  const [maxQuestions, setMaxQuestions] = useState<number>(10);
-  
-  // Handle topic change
-  const handleTopicChange = (event: SelectChangeEvent) => {
-    setTopic(event.target.value as string);
-  };
-  
-  // Handle difficulty change
-  const handleDifficultyChange = (_event: Event, newValue: number | number[]) => {
-    setDifficulty(newValue as number);
-  };
-  
-  // Handle max questions change
-  const handleMaxQuestionsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value);
-    if (!isNaN(value) && value >= 1 && value <= 20) {
-      setMaxQuestions(value);
+  const { state, setCurrentInterview, setLoading, setError } = useAppContext();
+
+  const handleStartInterview = async () => {
+    setLoading(true);
+    try {
+      const userId = Date.now().toString(); // Generate a temporary user ID
+      const response = await fetch(API_ENDPOINTS.CREATE_INTERVIEW, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          topic: "data_structures", // Default topic
+          difficulty: 5, // Medium difficulty
+          maxQuestions: 10 // Default max questions
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create interview');
+      }
+
+      const data = await response.json();
+      
+      // Transform the first question to match our Question interface
+      const firstQuestion: Question = {
+        questionId: data.first_question.id,
+        topic: data.first_question.topic,
+        difficulty: data.first_question.difficulty,
+        question: data.first_question.content,  // backend sends as 'content'
+        follow_up_questions: data.first_question.follow_up_questions,
+        evaluation_points: data.first_question.evaluation_points,
+        subtopic: data.first_question.subtopic
+      };
+
+      // Create interview object matching the Interview interface
+      const newInterview: Interview = {
+        interviewId: data.session_id || userId, // Use session_id from backend if available, fallback to userId
+        userId: userId, // Store the user ID separately
+        topic: data.first_question.topic,  // Use the topic from the first question
+        currentQuestion: firstQuestion,
+        currentQuestionIdx: 0,
+        maxQuestions: data.session_stats.max_questions || 10, // Use max_questions from session
+        questions: [firstQuestion],
+        answers: [],
+        status: 'in_progress',
+        difficulty: data.initial_difficulty,
+        stats: data.session_stats
+      };
+      
+      setCurrentInterview(newInterview);
+      navigate('/interview');
+    } catch (err) {
+      console.error('Error creating interview:', err);
+      setError(err instanceof Error ? err.message : 'Failed to create interview');
+    } finally {
+      setLoading(false);
     }
   };
   
@@ -58,67 +84,7 @@ const InterviewSetupPage: React.FC = () => {
       </Typography>
 
       <Box sx={{ display: 'flex', gap: 3, mt: 3 }}>
-        {/* Left Column - Interview Configuration */}
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="h6" gutterBottom>
-            Configure Your Interview
-          </Typography>
-
-          {/* Topic Selection */}
-          <FormControl fullWidth sx={{ mb: 4 }}>
-            <InputLabel id="topic-select-label">Interview Topic</InputLabel>
-            <Select
-              labelId="topic-select-label"
-              value={topic}
-              onChange={handleTopicChange}
-              label="Interview Topic"
-            >
-              <MenuItem value="Data Structures">Data Structures</MenuItem>
-              <MenuItem value="Algorithms">Algorithms</MenuItem>
-              <MenuItem value="System Design">System Design</MenuItem>
-              <MenuItem value="Web Development">Web Development</MenuItem>
-              <MenuItem value="Machine Learning">Machine Learning</MenuItem>
-            </Select>
-            <FormHelperText>
-              Topics are suggested based on your resume
-            </FormHelperText>
-          </FormControl>
-
-          {/* Difficulty Level */}
-          <Box sx={{ mb: 4 }}>
-            <Typography gutterBottom>
-              Difficulty Level: {difficulty}
-            </Typography>
-            <Slider
-              value={difficulty}
-              onChange={handleDifficultyChange}
-              step={1}
-              marks={difficultyMarks}
-              min={1}
-              max={10}
-              valueLabelDisplay="auto"
-            />
-            <FormHelperText>
-              {difficulty <= 3 && 'Beginner-friendly questions'}
-              {difficulty > 3 && difficulty <= 7 && 'Moderate difficulty, suitable for most candidates'}
-              {difficulty > 7 && 'Advanced questions for experienced candidates'}
-            </FormHelperText>
-          </Box>
-
-          {/* Number of Questions */}
-          <TextField
-            fullWidth
-            label="Number of Questions"
-            type="number"
-            value={maxQuestions}
-            onChange={handleMaxQuestionsChange}
-            InputProps={{ inputProps: { min: 1, max: 20 } }}
-            sx={{ mb: 4 }}
-            helperText="Choose between 1 and 20 questions"
-          />
-        </Box>
-
-        {/* Right Column - RL Agent Info */}
+        {/* RL Agent Info */}
         <Box sx={{ flex: 1 }}>
           {/* RL Agent Configuration */}
           <Paper sx={{ p: 3, bgcolor: 'primary.main', color: 'white', mb: 3 }}>
@@ -168,8 +134,7 @@ const InterviewSetupPage: React.FC = () => {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => navigate('/interview/new')}
-          disabled={!topic}
+          onClick={handleStartInterview}
         >
           Start Interview
         </Button>
