@@ -14,18 +14,23 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
-import { API_ENDPOINTS } from '../config/api';
-import Layout from '../components/layout/Layout';
-import { Interview, Question, StartInterviewFormData, ApiResponse } from '../types';
+import { rlAgentApi } from '../services/api';
 import { INTERVIEW_CONFIG } from '../config/interview';
 import { SelectChangeEvent } from '@mui/material/Select';
+import Layout from '../components/layout/Layout';
+import { Interview, Question } from '../types';
+
+interface FormData {
+  topic: string;
+  difficulty: number;
+  maxQuestions: number;
+}
 
 const InterviewSetupPage: React.FC = () => {
   const navigate = useNavigate();
   const { state, setCurrentInterview, setLoading, setError } = useAppContext();
   
-  const [formData, setFormData] = useState<StartInterviewFormData>({
-    resumeId: state.resumeId || '',
+  const [formData, setFormData] = useState<FormData>({
     topic: INTERVIEW_CONFIG.DEFAULT_TOPIC,
     difficulty: INTERVIEW_CONFIG.DEFAULT_DIFFICULTY,
     maxQuestions: INTERVIEW_CONFIG.MAX_QUESTIONS
@@ -34,26 +39,13 @@ const InterviewSetupPage: React.FC = () => {
   const handleStartInterview = async () => {
     setLoading(true);
     try {
-      const userId = Date.now().toString(); // Generate a temporary user ID
-      const response = await fetch(API_ENDPOINTS.CREATE_INTERVIEW, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          topic: formData.topic,
-          difficulty: formData.difficulty,
-          maxQuestions: formData.maxQuestions
-        })
-      });
+      const response = await rlAgentApi.createInterview(
+        formData.topic,
+        formData.difficulty,
+        formData.maxQuestions
+      );
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create interview');
-      }
-
-      const data = await response.json();
+      const data = response.data;
       
       // Transform the first question to match our Question interface
       const firstQuestion: Question = {
@@ -67,10 +59,10 @@ const InterviewSetupPage: React.FC = () => {
         expected_time: data.first_question.expected_time_minutes
       };
   
-      // Create interview object matching the Interview interface
+      // Create interview object
       const newInterview: Interview = {
-        interviewId: data.session_id || userId,
-        userId: userId,
+        interviewId: data.session_id,
+        userId: Date.now().toString(), // Generate temporary user ID
         currentQuestion: firstQuestion,
         currentQuestionIdx: 0,
         maxQuestions: data.session_stats.max_questions || formData.maxQuestions,
@@ -80,6 +72,9 @@ const InterviewSetupPage: React.FC = () => {
         difficulty: data.initial_difficulty,
         stats: data.session_stats
       };
+      
+      // Store session ID in localStorage for persistence
+      localStorage.setItem('interviewId', data.session_id);
       
       setCurrentInterview(newInterview);
       navigate('/interview');
@@ -95,7 +90,7 @@ const InterviewSetupPage: React.FC = () => {
     setFormData(prev => ({ ...prev, topic: event.target.value }));
   };
 
-  const handleDifficultyChange = (event: Event, newValue: number | number[]) => {
+  const handleDifficultyChange = (_event: Event, newValue: number | number[]) => {
     setFormData(prev => ({ ...prev, difficulty: newValue as number }));
   };
   

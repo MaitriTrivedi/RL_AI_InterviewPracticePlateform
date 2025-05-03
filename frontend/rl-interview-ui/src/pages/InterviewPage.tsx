@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -9,50 +9,51 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
-import { API_ENDPOINTS } from '../config/api';
+import { rlAgentApi } from '../services/api';
 import Layout from '../components/layout/Layout';
-import { SubmitAnswerResponse } from '../types';
+import { Interview, Question, SubmitAnswerResponse } from '../types';
+import axios from 'axios';
 
 const InterviewPage: React.FC = () => {
   const navigate = useNavigate();
   const { state, setCurrentInterview, setLoading, setError } = useAppContext();
   const [answer, setAnswer] = useState('');
   const [isSubmitting, setSubmitting] = useState(false);
+  const [startTime] = useState(Date.now());
+
+  useEffect(() => {
+    // Check for active interview
+    const interviewId = localStorage.getItem('interviewId');
+    if (!state.currentInterview && !interviewId) {
+      navigate('/');
+    }
+  }, [state.currentInterview, navigate]);
 
   const handleSubmitAnswer = async () => {
     if (!state.currentInterview) return;
     
     setSubmitting(true);
     try {
-      const response = await fetch(
-        API_ENDPOINTS.SUBMIT_ANSWER(state.currentInterview.interviewId),
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            question_id: state.currentInterview.currentQuestion.questionId,
-            answer: answer
-          })
-        }
+      const timeTaken = (Date.now() - startTime) / 1000; // Convert to seconds
+      
+      const response = await rlAgentApi.submitAnswer(
+        state.currentInterview.interviewId,
+        answer,
+        timeTaken
       );
 
-      if (!response.ok) {
-        throw new Error('Failed to submit answer');
-      }
-
-      const data: SubmitAnswerResponse = await response.json();
+      const data = response.data as SubmitAnswerResponse;
       
       // Check if interview is complete
       if (data.next_state.interview_complete) {
+        localStorage.removeItem('interviewId'); // Clear session
         navigate('/interview/complete');
         return;
       }
 
       // Update interview state with next question
       if (state.currentInterview) {
-        const updatedInterview = {
+        const updatedInterview: Interview = {
           ...state.currentInterview,
           currentQuestion: data.next_state.next_question,
           questions: [...state.currentInterview.questions, data.next_state.next_question],
@@ -64,7 +65,13 @@ const InterviewPage: React.FC = () => {
       }
       
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to submit answer');
+      console.error('Error submitting answer:', err);
+      if (axios.isAxiosError(err) && err.response?.status === 404) {
+        localStorage.removeItem('interviewId'); // Clear invalid session
+        navigate('/');
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to submit answer');
+      }
     } finally {
       setSubmitting(false);
     }

@@ -76,7 +76,7 @@ export const questionApi = {
 // RL Agent API
 export const rlAgentApi = {
   createInterview: async (topic: string, difficulty: number = 5, maxQuestions: number = 10) => {
-    const response = await axios.post(`${API_URL}/interview/new`, {
+    const response = await axios.post(`${API_URL}/interview/start`, {
       topic,
       difficulty,
       maxQuestions,
@@ -84,21 +84,18 @@ export const rlAgentApi = {
     return response;
   },
   
-  getNextQuestion: async (interviewId: string) => {
-    const response = await axios.get(`${API_URL}/interview/${interviewId}/next-question`);
-    return response;
-  },
-  
-  submitAnswer: async (interviewId: string, questionId: string, answer: string) => {
+  submitAnswer: async (interviewId: string, answer: string, timeTaken: number = 0) => {
     const response = await axios.post(`${API_URL}/interview/${interviewId}/submit-answer`, {
-      questionId,
       answer,
+      time_taken: timeTaken
     });
     return response;
   },
   
-  getResults: async (interviewId: string) => {
-    const response = await axios.get(`${API_URL}/interview/${interviewId}/results`);
+  endInterview: async (interviewId: string) => {
+    const response = await axios.post(`${API_URL}/interview/end`, {
+      interview_id: interviewId
+    });
     return response;
   },
 };

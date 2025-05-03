@@ -1,8 +1,10 @@
 import numpy as np
+import torch
+import json
 from collections import deque
 from datetime import datetime
-from ppo_agent import PPOAgent
-from model_handler import ModelHandler
+from .ppo_agent import PPOAgent
+from .model_handler import ModelHandler
 
 class InterviewAgent:
     def __init__(self, state_dim=9, model_version=None):
@@ -38,7 +40,7 @@ class InterviewAgent:
     
     def reset_interview_state(self):
         """Reset interview state for new interview."""
-        self.current_step = 0
+        self.current_step = 0                                                                                                               
         self.current_score = 0.0
         self.current_streak = 0
         self.time_efficiency = 1.0
@@ -54,16 +56,28 @@ class InterviewAgent:
     
     def _get_state(self, topic):
         """Get current state for decision making."""
-        topic_idx = self.topics.index(topic) / (len(self.topics) - 1)
+        # Convert topic to index safely
+        try:
+            topic_idx = float(self.topics.index(topic)) / float(len(self.topics) - 1)
+        except (ValueError, IndexError):
+            topic_idx = 0.0  # Default to first topic if not found
         
-        return np.array([
+        state = np.array([
             topic_idx,                                    # Current topic (normalized)
             self.current_difficulty / 10.0,               # Current difficulty (normalized)
             self.current_score,                           # Average performance
             self.time_efficiency,                         # Time efficiency
             self.current_streak / 10.0,                   # Streak (normalized)
-            *list(self.question_history.values())[-4:]    # Last 4 topics' performance
+            *[float(val) for val in list(self.question_history.values())[-4:]]  # Last 4 topics' performance
         ], dtype=np.float32)
+        
+        # Ensure state has correct dimension
+        if len(state) < self.state_dim:
+            state = np.pad(state, (0, self.state_dim - len(state)), 'constant')
+        elif len(state) > self.state_dim:
+            state = state[:self.state_dim]
+            
+        return state
     
     def get_next_question(self, topic):
         """Get difficulty adjustment for next question."""
@@ -79,16 +93,16 @@ class InterviewAgent:
         self.current_log_prob = log_prob
         
         # Convert action to difficulty adjustment (-2 to +2)
-        diff_adjustment = (action[0] * 4) - 2  # Scale from [0,1] to [-2,2]
+        diff_adjustment = float((action[0] * 4) - 2)  # Scale from [0,1] to [-2,2]
         
         # Update difficulty with bounds
-        new_difficulty = np.clip(self.current_difficulty + diff_adjustment, 1, 10)
-        self.current_difficulty = float(new_difficulty)
+        new_difficulty = float(np.clip(self.current_difficulty + diff_adjustment, 1, 10))
+        self.current_difficulty = new_difficulty
         
         return {
             'difficulty': self.current_difficulty,
-            'value_estimate': value,
-            'log_prob': log_prob
+            'value_estimate': float(value),
+            'log_prob': float(log_prob)
         }
     
     def update_performance(self, topic, performance_score, time_taken):

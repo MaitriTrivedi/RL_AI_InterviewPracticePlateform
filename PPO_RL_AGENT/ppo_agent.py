@@ -1,6 +1,7 @@
 import numpy as np
+import torch
 from collections import deque
-from neural_network import GaussianPolicy, ValueNetwork, compute_gae
+from .neural_network import GaussianPolicy, ValueNetwork, compute_gae
 
 class PPOAgent:
     def __init__(self, state_dim=9, action_dim=1, hidden_dim=64, 

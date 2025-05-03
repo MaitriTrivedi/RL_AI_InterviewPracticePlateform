@@ -1,6 +1,7 @@
 import argparse
 import numpy as np
-from interview_agent import InterviewAgent
+import json
+from .interview_agent import InterviewAgent
 
 def train_agent(
     num_episodes=20,
