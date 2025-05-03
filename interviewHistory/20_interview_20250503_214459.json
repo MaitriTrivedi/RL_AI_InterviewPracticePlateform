@@ -1,0 +1,75 @@
+{
+  "interview_id": "4301399a-bb27-446e-afc1-766dd203511f",
+  "timestamp": "2025-05-03T21:44:59.961614",
+  "total_questions": 9,
+  "total_score": 4.9,
+  "current_interaction": {
+    "question": {
+      "id": "2567b40e-8f1f-4e9f-b40e-6ecdf781c1c3",
+      "topic": "system_design",
+      "subtopic": "CAP Theorem",
+      "difficulty": 10.0,
+      "content": "You are tasked with designing a globally distributed, multi-tenant key-value store. Each tenant requires strong consistency within their partition but can tolerate eventual consistency *between* partitions owned by the same tenant. Your architecture leverages a consensus protocol for consistency within a partition. However, due to unpredictable network partitions and the necessity to maintain availability for critical user-facing features, you've observed frequent occurrences where a tenant\u2019s partitions become temporarily isolated and experience a split-brain scenario despite the use of the consensus protocol. These splits result in data divergence between the isolated partitions. Describe a robust and cost-effective strategy to automatically detect and resolve such divergence, ensuring eventual consistency across all of a tenant\u2019s partitions. Your strategy must also consider potential for malicious or compromised nodes within the tenant's partitions attempting to manipulate the resolution process, and detail how you would mitigate this. Furthermore, consider the performance impact of your chosen solution on overall system latency and throughput, and explain how you would optimize it. Finally, how would you handle the edge case where a tenant is extremely large, spanning multiple regions, and experiences frequent, smaller network partitions that are constantly healing before full divergence can be detected?",
+      "follow_up_questions": [
+        "How would your solution change if you also need to ensure causal consistency across all tenants, not just within a tenant's partitions?",
+        "What metrics would you monitor to evaluate the effectiveness of your divergence detection and resolution strategy, and what are the acceptable thresholds for these metrics?"
+      ],
+      "evaluation_points": [
+        "Divergence detection mechanisms (e.g., vector clocks, Merkle trees, anti-entropy protocols)",
+        "Conflict resolution strategies (e.g., CRDTs, last-write-wins with proper tiebreakers, version vectors)",
+        "Handling malicious nodes (e.g., quorum-based voting, Byzantine Fault Tolerance (BFT) adaptations, data auditing)",
+        "Performance optimization (e.g., asynchronous replication, caching, data compression)",
+        "Handling frequent short partitions with a balance of detection overhead and consistency guarantees",
+        "Understanding of CAP theorem trade-offs and implications in a multi-tenant environment"
+      ],
+      "expected_time_minutes": 60
+    },
+    "answer": "dont know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer provided, 'don't know,' demonstrates no understanding of the problem or its potential solutions. The question requires knowledge of distributed systems concepts, consistency models, conflict resolution strategies, and security considerations. The absence of any attempt to address the question warrants a score of 0.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding divergence detection mechanisms like vector clocks and Merkle trees.",
+        "Knowledge of conflict resolution strategies such as CRDTs and last-write-wins.",
+        "Understanding techniques for handling malicious nodes in a distributed system.",
+        "Knowledge of performance optimization techniques for distributed data stores.",
+        "Understanding of CAP theorem and its implications.",
+        "Ability to design a system that balances consistency, availability, and partition tolerance in a multi-tenant environment.",
+        "Ability to address the edge case of frequent short partitions and their impact on the system."
+      ],
+      "follow_up_suggestions": [
+        "Study the CAP theorem and different consistency models (e.g., eventual consistency, strong consistency).",
+        "Research divergence detection mechanisms like vector clocks, Merkle trees, and anti-entropy protocols.",
+        "Learn about conflict resolution strategies such as CRDTs, last-write-wins, and version vectors.",
+        "Investigate techniques for handling Byzantine faults and securing distributed systems against malicious actors.",
+        "Explore performance optimization techniques for distributed databases, including caching, asynchronous replication, and data compression.",
+        "Practice designing distributed systems to handle various failure scenarios and consistency requirements."
+      ]
+    },
+    "time_taken": 348.879
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [
+        0.0
+      ],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 10.0
+  }
+}

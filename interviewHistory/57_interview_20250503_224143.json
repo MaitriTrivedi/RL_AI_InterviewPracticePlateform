@@ -1,0 +1,69 @@
+{
+  "interview_id": "cf197ad1-ab74-4a3a-9b7e-0be4a63b610f",
+  "timestamp": "2025-05-03T22:41:43.870607",
+  "total_questions": 6,
+  "total_score": 4.5,
+  "current_interaction": {
+    "question": {
+      "id": "35745e16-29ef-4a95-a74a-83e692ed6196",
+      "topic": null,
+      "subtopic": "Scalability",
+      "difficulty": 5.0,
+      "content": "Imagine you're building a photo-sharing application, similar to Instagram, which is experiencing rapid user growth. Currently, all images are stored on a single server. As the number of users and photos increases dramatically, the application is becoming slow and unreliable, especially during peak hours. Describe two specific strategies you would implement to improve the scalability of the image storage and retrieval process. Explain the tradeoffs of each approach, considering factors like cost, complexity, and consistency.",
+      "follow_up_questions": [
+        "How would you monitor the performance of your chosen solution(s) to ensure they're effectively addressing the scalability issues?",
+        "Let's say you decide to use a CDN. How would you handle updates or deletions to images already cached in the CDN?"
+      ],
+      "evaluation_points": [
+        "Understanding of horizontal scaling principles.",
+        "Knowledge of CDN usage and its benefits.",
+        "Ability to discuss tradeoffs (e.g., eventual consistency vs. strong consistency, cost vs. performance).",
+        "Understanding of sharding concepts or object storage solutions."
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "I dont know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated \"I don't know,\" indicating a complete lack of understanding of the concepts involved in scaling image storage and retrieval. There is no demonstration of knowledge regarding horizontal scaling, CDN usage, sharding, or object storage solutions. The answer lacks any attempt to discuss tradeoffs like cost, complexity, or consistency.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of horizontal scaling principles.",
+        "Knowledge of CDN usage and its benefits.",
+        "Ability to discuss tradeoffs (e.g., eventual consistency vs. strong consistency, cost vs. performance).",
+        "Understanding of sharding concepts or object storage solutions.",
+        "Familiarity with cloud storage options (e.g., AWS S3, Google Cloud Storage)."
+      ],
+      "follow_up_suggestions": [
+        "Research common strategies for scaling web applications, particularly focusing on image storage.",
+        "Study the concepts of Content Delivery Networks (CDNs) and their role in improving performance and reducing server load.",
+        "Learn about different database sharding techniques and their associated challenges.",
+        "Explore object storage services like AWS S3, Google Cloud Storage, or Azure Blob Storage and understand their advantages for storing large amounts of data."
+      ]
+    },
+    "time_taken": 235.565
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.9,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [
+        0.9
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 5.0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "total_episodes": 345,
+  "epoch": 4,
+  "epoch_episode": 45,
+  "average_score": 0.7251163160554611,
+  "time_efficiency": 0.31292735901613467,
+  "current_streak": 3,
+  "difficulty_level": 1.0,
+  "topic_performances": {
+    "ds": 0.7558228866878526,
+    "algo": 0.8139041792276929,
+    "oops": 0.6547782583998553,
+    "dbms": 0.3073360677880722,
+    "os": 0.8083219166245406,
+    "cn": 0.0,
+    "system_design": 0.7402259196749112
+  }
+}

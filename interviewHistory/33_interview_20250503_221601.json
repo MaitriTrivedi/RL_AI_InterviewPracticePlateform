@@ -1,0 +1,65 @@
+{
+  "interview_id": "1a575a1c-f53a-4d6d-8149-4183a98da706",
+  "timestamp": "2025-05-03T22:16:01.275719",
+  "total_questions": 2,
+  "total_score": 1.7,
+  "current_interaction": {
+    "question": {
+      "id": "b5fbf63f-a02b-45ed-bcd1-ecd033c2657c",
+      "topic": null,
+      "subtopic": "Scalability",
+      "difficulty": 2.5,
+      "content": "Imagine you're building a website for a small bakery that expects to get more customers as they become more popular. What's one basic thing you could do to make sure their website can handle the increasing number of visitors without slowing down significantly? Focus on the term 'scaling'.",
+      "follow_up_questions": [
+        "What's the difference between scaling 'vertically' and 'horizontally' in the context of web servers?",
+        "Give an example of a simple way to scale horizontally."
+      ],
+      "evaluation_points": [
+        "The candidate mentions 'scaling' or 'scale up/out' as a general concept.",
+        "The candidate suggests a simple solution like increasing server resources or adding more servers.",
+        "Awareness of the term 'horizontal scaling' (adding more machines)"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "To ensure the website can handle more visitors, you could scale the website by adding more servers or resources as traffic increases. This can be done through horizontal scaling (adding more servers) or vertical scaling (upgrading existing server resources like CPU or memory). This ensures the website can manage increased load without slowing down.",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer is excellent. The candidate correctly identifies 'scaling' as the solution and explains both horizontal and vertical scaling options. They also clearly state that this ensures the website manages the increased load without slowdowns. The response demonstrates a solid understanding of scaling concepts related to web applications.",
+      "strengths": [
+        "Correctly identifies scaling as the solution.",
+        "Explains both horizontal and vertical scaling.",
+        "Clearly articulates the purpose of scaling (handling increased load)."
+      ],
+      "areas_for_improvement": [
+        "Could briefly mention load balancing in the context of horizontal scaling for better distribution of requests across servers. This would showcase a more complete understanding of how horizontal scaling works in practice.",
+        "While not strictly necessary for this simple question, a brief discussion of monitoring website performance to determine when to scale would add extra value."
+      ],
+      "follow_up_suggestions": [
+        "Explain how load balancing works and why it's essential for horizontal scaling.",
+        "Describe the metrics you would monitor to determine when a website needs to be scaled."
+      ]
+    },
+    "time_taken": 221.385
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.5
+  }
+}

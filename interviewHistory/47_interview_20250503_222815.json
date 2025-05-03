@@ -1,0 +1,66 @@
+{
+  "interview_id": "7fe36e99-7d80-4cea-89a2-e62f1008964e",
+  "timestamp": "2025-05-03T22:28:15.323056",
+  "total_questions": 6,
+  "total_score": 4.4,
+  "current_interaction": {
+    "question": {
+      "id": "3e0a3aaf-9e9a-44fe-baea-ab3dbf91a2bc",
+      "topic": null,
+      "subtopic": "TCP/UDP",
+      "difficulty": 1.0,
+      "content": "In a simple client-server application, you need to send a small, single message from the client to the server and don't need confirmation of receipt. Which transport protocol, TCP or UDP, would be more appropriate and why?",
+      "follow_up_questions": [
+        "What is the main difference between TCP and UDP in terms of reliability?",
+        "Can you give a simple example of an application that commonly uses UDP?"
+      ],
+      "evaluation_points": [
+        "UDP is more appropriate.",
+        "UDP is connectionless and lightweight, suitable for small, non-critical messages where speed is prioritized over guaranteed delivery.",
+        "TCP guarantees delivery and order of packets, but adds overhead."
+      ],
+      "expected_time_minutes": 2
+    },
+    "answer": "I dont know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer 'I don't know' demonstrates a complete lack of understanding of fundamental networking concepts. The question assesses knowledge of TCP and UDP protocols and their appropriate use cases. The answer provides no technical insight or reasoning.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of TCP and UDP protocols",
+        "Knowledge of the differences between connection-oriented and connectionless protocols",
+        "Ability to apply protocol knowledge to practical scenarios",
+        "Understanding the tradeoffs between reliability and performance in networking"
+      ],
+      "follow_up_suggestions": [
+        "Study the basics of the TCP/IP model and the transport layer protocols TCP and UDP.",
+        "Research the use cases where TCP is preferred over UDP and vice versa. Pay attention to scenarios involving reliability, speed, and message size.",
+        "Practice applying your knowledge by considering different network applications and determining the most suitable transport protocol for each."
+      ]
+    },
+    "time_taken": 208.047
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 1.0
+  }
+}

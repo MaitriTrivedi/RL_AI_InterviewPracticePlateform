@@ -20,7 +20,7 @@ import { styled } from '@mui/material/styles';
 import ReactMarkdown from 'react-markdown';
 import { useAppContext } from '../contexts/AppContext';
 import { API_ENDPOINTS } from '../config/api';
-import { Question as AppQuestion } from '../types';
+import { Question, InterviewStats } from '../types';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -46,17 +46,6 @@ interface InterviewInterfaceProps {
   onEnd: () => void;
 }
 
-interface Question extends AppQuestion {
-  content: string;
-  follow_up_questions: string[];
-  subtopic: string;
-  session_stats: {
-    questions_asked: number;
-    average_performance: number;
-    current_topic: string;
-  };
-}
-
 interface EvaluationResult {
   score: number;
   feedback: string;
@@ -73,12 +62,17 @@ interface RawEvaluationResponse {
 interface EvaluationResponse {
   evaluation: {
     score: number;
-    overall_feedback: string;
-    correct_answer?: string;
+    feedback: string;
     strengths: string[];
-    improvements: string[];
+    areas_for_improvement: string[];
   };
-  error?: string;
+  next_question?: Question;
+  session_stats?: {
+    questions_asked: number;
+    average_score: number;
+    remaining_questions: number;
+  };
+  message?: string;
 }
 
 interface AnswerSubmissionRequest {
@@ -120,6 +114,7 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
   const [totalScore, setTotalScore] = useState(0);
   const [questionsAnswered, setQuestionsAnswered] = useState(0);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [startTime, setStartTime] = useState(Date.now());
 
   useEffect(() => {
     if (!currentInterview?.interviewId) {
@@ -145,38 +140,28 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/next-question', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          user_id: currentInterview.interviewId,
-          question: {
-            time_allocated: 15,
-            topic_index: 0
-          }
-        })
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to fetch next question');
+      // If we have a next question in the current response, use that
+      if (currentInterview.currentQuestion) {
+        const nextQuestion: Question = {
+          questionId: currentInterview.currentQuestion.questionId,
+          topic: currentInterview.currentQuestion.topic,
+          subtopic: currentInterview.currentQuestion.subtopic,
+          difficulty: currentInterview.currentQuestion.difficulty,
+          content: currentInterview.currentQuestion.content,
+          follow_up_questions: currentInterview.currentQuestion.follow_up_questions,
+          evaluation_points: currentInterview.currentQuestion.evaluation_points,
+          expected_time: currentInterview.currentQuestion.expected_time || 5
+        };
+        setCurrentQuestion(nextQuestion);
+        setResult(null);
+        setAnswer('');
+        setStartTime(Date.now());
+        setIsLoading(false);
+        return;
       }
-      
-      const data = await response.json();
-      
-      // Transform the question data to match our Question interface
-      const questionData = {
-        ...data,
-        difficulty: data.difficulty || currentInterview.difficulty || 5, // Use current interview difficulty as fallback
-        topic: data.topic || currentInterview.currentQuestion?.topic || 'General',
-        content: data.content || data.question || '', // Support both content and question fields
-      };
-      
-      setCurrentQuestion(questionData);
-      setResult(null);
-      setAnswer('');
+
+      // Otherwise, redirect to home as something is wrong
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load next question. Please try again.');
     } finally {
@@ -185,7 +170,7 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
   };
 
   const handleSubmit = async () => {
-    if (!answer.trim() || !currentInterview?.interviewId || !currentQuestion?.questionId) return;
+    if (!answer.trim() || !currentInterview?.interviewId) return;
     
     setIsEvaluating(true);
     setError(null);
@@ -198,51 +183,73 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
           'Accept': 'application/json'
         },
         body: JSON.stringify({
-          question_id: currentQuestion.questionId,
           answer: answer.trim(),
-          session_id: currentInterview.interviewId
+          time_taken: (Date.now() - startTime) / 1000 // Convert to seconds
         })
       });
 
-      const responseText = await response.text();
-      console.log('Raw response text:', responseText);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-      // Remove Markdown code block formatting if present
-      const cleanResponseText = responseText
-        .replace(/^```json\n/, '')  // Remove opening ```json
-        .replace(/\n```$/, '')      // Remove closing ```
-        .trim();
+      const responseData = await response.json();
+      console.log('Response data:', responseData);
 
-      let responseData: EvaluationResponse;
-      try {
-        if (!cleanResponseText) {
-          throw new Error('Empty response from server');
-        }
-        const rawResponse: RawEvaluationResponse = JSON.parse(cleanResponseText);
-        console.log('Parsed response data:', rawResponse);
-
-        responseData = {
-          evaluation: {
-            score: rawResponse.score || 0,
-            overall_feedback: rawResponse.feedback || 'No feedback provided',
-            correct_answer: undefined,
-            strengths: rawResponse.strengths || [],
-            improvements: rawResponse.improvements || []
-          }
-        };
-
+      // Handle evaluation result
+      if (responseData.evaluation) {
         setResult({
           score: responseData.evaluation.score,
-          feedback: `${responseData.evaluation.overall_feedback}\n\nStrengths:\n${responseData.evaluation.strengths.map(s => `• ${s}`).join('\n')}\n\nPossible Improvements:\n${responseData.evaluation.improvements.map(i => `• ${i}`).join('\n')}`,
-          correctAnswer: responseData.evaluation.correct_answer
+          feedback: `${responseData.evaluation.feedback}\n\nStrengths:\n${responseData.evaluation.strengths.map((s: string) => `• ${s}`).join('\n')}\n\nAreas for Improvement:\n${responseData.evaluation.improvements.map((i: string) => `• ${i}`).join('\n')}`,
+          correctAnswer: undefined
         });
 
-        setTotalScore(prev => prev + responseData.evaluation.score);
-        setQuestionsAnswered(prev => prev + 1);
-      } catch (error) {
-        console.error('JSON parse error:', error);
-        throw new Error('Failed to parse server response');
+        // Update interview stats
+        if (responseData.current_state?.session_stats) {
+          setQuestionsAnswered(responseData.current_state.session_stats.questions_asked);
+          setTotalScore(prev => prev + responseData.evaluation.score);
+        }
+
+        // If interview is complete
+        if (responseData.next_state?.interview_complete) {
+          onEnd && onEnd();
+          return;
+        }
+
+        // Update the current interview with next question
+        if (responseData.next_state?.next_question && currentInterview) {
+          const nextQuestion: Question = {
+            questionId: responseData.next_state.next_question.id || responseData.next_state.next_question.questionId,
+            topic: responseData.next_state.next_topic,
+            subtopic: responseData.next_state.next_subtopic,
+            difficulty: responseData.next_state.next_difficulty,
+            content: responseData.next_state.next_question.content,
+            follow_up_questions: responseData.next_state.next_question.follow_up_questions || [],
+            evaluation_points: responseData.next_state.next_question.evaluation_points || [],
+            expected_time: responseData.next_state.next_question.expected_time || 5
+          };
+
+          const updatedInterview = {
+            ...currentInterview,
+            currentQuestion: nextQuestion,
+            questions: [...(currentInterview.questions || []), nextQuestion],
+            currentQuestionIdx: (currentInterview.currentQuestionIdx || 0) + 1,
+            stats: responseData.current_state.session_stats
+          };
+          setCurrentInterview(updatedInterview);
+          
+          // Automatically transition to next question after delay
+          setTimeout(() => {
+            setCurrentQuestion(nextQuestion);
+            setAnswer('');
+            setResult(null);
+            setStartTime(Date.now());
+          }, 3000); // 3 second delay to show the result
+        }
+      } else {
+        // Handle error case when evaluation is missing
+        throw new Error('Invalid response format from server');
       }
+
     } catch (error) {
       console.error('Error in submit handler:', error);
       setError(error instanceof Error ? error.message : 'Failed to submit answer');
@@ -359,16 +366,6 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
           >
             {isEvaluating ? <CircularProgress size={24} /> : 'Submit'}
           </Button>
-          
-          {result && (
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={fetchNextQuestion}
-            >
-              Next Question
-            </Button>
-          )}
           
           <Button
             variant="outlined"

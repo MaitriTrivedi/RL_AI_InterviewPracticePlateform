@@ -1,0 +1,61 @@
+{
+  "interview_id": "1a575a1c-f53a-4d6d-8149-4183a98da706",
+  "timestamp": "2025-05-03T22:18:44.092868",
+  "total_questions": 5,
+  "total_score": 4.2,
+  "current_interaction": {
+    "question": {
+      "id": "2feda0de-2a93-492d-b3ee-2229c68b523d",
+      "topic": null,
+      "subtopic": "Sorting",
+      "difficulty": 1.0,
+      "content": "Imagine you have a small list of five numbers: [5, 2, 8, 1, 9].  Explain, in your own words, what it means to sort this list in ascending order (from smallest to largest).",
+      "follow_up_questions": [
+        "What would the sorted list look like after sorting?",
+        "Can you name one simple sorting algorithm you might use for a list this small?"
+      ],
+      "evaluation_points": [
+        "Arranging elements in a specific order (smallest to largest)",
+        "Understanding the concept of ascending order"
+      ],
+      "expected_time_minutes": 2
+    },
+    "answer": "Sorting the list [5, 2, 8, 1, 9] in ascending order means arranging the numbers from the smallest to the largest.\n\nSo, you'd start by finding the smallest number in the list, then the next smallest, and continue this process until the entire list is ordered. For this specific list, the sorted version in ascending order would look like:\n\n[1, 2, 5, 8, 9]\n\nIn this order:\n\n1 is the smallest, followed by 2, then 5, then 8, and finally 9 as the largest.",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer is excellent. It clearly and accurately explains the concept of ascending order sorting. The example provided is correct and illustrative. The explanation covers both the general idea and applies it specifically to the given list. No improvements needed for the core understanding demonstrated.",
+      "strengths": [
+        "Accurate definition of ascending order sorting.",
+        "Clear and concise explanation.",
+        "Provides a concrete example to illustrate the concept."
+      ],
+      "areas_for_improvement": [],
+      "follow_up_suggestions": [
+        "Could be asked to describe different sorting algorithms.",
+        "Could be asked about the time complexity of different sorting algorithms."
+      ]
+    },
+    "time_taken": 384.483
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 1.0
+  }
+}

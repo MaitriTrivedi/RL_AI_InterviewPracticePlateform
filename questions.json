@@ -1,0 +1,1658 @@
+[
+  {
+    "topic": "ds",
+    "subtopic": "Arrays",
+    "difficulty": 3,
+    "text": "Sample Arrays question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Arrays",
+      "Hint 2 for Arrays"
+    ],
+    "example": "Example for Arrays question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Arrays",
+    "difficulty": 5,
+    "text": "Sample Arrays question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Arrays",
+      "Hint 2 for Arrays"
+    ],
+    "example": "Example for Arrays question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Arrays",
+    "difficulty": 7,
+    "text": "Sample Arrays question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Arrays",
+      "Hint 2 for Arrays"
+    ],
+    "example": "Example for Arrays question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Strings",
+    "difficulty": 3,
+    "text": "Sample Strings question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Strings",
+      "Hint 2 for Strings"
+    ],
+    "example": "Example for Strings question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Strings",
+    "difficulty": 5,
+    "text": "Sample Strings question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Strings",
+      "Hint 2 for Strings"
+    ],
+    "example": "Example for Strings question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Strings",
+    "difficulty": 7,
+    "text": "Sample Strings question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Strings",
+      "Hint 2 for Strings"
+    ],
+    "example": "Example for Strings question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Linked Lists",
+    "difficulty": 3,
+    "text": "Sample Linked Lists question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Linked Lists",
+      "Hint 2 for Linked Lists"
+    ],
+    "example": "Example for Linked Lists question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Linked Lists",
+    "difficulty": 5,
+    "text": "Sample Linked Lists question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Linked Lists",
+      "Hint 2 for Linked Lists"
+    ],
+    "example": "Example for Linked Lists question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Linked Lists",
+    "difficulty": 7,
+    "text": "Sample Linked Lists question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Linked Lists",
+      "Hint 2 for Linked Lists"
+    ],
+    "example": "Example for Linked Lists question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Stacks and Queues",
+    "difficulty": 3,
+    "text": "Sample Stacks and Queues question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Stacks and Queues",
+      "Hint 2 for Stacks and Queues"
+    ],
+    "example": "Example for Stacks and Queues question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Stacks and Queues",
+    "difficulty": 5,
+    "text": "Sample Stacks and Queues question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Stacks and Queues",
+      "Hint 2 for Stacks and Queues"
+    ],
+    "example": "Example for Stacks and Queues question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Stacks and Queues",
+    "difficulty": 7,
+    "text": "Sample Stacks and Queues question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Stacks and Queues",
+      "Hint 2 for Stacks and Queues"
+    ],
+    "example": "Example for Stacks and Queues question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Hashing",
+    "difficulty": 3,
+    "text": "Sample Hashing question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Hashing",
+      "Hint 2 for Hashing"
+    ],
+    "example": "Example for Hashing question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Hashing",
+    "difficulty": 5,
+    "text": "Sample Hashing question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Hashing",
+      "Hint 2 for Hashing"
+    ],
+    "example": "Example for Hashing question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Hashing",
+    "difficulty": 7,
+    "text": "Sample Hashing question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Hashing",
+      "Hint 2 for Hashing"
+    ],
+    "example": "Example for Hashing question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Trees",
+    "difficulty": 3,
+    "text": "Sample Trees question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Trees",
+      "Hint 2 for Trees"
+    ],
+    "example": "Example for Trees question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Trees",
+    "difficulty": 5,
+    "text": "Sample Trees question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Trees",
+      "Hint 2 for Trees"
+    ],
+    "example": "Example for Trees question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Trees",
+    "difficulty": 7,
+    "text": "Sample Trees question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Trees",
+      "Hint 2 for Trees"
+    ],
+    "example": "Example for Trees question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Heaps",
+    "difficulty": 3,
+    "text": "Sample Heaps question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Heaps",
+      "Hint 2 for Heaps"
+    ],
+    "example": "Example for Heaps question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Heaps",
+    "difficulty": 5,
+    "text": "Sample Heaps question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Heaps",
+      "Hint 2 for Heaps"
+    ],
+    "example": "Example for Heaps question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Heaps",
+    "difficulty": 7,
+    "text": "Sample Heaps question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Heaps",
+      "Hint 2 for Heaps"
+    ],
+    "example": "Example for Heaps question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Tries",
+    "difficulty": 3,
+    "text": "Sample Tries question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Tries",
+      "Hint 2 for Tries"
+    ],
+    "example": "Example for Tries question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Tries",
+    "difficulty": 5,
+    "text": "Sample Tries question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Tries",
+      "Hint 2 for Tries"
+    ],
+    "example": "Example for Tries question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Tries",
+    "difficulty": 7,
+    "text": "Sample Tries question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Tries",
+      "Hint 2 for Tries"
+    ],
+    "example": "Example for Tries question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Graphs",
+    "difficulty": 3,
+    "text": "Sample Graphs question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Graphs",
+      "Hint 2 for Graphs"
+    ],
+    "example": "Example for Graphs question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Graphs",
+    "difficulty": 5,
+    "text": "Sample Graphs question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Graphs",
+      "Hint 2 for Graphs"
+    ],
+    "example": "Example for Graphs question"
+  },
+  {
+    "topic": "ds",
+    "subtopic": "Graphs",
+    "difficulty": 7,
+    "text": "Sample Graphs question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Graphs",
+      "Hint 2 for Graphs"
+    ],
+    "example": "Example for Graphs question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Sorting",
+    "difficulty": 3,
+    "text": "Sample Sorting question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Sorting",
+      "Hint 2 for Sorting"
+    ],
+    "example": "Example for Sorting question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Sorting",
+    "difficulty": 5,
+    "text": "Sample Sorting question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Sorting",
+      "Hint 2 for Sorting"
+    ],
+    "example": "Example for Sorting question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Sorting",
+    "difficulty": 7,
+    "text": "Sample Sorting question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Sorting",
+      "Hint 2 for Sorting"
+    ],
+    "example": "Example for Sorting question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Searching",
+    "difficulty": 3,
+    "text": "Sample Searching question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Searching",
+      "Hint 2 for Searching"
+    ],
+    "example": "Example for Searching question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Searching",
+    "difficulty": 5,
+    "text": "Sample Searching question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Searching",
+      "Hint 2 for Searching"
+    ],
+    "example": "Example for Searching question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Searching",
+    "difficulty": 7,
+    "text": "Sample Searching question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Searching",
+      "Hint 2 for Searching"
+    ],
+    "example": "Example for Searching question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Two Pointer",
+    "difficulty": 3,
+    "text": "Sample Two Pointer question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Two Pointer",
+      "Hint 2 for Two Pointer"
+    ],
+    "example": "Example for Two Pointer question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Two Pointer",
+    "difficulty": 5,
+    "text": "Sample Two Pointer question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Two Pointer",
+      "Hint 2 for Two Pointer"
+    ],
+    "example": "Example for Two Pointer question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Two Pointer",
+    "difficulty": 7,
+    "text": "Sample Two Pointer question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Two Pointer",
+      "Hint 2 for Two Pointer"
+    ],
+    "example": "Example for Two Pointer question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Recursion",
+    "difficulty": 3,
+    "text": "Sample Recursion question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Recursion",
+      "Hint 2 for Recursion"
+    ],
+    "example": "Example for Recursion question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Recursion",
+    "difficulty": 5,
+    "text": "Sample Recursion question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Recursion",
+      "Hint 2 for Recursion"
+    ],
+    "example": "Example for Recursion question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Recursion",
+    "difficulty": 7,
+    "text": "Sample Recursion question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Recursion",
+      "Hint 2 for Recursion"
+    ],
+    "example": "Example for Recursion question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Backtracking",
+    "difficulty": 3,
+    "text": "Sample Backtracking question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Backtracking",
+      "Hint 2 for Backtracking"
+    ],
+    "example": "Example for Backtracking question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Backtracking",
+    "difficulty": 5,
+    "text": "Sample Backtracking question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Backtracking",
+      "Hint 2 for Backtracking"
+    ],
+    "example": "Example for Backtracking question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Backtracking",
+    "difficulty": 7,
+    "text": "Sample Backtracking question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Backtracking",
+      "Hint 2 for Backtracking"
+    ],
+    "example": "Example for Backtracking question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Greedy",
+    "difficulty": 3,
+    "text": "Sample Greedy question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Greedy",
+      "Hint 2 for Greedy"
+    ],
+    "example": "Example for Greedy question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Greedy",
+    "difficulty": 5,
+    "text": "Sample Greedy question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Greedy",
+      "Hint 2 for Greedy"
+    ],
+    "example": "Example for Greedy question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Greedy",
+    "difficulty": 7,
+    "text": "Sample Greedy question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Greedy",
+      "Hint 2 for Greedy"
+    ],
+    "example": "Example for Greedy question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Dynamic Programming",
+    "difficulty": 3,
+    "text": "Sample Dynamic Programming question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Dynamic Programming",
+      "Hint 2 for Dynamic Programming"
+    ],
+    "example": "Example for Dynamic Programming question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Dynamic Programming",
+    "difficulty": 5,
+    "text": "Sample Dynamic Programming question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Dynamic Programming",
+      "Hint 2 for Dynamic Programming"
+    ],
+    "example": "Example for Dynamic Programming question"
+  },
+  {
+    "topic": "algo",
+    "subtopic": "Dynamic Programming",
+    "difficulty": 7,
+    "text": "Sample Dynamic Programming question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Dynamic Programming",
+      "Hint 2 for Dynamic Programming"
+    ],
+    "example": "Example for Dynamic Programming question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Classes and Objects",
+    "difficulty": 3,
+    "text": "Sample Classes and Objects question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Classes and Objects",
+      "Hint 2 for Classes and Objects"
+    ],
+    "example": "Example for Classes and Objects question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Classes and Objects",
+    "difficulty": 5,
+    "text": "Sample Classes and Objects question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Classes and Objects",
+      "Hint 2 for Classes and Objects"
+    ],
+    "example": "Example for Classes and Objects question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Classes and Objects",
+    "difficulty": 7,
+    "text": "Sample Classes and Objects question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Classes and Objects",
+      "Hint 2 for Classes and Objects"
+    ],
+    "example": "Example for Classes and Objects question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Inheritance",
+    "difficulty": 3,
+    "text": "Sample Inheritance question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Inheritance",
+      "Hint 2 for Inheritance"
+    ],
+    "example": "Example for Inheritance question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Inheritance",
+    "difficulty": 5,
+    "text": "Sample Inheritance question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Inheritance",
+      "Hint 2 for Inheritance"
+    ],
+    "example": "Example for Inheritance question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Inheritance",
+    "difficulty": 7,
+    "text": "Sample Inheritance question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Inheritance",
+      "Hint 2 for Inheritance"
+    ],
+    "example": "Example for Inheritance question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Polymorphism",
+    "difficulty": 3,
+    "text": "Sample Polymorphism question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Polymorphism",
+      "Hint 2 for Polymorphism"
+    ],
+    "example": "Example for Polymorphism question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Polymorphism",
+    "difficulty": 5,
+    "text": "Sample Polymorphism question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Polymorphism",
+      "Hint 2 for Polymorphism"
+    ],
+    "example": "Example for Polymorphism question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Polymorphism",
+    "difficulty": 7,
+    "text": "Sample Polymorphism question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Polymorphism",
+      "Hint 2 for Polymorphism"
+    ],
+    "example": "Example for Polymorphism question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Abstraction",
+    "difficulty": 3,
+    "text": "Sample Abstraction question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Abstraction",
+      "Hint 2 for Abstraction"
+    ],
+    "example": "Example for Abstraction question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Abstraction",
+    "difficulty": 5,
+    "text": "Sample Abstraction question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Abstraction",
+      "Hint 2 for Abstraction"
+    ],
+    "example": "Example for Abstraction question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Abstraction",
+    "difficulty": 7,
+    "text": "Sample Abstraction question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Abstraction",
+      "Hint 2 for Abstraction"
+    ],
+    "example": "Example for Abstraction question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Interfaces",
+    "difficulty": 3,
+    "text": "Sample Interfaces question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Interfaces",
+      "Hint 2 for Interfaces"
+    ],
+    "example": "Example for Interfaces question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Interfaces",
+    "difficulty": 5,
+    "text": "Sample Interfaces question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Interfaces",
+      "Hint 2 for Interfaces"
+    ],
+    "example": "Example for Interfaces question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Interfaces",
+    "difficulty": 7,
+    "text": "Sample Interfaces question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Interfaces",
+      "Hint 2 for Interfaces"
+    ],
+    "example": "Example for Interfaces question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Design Patterns",
+    "difficulty": 3,
+    "text": "Sample Design Patterns question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Design Patterns",
+      "Hint 2 for Design Patterns"
+    ],
+    "example": "Example for Design Patterns question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Design Patterns",
+    "difficulty": 5,
+    "text": "Sample Design Patterns question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Design Patterns",
+      "Hint 2 for Design Patterns"
+    ],
+    "example": "Example for Design Patterns question"
+  },
+  {
+    "topic": "oops",
+    "subtopic": "Design Patterns",
+    "difficulty": 7,
+    "text": "Sample Design Patterns question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Design Patterns",
+      "Hint 2 for Design Patterns"
+    ],
+    "example": "Example for Design Patterns question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Basic SQL",
+    "difficulty": 3,
+    "text": "Sample Basic SQL question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Basic SQL",
+      "Hint 2 for Basic SQL"
+    ],
+    "example": "Example for Basic SQL question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Basic SQL",
+    "difficulty": 5,
+    "text": "Sample Basic SQL question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Basic SQL",
+      "Hint 2 for Basic SQL"
+    ],
+    "example": "Example for Basic SQL question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Basic SQL",
+    "difficulty": 7,
+    "text": "Sample Basic SQL question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Basic SQL",
+      "Hint 2 for Basic SQL"
+    ],
+    "example": "Example for Basic SQL question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Joins",
+    "difficulty": 3,
+    "text": "Sample Joins question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Joins",
+      "Hint 2 for Joins"
+    ],
+    "example": "Example for Joins question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Joins",
+    "difficulty": 5,
+    "text": "Sample Joins question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Joins",
+      "Hint 2 for Joins"
+    ],
+    "example": "Example for Joins question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Joins",
+    "difficulty": 7,
+    "text": "Sample Joins question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Joins",
+      "Hint 2 for Joins"
+    ],
+    "example": "Example for Joins question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Normalization",
+    "difficulty": 3,
+    "text": "Sample Normalization question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Normalization",
+      "Hint 2 for Normalization"
+    ],
+    "example": "Example for Normalization question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Normalization",
+    "difficulty": 5,
+    "text": "Sample Normalization question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Normalization",
+      "Hint 2 for Normalization"
+    ],
+    "example": "Example for Normalization question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Normalization",
+    "difficulty": 7,
+    "text": "Sample Normalization question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Normalization",
+      "Hint 2 for Normalization"
+    ],
+    "example": "Example for Normalization question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Indexes",
+    "difficulty": 3,
+    "text": "Sample Indexes question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Indexes",
+      "Hint 2 for Indexes"
+    ],
+    "example": "Example for Indexes question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Indexes",
+    "difficulty": 5,
+    "text": "Sample Indexes question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Indexes",
+      "Hint 2 for Indexes"
+    ],
+    "example": "Example for Indexes question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Indexes",
+    "difficulty": 7,
+    "text": "Sample Indexes question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Indexes",
+      "Hint 2 for Indexes"
+    ],
+    "example": "Example for Indexes question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Transactions",
+    "difficulty": 3,
+    "text": "Sample Transactions question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Transactions",
+      "Hint 2 for Transactions"
+    ],
+    "example": "Example for Transactions question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Transactions",
+    "difficulty": 5,
+    "text": "Sample Transactions question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Transactions",
+      "Hint 2 for Transactions"
+    ],
+    "example": "Example for Transactions question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Transactions",
+    "difficulty": 7,
+    "text": "Sample Transactions question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Transactions",
+      "Hint 2 for Transactions"
+    ],
+    "example": "Example for Transactions question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Query Optimization",
+    "difficulty": 3,
+    "text": "Sample Query Optimization question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Query Optimization",
+      "Hint 2 for Query Optimization"
+    ],
+    "example": "Example for Query Optimization question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Query Optimization",
+    "difficulty": 5,
+    "text": "Sample Query Optimization question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Query Optimization",
+      "Hint 2 for Query Optimization"
+    ],
+    "example": "Example for Query Optimization question"
+  },
+  {
+    "topic": "dbms",
+    "subtopic": "Query Optimization",
+    "difficulty": 7,
+    "text": "Sample Query Optimization question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Query Optimization",
+      "Hint 2 for Query Optimization"
+    ],
+    "example": "Example for Query Optimization question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Process Management",
+    "difficulty": 3,
+    "text": "Sample Process Management question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Process Management",
+      "Hint 2 for Process Management"
+    ],
+    "example": "Example for Process Management question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Process Management",
+    "difficulty": 5,
+    "text": "Sample Process Management question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Process Management",
+      "Hint 2 for Process Management"
+    ],
+    "example": "Example for Process Management question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Process Management",
+    "difficulty": 7,
+    "text": "Sample Process Management question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Process Management",
+      "Hint 2 for Process Management"
+    ],
+    "example": "Example for Process Management question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Memory Management",
+    "difficulty": 3,
+    "text": "Sample Memory Management question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Memory Management",
+      "Hint 2 for Memory Management"
+    ],
+    "example": "Example for Memory Management question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Memory Management",
+    "difficulty": 5,
+    "text": "Sample Memory Management question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Memory Management",
+      "Hint 2 for Memory Management"
+    ],
+    "example": "Example for Memory Management question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Memory Management",
+    "difficulty": 7,
+    "text": "Sample Memory Management question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Memory Management",
+      "Hint 2 for Memory Management"
+    ],
+    "example": "Example for Memory Management question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "CPU Scheduling",
+    "difficulty": 3,
+    "text": "Sample CPU Scheduling question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for CPU Scheduling",
+      "Hint 2 for CPU Scheduling"
+    ],
+    "example": "Example for CPU Scheduling question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "CPU Scheduling",
+    "difficulty": 5,
+    "text": "Sample CPU Scheduling question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for CPU Scheduling",
+      "Hint 2 for CPU Scheduling"
+    ],
+    "example": "Example for CPU Scheduling question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "CPU Scheduling",
+    "difficulty": 7,
+    "text": "Sample CPU Scheduling question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for CPU Scheduling",
+      "Hint 2 for CPU Scheduling"
+    ],
+    "example": "Example for CPU Scheduling question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Deadlocks",
+    "difficulty": 3,
+    "text": "Sample Deadlocks question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Deadlocks",
+      "Hint 2 for Deadlocks"
+    ],
+    "example": "Example for Deadlocks question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Deadlocks",
+    "difficulty": 5,
+    "text": "Sample Deadlocks question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Deadlocks",
+      "Hint 2 for Deadlocks"
+    ],
+    "example": "Example for Deadlocks question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Deadlocks",
+    "difficulty": 7,
+    "text": "Sample Deadlocks question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Deadlocks",
+      "Hint 2 for Deadlocks"
+    ],
+    "example": "Example for Deadlocks question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "File Systems",
+    "difficulty": 3,
+    "text": "Sample File Systems question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for File Systems",
+      "Hint 2 for File Systems"
+    ],
+    "example": "Example for File Systems question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "File Systems",
+    "difficulty": 5,
+    "text": "Sample File Systems question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for File Systems",
+      "Hint 2 for File Systems"
+    ],
+    "example": "Example for File Systems question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "File Systems",
+    "difficulty": 7,
+    "text": "Sample File Systems question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for File Systems",
+      "Hint 2 for File Systems"
+    ],
+    "example": "Example for File Systems question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Multithreading",
+    "difficulty": 3,
+    "text": "Sample Multithreading question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Multithreading",
+      "Hint 2 for Multithreading"
+    ],
+    "example": "Example for Multithreading question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Multithreading",
+    "difficulty": 5,
+    "text": "Sample Multithreading question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Multithreading",
+      "Hint 2 for Multithreading"
+    ],
+    "example": "Example for Multithreading question"
+  },
+  {
+    "topic": "os",
+    "subtopic": "Multithreading",
+    "difficulty": 7,
+    "text": "Sample Multithreading question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Multithreading",
+      "Hint 2 for Multithreading"
+    ],
+    "example": "Example for Multithreading question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "OSI Model",
+    "difficulty": 3,
+    "text": "Sample OSI Model question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for OSI Model",
+      "Hint 2 for OSI Model"
+    ],
+    "example": "Example for OSI Model question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "OSI Model",
+    "difficulty": 5,
+    "text": "Sample OSI Model question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for OSI Model",
+      "Hint 2 for OSI Model"
+    ],
+    "example": "Example for OSI Model question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "OSI Model",
+    "difficulty": 7,
+    "text": "Sample OSI Model question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for OSI Model",
+      "Hint 2 for OSI Model"
+    ],
+    "example": "Example for OSI Model question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "TCP/UDP",
+    "difficulty": 3,
+    "text": "Sample TCP/UDP question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for TCP/UDP",
+      "Hint 2 for TCP/UDP"
+    ],
+    "example": "Example for TCP/UDP question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "TCP/UDP",
+    "difficulty": 5,
+    "text": "Sample TCP/UDP question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for TCP/UDP",
+      "Hint 2 for TCP/UDP"
+    ],
+    "example": "Example for TCP/UDP question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "TCP/UDP",
+    "difficulty": 7,
+    "text": "Sample TCP/UDP question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for TCP/UDP",
+      "Hint 2 for TCP/UDP"
+    ],
+    "example": "Example for TCP/UDP question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "IP Addressing",
+    "difficulty": 3,
+    "text": "Sample IP Addressing question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for IP Addressing",
+      "Hint 2 for IP Addressing"
+    ],
+    "example": "Example for IP Addressing question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "IP Addressing",
+    "difficulty": 5,
+    "text": "Sample IP Addressing question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for IP Addressing",
+      "Hint 2 for IP Addressing"
+    ],
+    "example": "Example for IP Addressing question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "IP Addressing",
+    "difficulty": 7,
+    "text": "Sample IP Addressing question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for IP Addressing",
+      "Hint 2 for IP Addressing"
+    ],
+    "example": "Example for IP Addressing question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "Routing",
+    "difficulty": 3,
+    "text": "Sample Routing question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Routing",
+      "Hint 2 for Routing"
+    ],
+    "example": "Example for Routing question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "Routing",
+    "difficulty": 5,
+    "text": "Sample Routing question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Routing",
+      "Hint 2 for Routing"
+    ],
+    "example": "Example for Routing question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "Routing",
+    "difficulty": 7,
+    "text": "Sample Routing question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Routing",
+      "Hint 2 for Routing"
+    ],
+    "example": "Example for Routing question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "HTTP/HTTPS",
+    "difficulty": 3,
+    "text": "Sample HTTP/HTTPS question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for HTTP/HTTPS",
+      "Hint 2 for HTTP/HTTPS"
+    ],
+    "example": "Example for HTTP/HTTPS question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "HTTP/HTTPS",
+    "difficulty": 5,
+    "text": "Sample HTTP/HTTPS question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for HTTP/HTTPS",
+      "Hint 2 for HTTP/HTTPS"
+    ],
+    "example": "Example for HTTP/HTTPS question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "HTTP/HTTPS",
+    "difficulty": 7,
+    "text": "Sample HTTP/HTTPS question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for HTTP/HTTPS",
+      "Hint 2 for HTTP/HTTPS"
+    ],
+    "example": "Example for HTTP/HTTPS question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "Socket Programming",
+    "difficulty": 3,
+    "text": "Sample Socket Programming question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Socket Programming",
+      "Hint 2 for Socket Programming"
+    ],
+    "example": "Example for Socket Programming question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "Socket Programming",
+    "difficulty": 5,
+    "text": "Sample Socket Programming question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Socket Programming",
+      "Hint 2 for Socket Programming"
+    ],
+    "example": "Example for Socket Programming question"
+  },
+  {
+    "topic": "cn",
+    "subtopic": "Socket Programming",
+    "difficulty": 7,
+    "text": "Sample Socket Programming question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Socket Programming",
+      "Hint 2 for Socket Programming"
+    ],
+    "example": "Example for Socket Programming question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Scalability",
+    "difficulty": 3,
+    "text": "Sample Scalability question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Scalability",
+      "Hint 2 for Scalability"
+    ],
+    "example": "Example for Scalability question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Scalability",
+    "difficulty": 5,
+    "text": "Sample Scalability question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Scalability",
+      "Hint 2 for Scalability"
+    ],
+    "example": "Example for Scalability question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Scalability",
+    "difficulty": 7,
+    "text": "Sample Scalability question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Scalability",
+      "Hint 2 for Scalability"
+    ],
+    "example": "Example for Scalability question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Load Balancing",
+    "difficulty": 3,
+    "text": "Sample Load Balancing question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Load Balancing",
+      "Hint 2 for Load Balancing"
+    ],
+    "example": "Example for Load Balancing question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Load Balancing",
+    "difficulty": 5,
+    "text": "Sample Load Balancing question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Load Balancing",
+      "Hint 2 for Load Balancing"
+    ],
+    "example": "Example for Load Balancing question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Load Balancing",
+    "difficulty": 7,
+    "text": "Sample Load Balancing question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Load Balancing",
+      "Hint 2 for Load Balancing"
+    ],
+    "example": "Example for Load Balancing question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Caching",
+    "difficulty": 3,
+    "text": "Sample Caching question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Caching",
+      "Hint 2 for Caching"
+    ],
+    "example": "Example for Caching question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Caching",
+    "difficulty": 5,
+    "text": "Sample Caching question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Caching",
+      "Hint 2 for Caching"
+    ],
+    "example": "Example for Caching question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Caching",
+    "difficulty": 7,
+    "text": "Sample Caching question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Caching",
+      "Hint 2 for Caching"
+    ],
+    "example": "Example for Caching question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Database Design",
+    "difficulty": 3,
+    "text": "Sample Database Design question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Database Design",
+      "Hint 2 for Database Design"
+    ],
+    "example": "Example for Database Design question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Database Design",
+    "difficulty": 5,
+    "text": "Sample Database Design question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Database Design",
+      "Hint 2 for Database Design"
+    ],
+    "example": "Example for Database Design question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Database Design",
+    "difficulty": 7,
+    "text": "Sample Database Design question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Database Design",
+      "Hint 2 for Database Design"
+    ],
+    "example": "Example for Database Design question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "API Design",
+    "difficulty": 3,
+    "text": "Sample API Design question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for API Design",
+      "Hint 2 for API Design"
+    ],
+    "example": "Example for API Design question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "API Design",
+    "difficulty": 5,
+    "text": "Sample API Design question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for API Design",
+      "Hint 2 for API Design"
+    ],
+    "example": "Example for API Design question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "API Design",
+    "difficulty": 7,
+    "text": "Sample API Design question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for API Design",
+      "Hint 2 for API Design"
+    ],
+    "example": "Example for API Design question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Microservices",
+    "difficulty": 3,
+    "text": "Sample Microservices question (Difficulty: 3/10)",
+    "expected_time": 6,
+    "hints": [
+      "Hint 1 for Microservices",
+      "Hint 2 for Microservices"
+    ],
+    "example": "Example for Microservices question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Microservices",
+    "difficulty": 5,
+    "text": "Sample Microservices question (Difficulty: 5/10)",
+    "expected_time": 7,
+    "hints": [
+      "Hint 1 for Microservices",
+      "Hint 2 for Microservices"
+    ],
+    "example": "Example for Microservices question"
+  },
+  {
+    "topic": "system_design",
+    "subtopic": "Microservices",
+    "difficulty": 7,
+    "text": "Sample Microservices question (Difficulty: 7/10)",
+    "expected_time": 8,
+    "hints": [
+      "Hint 1 for Microservices",
+      "Hint 2 for Microservices"
+    ],
+    "example": "Example for Microservices question"
+  }
+]

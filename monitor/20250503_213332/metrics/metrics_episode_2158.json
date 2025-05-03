@@ -1,0 +1,17 @@
+{
+  "total_episodes": 2158,
+  "epoch": 5,
+  "epoch_episode": 158,
+  "actor_loss": -0.0338330738552719,
+  "value_loss": 1.0,
+  "mean_reward": 0.2599891795313615,
+  "topic_performance": {
+    "ds": 0.3552811297234312,
+    "algo": 0.22424778673084736,
+    "oops": 0.24808459723584086,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  }
+}

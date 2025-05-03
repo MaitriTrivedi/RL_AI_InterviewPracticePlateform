@@ -1,15 +1,36 @@
+"""Configuration settings for the AI Interview Practice Platform."""
+
 # Interview Configuration
 INTERVIEW_CONFIG = {
-    'MAX_QUESTIONS': 5,  # Default number of questions per interview
-    'DEFAULT_DIFFICULTY': 5.0,  # Default starting difficulty (medium)
-    'DEFAULT_TOPIC': 'ds',  # Default starting topic
-    'PERFORMANCE_THRESHOLDS': {
-        'GOOD': 0.7,  # Above this is considered good performance
-        'POOR': 0.4   # Below this is considered poor performance
+    # Model settings
+    'model': {
+        'version': 'model_v1_20250503_220116_reward_0.177',  # Current best model
+        'state_dim': 9,
+        'action_dim': 1,
+        'hidden_dim': 64,
     },
-    'DIFFICULTY_RANGES': {
-        'EASY': (1, 3),
-        'MEDIUM': (4, 7),
-        'HARD': (8, 10)
+    
+    # Interview settings
+    'interview': {
+        'max_questions': 5,
+        'min_difficulty': 1,
+        'max_difficulty': 10,
+        'performance_threshold': 0.6,
+        'high_performance_threshold': 0.8,
+    },
+    
+    # Evaluation settings
+    'evaluation': {
+        'technical_weight': 0.4,
+        'communication_weight': 0.2,
+        'problem_solving_weight': 0.3,
+        'time_efficiency_weight': 0.1,
+    },
+    
+    # Time settings
+    'timing': {
+        'base_time_per_difficulty': 2,  # minutes
+        'max_time_multiplier': 2.5,
+        'evaluation_display_time': 3,  # seconds
     }
 } 

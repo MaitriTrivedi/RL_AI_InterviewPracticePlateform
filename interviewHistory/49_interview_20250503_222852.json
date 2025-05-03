@@ -1,0 +1,63 @@
+{
+  "interview_id": "7fe36e99-7d80-4cea-89a2-e62f1008964e",
+  "timestamp": "2025-05-03T22:28:52.047987",
+  "total_questions": 8,
+  "total_score": 4.4,
+  "current_interaction": {
+    "question": {
+      "id": "7d5e3a06-4db2-40cf-bf94-e387cc6a819e",
+      "topic": "ds",
+      "subtopic": "Strings",
+      "difficulty": 1.0,
+      "content": "What is a string, and can you give a simple example of how you might use a string in a program to store someone's name?",
+      "follow_up_questions": [
+        "How are strings typically stored in memory?",
+        "What is the difference between a string and a single character?"
+      ],
+      "evaluation_points": [
+        "Sequence of characters",
+        "Example: \"John Doe\" or similar"
+      ],
+      "expected_time_minutes": 3
+    },
+    "answer": "I dont know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer \"I don't know\" demonstrates a complete lack of understanding of the fundamental concept of a string. The response provides no information regarding the definition of a string or any example of its usage. It fails to address any aspect of the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the basic definition of a string as a sequence of characters.",
+        "Providing examples of how strings are used in programming.",
+        "Demonstrating the ability to store data, like a person's name, within a string variable."
+      ],
+      "follow_up_suggestions": [
+        "Study the definition of a string and common string operations in any programming language (e.g., Python, Java, C++).",
+        "Practice creating and manipulating strings in a simple program, focusing on storing and displaying text data."
+      ]
+    },
+    "time_taken": 244.858
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 1.0
+  }
+}

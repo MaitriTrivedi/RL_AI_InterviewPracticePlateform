@@ -1,0 +1,16 @@
+{
+  "episode": 34,
+  "average_score": 0.7155432820846229,
+  "time_efficiency": 0.5508475009350302,
+  "current_streak": 2,
+  "difficulty_level": 8.00000000336991,
+  "topic_performances": {
+    "ds": 0.7347650843078746,
+    "algo": 0.8174244389896883,
+    "oops": 0.7546624941441534,
+    "dbms": 0.59730863810646,
+    "os": 0.6735557548749382,
+    "cn": 0.0,
+    "system_design": 0.0
+  }
+}

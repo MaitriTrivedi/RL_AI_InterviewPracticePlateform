@@ -1,0 +1,16 @@
+{
+  "episode": 95,
+  "epoch": 5,
+  "actor_loss": 6.661338147750939e-17,
+  "value_loss": 1.0,
+  "mean_reward": 0.8268444499833871,
+  "topic_performance": {
+    "ds": 0.8522475310539375,
+    "algo": 0.8113086018544992,
+    "oops": 1.0,
+    "dbms": 0.0,
+    "os": 0.7825059080406245,
+    "cn": 0.0,
+    "system_design": 0.0
+  }
+}

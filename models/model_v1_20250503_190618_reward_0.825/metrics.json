@@ -1,0 +1,21 @@
+{
+  "final_stats": {
+    "average_score": 0.8253660255853914,
+    "time_efficiency": 0.36745703733039115,
+    "topic_performances": {
+      "ds": 0.8220992042076478,
+      "algo": 0.8665343691125298,
+      "oops": 0.7576355996260279,
+      "dbms": 0.9357566335173528,
+      "os": 0.8338648384090616,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "current_streak": 10,
+    "difficulty_level": 1.0
+  },
+  "mean_reward": 0.8253660255853914,
+  "policy_loss": -0.03597747632946267,
+  "value_loss": 1.0,
+  "timestamp": "20250503_190618"
+}

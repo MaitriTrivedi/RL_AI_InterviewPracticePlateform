@@ -1,0 +1,17 @@
+{
+  "total_episodes": 1982,
+  "epoch": 4,
+  "epoch_episode": 482,
+  "actor_loss": 0.1243623768787939,
+  "value_loss": 1.0,
+  "mean_reward": 0.3442283033939318,
+  "topic_performance": {
+    "ds": 0.4385714702707082,
+    "algo": 0.43230481198064985,
+    "oops": 0.2759680899180531,
+    "dbms": 0.0,
+    "os": 0.15808663949368112,
+    "cn": 0.0,
+    "system_design": 0.0
+  }
+}

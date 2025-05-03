@@ -1,0 +1,62 @@
+{
+  "interview_id": "32600439-c5ea-415c-a41b-f976448f1b85",
+  "timestamp": "2025-05-03T21:23:50.401777",
+  "total_questions": 6,
+  "total_score": 4.1,
+  "current_interaction": {
+    "question": {
+      "id": "78916613-8981-4e2f-be46-8c5c62ddfcc2",
+      "topic": null,
+      "subtopic": "System Modeling",
+      "difficulty": 1.0,
+      "content": "What is a system model, and can you give a simple, real-world example?",
+      "follow_up_questions": [
+        "Why might someone create a system model?",
+        "Can you name a common tool used to create simple system models (even if you haven't used it yourself)?"
+      ],
+      "evaluation_points": [
+        "Abstraction or representation of a system",
+        "Example of a simple system and its representation (e.g., a diagram of a house's plumbing, a flowchart of a simple process)"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they did not know the answer. This demonstrates a lack of understanding of a fundamental concept in systems design and engineering.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of system models and their purpose.",
+        "Ability to provide real-world examples of system models."
+      ],
+      "follow_up_suggestions": [
+        "Research and understand the definition of a system model. Explore different types of models (e.g., conceptual, mathematical, simulation).",
+        "Study examples of system models in various domains, such as software engineering, mechanical engineering, and business processes. Practice creating simple models for everyday systems."
+      ]
+    },
+    "time_taken": 354.823
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.9,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.9
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 1.0
+  }
+}

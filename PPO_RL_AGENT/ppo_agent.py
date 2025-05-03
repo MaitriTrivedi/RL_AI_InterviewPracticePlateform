@@ -85,70 +85,91 @@ class PPOAgent:
     
     def train(self):
         """Train policy and value networks using PPO."""
-        # Convert lists to numpy arrays
-        states = np.vstack(self.states)
-        actions = np.vstack(self.actions)
-        old_log_probs = np.vstack(self.log_probs)
-        values = np.vstack(self.values)
-        rewards = np.array(self.rewards).reshape(-1, 1)
-        dones = np.array(self.dones).reshape(-1, 1)
-        
-        # Compute advantages using GAE
-        advantages, returns = compute_gae(
-            rewards, values, dones, 
-            self.gamma, self.gae_lambda
-        )
-        advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
-        
-        # Compute returns for value function training
-        returns = advantages + values
-        
-        # PPO training loop
-        for _ in range(self.train_actor_iterations):
-            # Forward pass through policy
-            mean, std = self.policy.forward(states)
-            new_log_probs = self.policy.log_prob(actions, mean, std)
+        try:
+            if len(self.states) < 10:  # Need at least one complete episode
+                return None
             
-            # Compute ratio and clipped ratio
-            ratio = np.exp(new_log_probs - old_log_probs)
-            clipped_ratio = np.clip(ratio, 1-self.clip_ratio, 1+self.clip_ratio)
+            # Convert lists to numpy arrays
+            states = np.vstack(self.states)
+            actions = np.vstack(self.actions)
+            old_log_probs = np.vstack(self.log_probs)
+            values = np.vstack(self.values)
+            rewards = np.array(self.rewards).reshape(-1, 1)
+            dones = np.array(self.dones).reshape(-1, 1)
             
-            # Compute losses
-            surrogate1 = ratio * advantages
-            surrogate2 = clipped_ratio * advantages
-            actor_loss = -np.minimum(surrogate1, surrogate2).mean()
+            # Compute advantages using GAE
+            advantages, returns = compute_gae(
+                rewards, values, dones, 
+                self.gamma, self.gae_lambda
+            )
             
-            # Compute KL divergence
-            approx_kl = ((old_log_probs - new_log_probs) ** 2).mean()
-            if approx_kl > self.target_kl:
-                break
+            # Normalize advantages
+            advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
             
-            # Update policy
-            policy_grads = self.policy.get_gradients(states, -advantages)
-            self.policy.apply_gradients(policy_grads, self.lr_actor)
-        
-        # Value function training
-        for _ in range(self.train_critic_iterations):
-            # Compute value loss
-            values = self.value_net.forward(states)
-            value_loss = ((values - returns) ** 2).mean()
+            # PPO training loop
+            policy_loss = 0
+            value_loss = 0
+            approx_kl = 0
             
-            # Update value network
-            value_grads = self.value_net.get_gradients(states, 2*(values - returns))
-            self.value_net.apply_gradients(value_grads, self.lr_critic)
-        
-        # Clear memory after training
-        self.clear_memory()
-        
-        # Calculate mean reward
-        mean_reward = float(np.mean(self.rewards)) if self.rewards else 0.0
-        
-        return {
-            'actor_loss': float(actor_loss),
-            'value_loss': float(value_loss),
-            'approx_kl': float(approx_kl),
-            'mean_episode_reward': mean_reward
-        }
+            # Policy network update
+            for _ in range(self.train_actor_iterations):
+                # Forward pass through policy
+                mean, std = self.policy.forward(states)
+                new_log_probs = self.policy.log_prob(actions, mean, std)
+                
+                # Compute ratio and clipped ratio
+                ratio = np.exp(new_log_probs - old_log_probs)
+                clipped_ratio = np.clip(ratio, 1-self.clip_ratio, 1+self.clip_ratio)
+                
+                # Compute surrogate losses
+                surrogate1 = ratio * advantages
+                surrogate2 = clipped_ratio * advantages
+                policy_loss = -np.minimum(surrogate1, surrogate2).mean()
+                
+                # Compute KL divergence
+                approx_kl = ((old_log_probs - new_log_probs) ** 2).mean()
+                if approx_kl > self.target_kl:
+                    break
+                
+                # Update policy
+                policy_grads = self.policy.get_gradients(states, -advantages)
+                self.policy.apply_gradients(policy_grads, self.lr_actor)
+            
+            # Value network update
+            for _ in range(self.train_critic_iterations):
+                # Forward pass through value network
+                values_pred = self.value_net.forward(states)
+                
+                # Compute value loss with clipping to prevent extreme values
+                values_pred = np.clip(values_pred, -10.0, 10.0)  # Clip predicted values
+                returns = np.clip(returns, -10.0, 10.0)  # Clip returns
+                value_diff = values_pred - returns
+                value_diff = np.clip(value_diff, -1.0, 1.0)  # Clip the difference
+                value_loss = (value_diff ** 2).mean()
+                
+                # Update value network
+                value_grads = self.value_net.get_gradients(states, 2*value_diff)  # Use clipped difference
+                self.value_net.apply_gradients(value_grads, self.lr_critic)
+            
+            # Update metrics
+            self.metrics['policy_loss'].append(float(policy_loss))
+            self.metrics['value_loss'].append(float(value_loss))
+            self.metrics['approx_kl'].append(float(approx_kl))
+            self.metrics['mean_reward'].append(float(np.mean(rewards)))
+            
+            # Clear memory after training
+            self.clear_memory()
+            
+            return {
+                'actor_loss': float(policy_loss),
+                'value_loss': float(value_loss),
+                'approx_kl': float(approx_kl),
+                'mean_episode_reward': float(np.mean(rewards))
+            }
+        except Exception as e:
+            print(f"Error in train: {e}")
+            self.clear_memory()
+            return None
     
     def save_checkpoint(self, path):
         """Save neural network weights."""

@@ -14,6 +14,7 @@ import time
 from PPO_RL_AGENT.interview_agent import InterviewAgent
 from PPO_RL_AGENT.ppo_agent import PPOAgent
 from config import INTERVIEW_CONFIG
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -47,7 +48,7 @@ CORS(app, resources={
     r"/api/*": {
         "origins": ["http://localhost:3000"],
         "methods": ["GET", "POST", "OPTIONS"],
-        "allow_headers": ["Content-Type"],
+        "allow_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True,
         "expose_headers": ["Content-Type"],
         "max_age": 600
@@ -69,6 +70,11 @@ app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 # Store active sessions with TTL
 active_sessions = {}
 SESSION_TIMEOUT = 3600  # 1 hour timeout
+
+# Add this after the active_sessions declaration
+INTERVIEW_HISTORY_DIR = 'interviewHistory'
+if not os.path.exists(INTERVIEW_HISTORY_DIR):
+    os.makedirs(INTERVIEW_HISTORY_DIR)
 
 # Question templates for different difficulty levels
 question_templates = {
@@ -316,28 +322,36 @@ def allowed_file(filename):
 def create_agent():
     """Create a new interview agent instance with the trained model."""
     return InterviewAgent(
-        state_dim=9,
-        model_version='model_v1_20250427_151606_reward_0.773'  # Using our best trained model
+        state_dim=INTERVIEW_CONFIG['model']['state_dim'],
+        model_version=INTERVIEW_CONFIG['model']['version']  # Using version from config
     )
 
-def create_fallback_question(topic: str, difficulty: float) -> dict:
+def create_fallback_question(subtopic: str, difficulty: float) -> dict:
     """Create a fallback question when Gemini fails."""
+    # Get topic category
+    topic_category = None
+    for topic, subtopics in sde_topics.items():
+        if subtopic in subtopics:
+            topic_category = topic
+            break
+            
     return {
         "id": str(uuid.uuid4()),
-        "topic": topic,
+        "topic": topic_category or "general",  # Use main topic or fallback to general
+        "subtopic": subtopic,
         "difficulty": difficulty,
-        "content": f"Explain the core concepts of {topic} and provide examples of its practical applications.",
+        "content": f"Please explain the concept of {subtopic} and its practical applications.",
         "follow_up_questions": [
-            f"What are the main challenges when working with {topic}?",
-            f"How would you optimize a solution involving {topic}?",
-            "Can you compare this with alternative approaches?"
+            f"What are the main use cases of {subtopic}?",
+            f"What are common challenges when working with {subtopic}?",
+            f"How would you optimize {subtopic} implementations?"
         ],
         "evaluation_points": [
-            "Understanding of core concepts",
-            "Quality of examples provided",
-            "Analysis of trade-offs"
+            "Basic understanding of the concept",
+            "Practical applications",
+            "Common challenges and solutions"
         ],
-        "subtopic": "fundamentals"
+        "expected_time_minutes": max(10, int(difficulty * 2))  # Scale with difficulty
     }
 
 def evaluate_answer(answer: str, question: dict) -> dict:
@@ -381,7 +395,7 @@ The score should be based on:
         # Get evaluation from Gemini
         response = model.generate_content(prompt)
         
-        if not response.text:
+        if not response or not response.text:
             logger.warning("Empty response from Gemini for evaluation")
             return create_fallback_evaluation(answer)
             
@@ -419,18 +433,18 @@ def create_fallback_evaluation(answer: str) -> dict:
     
     return {
         "score": score,
-        "feedback": "Your answer demonstrates understanding of the topic. Consider providing more detailed examples and explanations.",
+        "feedback": "Your answer has been recorded. Due to technical limitations, a detailed evaluation couldn't be generated.",
         "strengths": [
-            "Attempted to address the question",
-            "Provided some relevant information"
+            "Submitted an answer",
+            "Participated in the interview process"
         ],
         "areas_for_improvement": [
-            "Add more specific examples",
-            "Explain concepts in more detail"
+            "Consider providing more detailed explanations",
+            "Include specific examples when possible"
         ],
         "follow_up_suggestions": [
-            "Consider discussing trade-offs",
-            "Include real-world applications"
+            "Review the topic documentation",
+            "Practice with more examples"
         ]
     }
 
@@ -520,7 +534,8 @@ Respond with ONLY a JSON object in this format:
         # Format into our standard question structure
         formatted_question = {
             "id": str(uuid.uuid4()),
-            "topic": subtopic,
+            "topic": topic_category,  # Use the main topic category
+            "subtopic": subtopic,     # Keep the specific subtopic
             "difficulty": difficulty,
             "content": question_data['question'],
             "follow_up_questions": question_data['follow_up_questions'][:3],  # Limit to 3 follow-ups
@@ -537,230 +552,329 @@ Respond with ONLY a JSON object in this format:
 
 @app.route('/api/interview/start', methods=['POST'])
 def start_interview():
-    """Start a new interview session with first medium difficulty question."""
+    """Start a new interview session."""
     try:
-        data = request.get_json()
-        session_id = str(int(time.time() * 1000))
-        topic = data.get('topic', INTERVIEW_CONFIG['DEFAULT_TOPIC'])
-        difficulty = float(data.get('difficulty', INTERVIEW_CONFIG['DEFAULT_DIFFICULTY']))
-        max_questions = int(data.get('maxQuestions', INTERVIEW_CONFIG['MAX_QUESTIONS']))
+        # Create new session ID
+        session_id = str(uuid.uuid4())
         
-        logger.info(f"Starting new interview session with ID: {session_id}")
-        logger.info(f"Request data: {data}")
-        logger.info(f"Current active sessions before adding new one: {list(active_sessions.keys())}")
-            
-        # Get list of topics
-        topics = list(sde_topics.keys())
-        
-        # Create new agent for this session
+        # Create and initialize agent
         agent = create_agent()
+        if not agent:
+            return jsonify({
+                'error': 'Failed to initialize interview agent'
+            }), 500
         
-        # Initialize session state
-        active_sessions[session_id] = {
+        # Reset agent state
+        agent.reset_interview_state()
+        
+        # Get first topic based on agent's policy
+        topic_weights = [1.0 / (1.0 + agent.question_history[t]) for t in agent.topics]
+        topic = np.random.choice(agent.topics, p=np.array(topic_weights)/sum(topic_weights))
+        
+        # Get subtopic using agent's policy
+        subtopic = agent.select_subtopic(topic)
+        
+        # Get difficulty using agent's policy
+        action_info = agent.get_next_question(topic)
+        difficulty = action_info['difficulty']
+        
+        # Generate question
+        question = generate_question(subtopic, difficulty)
+        if not question:
+            question = create_fallback_question(subtopic, difficulty)
+        
+        # Store session information
+        session_data = {
             'agent': agent,
-            'current_difficulty': difficulty,
+            'current_question': question,
             'questions_asked': 0,
-            'total_performance': 0.0,
-            'topics': topics,
-            'current_topic_index': topics.index(topic) if topic in topics else 0,
-            'max_questions': max_questions,
-            'history': [],
-            'last_activity': time.time()  # Add timestamp for session tracking
+            'total_score': 0.0,
+            'topic_performances': {},
+            'last_activity': time.time(),
+            'interview_complete': False
         }
+        active_sessions[session_id] = session_data
         
-        session = active_sessions[session_id]
-        logger.info(f"Created session for ID {session_id}. Active sessions: {list(active_sessions.keys())}")
-        
-        try:
-            # Get current topic and subtopic
-            current_topic = topics[session['current_topic_index']]
-            current_subtopic = sde_topics[current_topic][0]  # Start with first subtopic
-            
-            # Generate first question using Gemini
-            question = generate_question(current_subtopic, difficulty)
-            session['current_question'] = question
-            
-            # Format response
-            response = {
-                'message': 'Interview session started',
-                'session_id': session_id,
-                'initial_difficulty': difficulty,
-                'session_stats': {
-                    'questions_asked': 0,
-                    'average_performance': 0.0,
-                    'max_questions': max_questions,
-                    'topics': topics,
-                    'current_topic': current_topic,
-                    'current_subtopic': current_subtopic
-                },
-                'first_question': {
-                    'id': question['id'],
-                    'topic': current_topic,
-                    'subtopic': current_subtopic,
-                    'difficulty': difficulty,
-                    'content': question['content'],
-                    'follow_up_questions': question['follow_up_questions'],
-                    'evaluation_points': question['evaluation_points']
-                }
+        return jsonify({
+            'message': 'Interview session started',
+            'session_id': session_id,
+            'initial_difficulty': difficulty,
+            'session_stats': {
+                'questions_asked': 0,
+                'average_performance': 0.0,
+                'max_questions': 10,
+                'topics': agent.topics,
+                'current_topic': topic,
+                'current_subtopic': subtopic
+            },
+            'first_question': {
+                'id': question['id'],
+                'topic': topic,
+                'subtopic': subtopic,
+                'difficulty': difficulty,
+                'content': question['content'],
+                'follow_up_questions': question.get('follow_up_questions', []),
+                'evaluation_points': question.get('evaluation_points', []),
+                'expected_time': question.get('expected_time_minutes', 5 + difficulty)
             }
-            
-            logger.info(f"Interview session {session_id} initialized successfully")
-            return jsonify(response)
-            
-        except ValueError as e:
-            logger.error(f"Error in start_interview for session {session_id}: {str(e)}")
-            if session_id in active_sessions:
-                del active_sessions[session_id]
-            return jsonify({'error': str(e)}), 500
-        
+        })
+    
     except Exception as e:
         logger.error(f"Error in start_interview: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'error': 'Failed to start interview session'
+        }), 500
+
+def get_next_interview_number():
+    """Get the next interview number by checking existing files."""
+    existing_files = os.listdir(INTERVIEW_HISTORY_DIR)
+    numbers = [int(f.split('_')[0]) for f in existing_files if f.endswith('.json') and f.split('_')[0].isdigit()]
+    return max(numbers, default=0) + 1
+
+def save_interview_history(session_id, current_data):
+    """Save interview interaction to JSON file."""
+    try:
+        session = active_sessions.get(session_id)
+        if not session:
+            return
+            
+        # Get the next interview number
+        interview_number = get_next_interview_number()
+        
+        # Prepare interview data
+        interview_data = {
+            'interview_id': session_id,
+            'timestamp': datetime.now().isoformat(),
+            'total_questions': session['questions_asked'],
+            'total_score': session['total_score'],
+            'current_interaction': {
+                'question': session['current_question'],
+                'answer': current_data.get('answer', ''),
+                'evaluation': current_data.get('evaluation', {}),
+                'time_taken': current_data.get('time_taken', 0)
+            },
+            'agent_state': {
+                'question_history': session['agent'].question_history,
+                'topic_performances': session['agent'].topic_performances,
+                'current_difficulty': session['agent'].current_difficulty
+            }
+        }
+        
+        # Save to file
+        filename = f"{interview_number}_interview_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filepath = os.path.join(INTERVIEW_HISTORY_DIR, filename)
+        
+        with open(filepath, 'w') as f:
+            json.dump(interview_data, f, indent=2)
+            
+        logger.info(f"Saved interview history to {filepath}")
+        
+    except Exception as e:
+        logger.error(f"Error saving interview history: {str(e)}")
+
+def save_final_interview_summary(session_id):
+    """Save final interview summary when interview is completed."""
+    try:
+        session = active_sessions.get(session_id)
+        if not session:
+            return
+            
+        # Get the interview number from the last interaction
+        interview_number = get_next_interview_number() - 1  # Use the same number as interactions
+        
+        # Prepare final summary
+        final_summary = {
+            'interview_id': session_id,
+            'completion_time': datetime.now().isoformat(),
+            'total_questions_answered': session['questions_asked'],
+            'final_score': session['total_score'],
+            'average_score': session['total_score'] / max(1, session['questions_asked']),
+            'agent_final_state': {
+                'question_history': session['agent'].question_history,
+                'topic_performances': session['agent'].topic_performances,
+                'final_difficulty': session['agent'].current_difficulty
+            },
+            'performance_metrics': {
+                'time_efficiency': session['agent'].time_efficiency,
+                'topic_coverage': len([t for t, score in session['agent'].question_history.items() if score > 0]),
+                'difficulty_progression': session['agent'].current_difficulty
+            }
+        }
+        
+        # Save to file
+        filename = f"{interview_number}_interview_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
+        filepath = os.path.join(INTERVIEW_HISTORY_DIR, filename)
+        
+        with open(filepath, 'w') as f:
+            json.dump(final_summary, f, indent=2)
+            
+        logger.info(f"Saved final interview summary to {filepath}")
+        
+    except Exception as e:
+        logger.error(f"Error saving final interview summary: {str(e)}")
 
 @app.route('/api/interview/<interview_id>/submit-answer', methods=['POST', 'OPTIONS'])
 def submit_answer(interview_id):
-    """Submit answer performance and update agent."""
-    try:
-        if request.method == 'OPTIONS':
-            # Handle CORS preflight request
-            response = jsonify({})
-            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-            response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
-            response.headers.add('Access-Control-Allow-Methods', 'POST')
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-            return response
+    """Submit an answer and get the next question."""
+    def add_cors_headers(response):
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        return response
 
-        logger.info(f"Submitting answer for session {interview_id}")
-        logger.info(f"Current active sessions: {list(active_sessions.keys())}")
+    if request.method == 'OPTIONS':
+        # Handle CORS preflight request
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Credentials', 'true')
+        return response
         
-        # Get and validate session
+    try:
+        # Get session
         session = get_session(interview_id)
         if not session:
-            logger.error(f"No active session found for ID {interview_id}")
-            return jsonify({
-                'error': 'No active interview session found. Please start a new interview.',
-                'code': 'SESSION_NOT_FOUND'
-            }), 404
-
-        # Validate request data
+            return add_cors_headers(jsonify({'error': 'Invalid or expired session'})), 404
+        
+        # Get request data
         data = request.get_json()
         if not data:
-            return jsonify({'error': 'Request body is required'}), 400
-
-        answer = data.get('answer', '').strip()
-        if not answer:
-            return jsonify({'error': 'Answer is required'}), 400
-
-        # Get current question and validate
+            return add_cors_headers(jsonify({'error': 'No data provided'})), 400
+            
+        answer = data.get('answer', '')
+        time_taken = float(data.get('time_taken', 0))  # Time taken in seconds
+        
+        # Get current question
         current_question = session.get('current_question')
         if not current_question:
-            logger.error(f"No current question found for session {interview_id}")
-            return jsonify({
-                'error': 'No current question found. Please start a new interview.',
-                'code': 'QUESTION_NOT_FOUND'
-            }), 404
-
-        # Get time taken from request data
-        time_taken = float(data.get('time_taken', 0))
-
-        # Get current topic
-        current_topic = session['topics'][session['current_topic_index']]
-        logger.info(f"Processing answer for session {interview_id}, topic: {current_topic}")
-
-        # Evaluate answer
-        evaluation = evaluate_answer(answer, current_question)
-        performance_score = float(evaluation['score']) / 10.0  # Normalize to 0-1
-
+            return add_cors_headers(jsonify({'error': 'No current question found'})), 400
+        
+        # Evaluate answer using Gemini
+        try:
+            evaluation = evaluate_answer(answer, current_question)
+        except Exception as e:
+            logger.error(f"Error during answer evaluation: {str(e)}")
+            evaluation = create_fallback_evaluation(answer)
+        
+        # Save current interaction to history
+        current_data = {
+            'answer': answer,
+            'time_taken': time_taken,
+            'evaluation': evaluation
+        }
+        save_interview_history(interview_id, current_data)
+        
+        # Ensure we have a valid evaluation
+        if not evaluation or not isinstance(evaluation, dict):
+            logger.warning("Invalid evaluation result, using fallback")
+            evaluation = create_fallback_evaluation(answer)
+        
+        # Calculate performance score (0.0 to 1.0)
+        try:
+            performance_score = float(evaluation.get('score', 5.0)) / 10.0  # Convert from 0-10 to 0-1 scale
+        except (TypeError, ValueError) as e:
+            logger.error(f"Error converting score: {str(e)}")
+            performance_score = 0.5  # Default to middle score
+        
+        # Update agent with performance
+        agent = session.get('agent')
+        if not agent:
+            return add_cors_headers(jsonify({'error': 'Invalid session state'})), 500
+            
+        try:
+            agent.update_performance(
+                topic=current_question['topic'],
+                subtopic=current_question['subtopic'],
+                performance_score=performance_score,
+                time_taken=time_taken
+            )
+        except Exception as e:
+            logger.error(f"Error updating agent performance: {str(e)}")
+            # Continue with the interview even if agent update fails
+        
         # Update session statistics
         session['questions_asked'] += 1
-        session['total_performance'] += performance_score
-        session['history'].append({
-            'question': current_question,
-            'answer': answer,
-            'evaluation': evaluation,
-            'time_taken': time_taken
-        })
-
-        # Calculate average performance
-        avg_performance = session['total_performance'] / session['questions_asked']
-
-        # Check if interview is complete
-        done = session['questions_asked'] >= session['max_questions']
-
-        if not done:
-            # Update agent with performance
-            session['agent'].update_performance(current_topic, performance_score, time_taken)
+        session['total_score'] += performance_score
+        
+        # Check if interview should continue
+        if session['questions_asked'] >= 10:  # Maximum 10 questions per interview
+            session['interview_complete'] = True
+            stats = agent.get_interview_stats()
             
-            # Get next question parameters from agent
-            action_info = session['agent'].get_next_question(current_topic)
-            next_difficulty = action_info['difficulty']
-            
-            # Update session
-            session['current_difficulty'] = next_difficulty
-            session['current_topic_index'] = (session['current_topic_index'] + 1) % len(session['topics'])
-            
-            # Get next topic and subtopic
-            next_topic = session['topics'][session['current_topic_index']]
-            next_subtopic = sde_topics[next_topic][0]  # Start with first subtopic
-            
-            # Generate next question
-            next_question = generate_question(next_subtopic, next_difficulty)
-            session['current_question'] = next_question
-
-            # Update session stats
-            session_stats = {
-                'questions_asked': session['questions_asked'],
-                'total_questions': session['max_questions'],
-                'current_difficulty': session['current_difficulty'],
-                'average_performance': avg_performance * 10,  # Convert back to 0-10 scale
-                'current_topic': next_topic,
-                'current_subtopic': next_subtopic
-            }
-
-            # Prepare response
-            response_data = {
+            return add_cors_headers(jsonify({
                 'evaluation': evaluation,
                 'current_state': {
                     'current_question': current_question,
-                    'session_stats': session_stats
-                },
-                'next_state': {
-                    'next_question': next_question,
-                    'next_difficulty': next_difficulty,
-                    'next_topic': next_topic,
-                    'next_subtopic': next_subtopic,
-                    'interview_complete': done
-                }
-            }
-
-            response = jsonify(response_data)
-            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-            return response
-        else:
-            # Interview complete
-            response_data = {
-                'evaluation': evaluation,
-                'current_state': {
                     'session_stats': {
                         'questions_asked': session['questions_asked'],
-                        'total_questions': session['max_questions'],
-                        'average_performance': avg_performance * 10
+                        'average_performance': stats['average_score'],
+                        'current_topic': current_question['topic'],
+                        'current_subtopic': current_question['subtopic'],
+                        'max_questions': 10,
+                        'current_difficulty': stats['difficulty_level']
                     }
                 },
                 'next_state': {
                     'interview_complete': True
                 }
+            }))
+        
+        # Get next topic based on agent's policy
+        topic_weights = [1.0 / (1.0 + agent.question_history[t]) for t in agent.topics]
+        topic = np.random.choice(agent.topics, p=np.array(topic_weights)/sum(topic_weights))
+        
+        # Get next subtopic
+        subtopic = agent.select_subtopic(topic)
+        
+        # Get next question difficulty
+        action_info = agent.get_next_question(topic)
+        difficulty = action_info['difficulty']
+        
+        # Generate next question
+        next_question = generate_question(subtopic, difficulty)
+        if not next_question:
+            next_question = create_fallback_question(subtopic, difficulty)
+        
+        # Update session with new question
+        session['current_question'] = next_question
+        session['last_activity'] = time.time()
+        
+        # Prepare response in the format frontend expects
+        response_data = {
+            'evaluation': {
+                'score': evaluation.get('score', 5.0),
+                'feedback': evaluation.get('feedback', 'Answer evaluated.'),
+                'strengths': evaluation.get('strengths', []),
+                'improvements': evaluation.get('areas_for_improvement', [])
+            },
+            'current_state': {
+                'current_question': current_question,
+                'session_stats': {
+                    'questions_asked': session['questions_asked'],
+                    'average_performance': session['total_score'] / session['questions_asked'],
+                    'current_topic': current_question['topic'],
+                    'current_subtopic': current_question['subtopic'],
+                    'max_questions': 10,
+                    'current_difficulty': difficulty
+                }
+            },
+            'next_state': {
+                'next_question': next_question,
+                'next_difficulty': difficulty,
+                'next_topic': topic,
+                'next_subtopic': subtopic,
+                'interview_complete': False
             }
-
-            response = jsonify(response_data)
-            response.headers.add('Access-Control-Allow-Origin', 'http://localhost:3000')
-            response.headers.add('Access-Control-Allow-Credentials', 'true')
-            return response
-
+        }
+        
+        return add_cors_headers(jsonify(response_data))
+        
     except Exception as e:
         logger.error(f"Error in submit_answer: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return add_cors_headers(jsonify({
+            'error': f'Failed to process answer: {str(e)}'
+        })), 500
 
 @app.route('/api/interview/end', methods=['POST'])
 def end_interview():
@@ -788,12 +902,15 @@ def end_interview():
             
         session = active_sessions[session_id]
         
+        # Save final interview summary
+        save_final_interview_summary(session_id)
+        
         # Get final statistics
         total_questions = max(1, session['questions_asked'])
         stats = {
             'questions_asked': session['questions_asked'],
-            'average_performance': session['total_performance'] / total_questions,
-            'final_difficulty': session['current_difficulty']
+            'average_performance': session['total_score'] / total_questions,
+            'final_difficulty': session['agent'].current_difficulty
         }
         
         # Clean up session

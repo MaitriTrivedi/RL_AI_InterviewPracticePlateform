@@ -1,0 +1,17 @@
+{
+  "total_episodes": 2022,
+  "epoch": 5,
+  "epoch_episode": 22,
+  "actor_loss": -0.0427778989726028,
+  "value_loss": 1.0,
+  "mean_reward": 0.1696433670059188,
+  "topic_performance": {
+    "ds": 0.11677258313442823,
+    "algo": 0.11819145276754699,
+    "oops": 0.3592155910403356,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.15491892750504432
+  }
+}

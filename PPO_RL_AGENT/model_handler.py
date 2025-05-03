@@ -1,5 +1,6 @@
 import os
 import numpy as np
+import json
 from datetime import datetime
 
 class ModelHandler:
@@ -10,17 +11,72 @@ class ModelHandler:
         os.makedirs(self.base_dir, exist_ok=True)
         os.makedirs(self.checkpoints_dir, exist_ok=True)
     
+    def _save_network_weights(self, network, network_type, filepath):
+        """Save network weights to a file."""
+        if network_type == 'policy':
+            weights = {
+                'W1': network.W1.tolist(),
+                'b1': network.b1.tolist(),
+                'W2': network.W2.tolist(),
+                'b2': network.b2.tolist(),
+                'W_mean': network.W_mean.tolist(),
+                'b_mean': network.b_mean.tolist(),
+                'W_std': network.W_std.tolist(),
+                'b_std': network.b_std.tolist()
+            }
+        else:  # value network
+            weights = {
+                'W1': network.W1.tolist(),
+                'b1': network.b1.tolist(),
+                'W2': network.W2.tolist(),
+                'b2': network.b2.tolist(),
+                'W3': network.W3.tolist(),
+                'b3': network.b3.tolist()
+            }
+        
+        # Save weights to file
+        with open(filepath, 'w') as f:
+            json.dump(weights, f, indent=2)
+    
+    def _load_network_weights(self, network, network_type, filepath):
+        """Load network weights from file."""
+        with open(filepath, 'r') as f:
+            weights = json.load(f)
+        
+        if network_type == 'policy':
+            network.W1 = np.array(weights['W1'])
+            network.b1 = np.array(weights['b1'])
+            network.W2 = np.array(weights['W2'])
+            network.b2 = np.array(weights['b2'])
+            network.W_mean = np.array(weights['W_mean'])
+            network.b_mean = np.array(weights['b_mean'])
+            network.W_std = np.array(weights['W_std'])
+            network.b_std = np.array(weights['b_std'])
+        else:  # value network
+            network.W1 = np.array(weights['W1'])
+            network.b1 = np.array(weights['b1'])
+            network.W2 = np.array(weights['W2'])
+            network.b2 = np.array(weights['b2'])
+            network.W3 = np.array(weights['W3'])
+            network.b3 = np.array(weights['b3'])
+    
     def save_checkpoint(self, agent, metadata):
         """Save training checkpoint."""
         # Create checkpoint filename
         timestamp = metadata.get('timestamp', datetime.now().strftime('%Y%m%d_%H%M%S'))
         interview_num = metadata.get('interview_num', 0)
-        filename = f"checkpoint_interview_{interview_num}_{timestamp}.npy"
-        path = os.path.join(self.checkpoints_dir, filename)
+        checkpoint_dir = os.path.join(self.checkpoints_dir, f"checkpoint_{interview_num}_{timestamp}")
+        os.makedirs(checkpoint_dir, exist_ok=True)
         
-        # Save checkpoint
-        agent.save_checkpoint(path)
-        return path
+        # Save network weights
+        self._save_network_weights(agent.policy, 'policy', os.path.join(checkpoint_dir, 'policy_weights.json'))
+        self._save_network_weights(agent.value_net, 'value', os.path.join(checkpoint_dir, 'value_weights.json'))
+        
+        # Save metadata
+        with open(os.path.join(checkpoint_dir, 'metadata.json'), 'w') as f:
+            json.dump(metadata, f, indent=2)
+        
+        return checkpoint_dir
     
     def save_model(self, policy_net, value_net, metrics):
         """Save final model."""
@@ -34,27 +90,13 @@ class ModelHandler:
         os.makedirs(model_dir, exist_ok=True)
         
         # Save networks and metrics
-        np.save(os.path.join(model_dir, "policy_net.npy"), {
-            'W1': policy_net.W1,
-            'b1': policy_net.b1,
-            'W2': policy_net.W2,
-            'b2': policy_net.b2,
-            'W_mean': policy_net.W_mean,
-            'b_mean': policy_net.b_mean,
-            'W_std': policy_net.W_std,
-            'b_std': policy_net.b_std
-        })
+        self._save_network_weights(policy_net, 'policy', os.path.join(model_dir, 'policy_weights.json'))
+        self._save_network_weights(value_net, 'value', os.path.join(model_dir, 'value_weights.json'))
         
-        np.save(os.path.join(model_dir, "value_net.npy"), {
-            'W1': value_net.W1,
-            'b1': value_net.b1,
-            'W2': value_net.W2,
-            'b2': value_net.b2,
-            'W3': value_net.W3,
-            'b3': value_net.b3
-        })
+        # Save metrics
+        with open(os.path.join(model_dir, 'metrics.json'), 'w') as f:
+            json.dump(metrics, f, indent=2)
         
-        np.save(os.path.join(model_dir, "metrics.npy"), metrics)
         return version
     
     def load_model(self, policy_net, value_net, version):
@@ -62,25 +104,9 @@ class ModelHandler:
         try:
             model_dir = os.path.join(self.base_dir, version)
             
-            # Load policy network weights
-            policy_weights = np.load(os.path.join(model_dir, "policy_net.npy"), allow_pickle=True).item()
-            policy_net.W1 = policy_weights['W1']
-            policy_net.b1 = policy_weights['b1']
-            policy_net.W2 = policy_weights['W2']
-            policy_net.b2 = policy_weights['b2']
-            policy_net.W_mean = policy_weights['W_mean']
-            policy_net.b_mean = policy_weights['b_mean']
-            policy_net.W_std = policy_weights['W_std']
-            policy_net.b_std = policy_weights['b_std']
-            
-            # Load value network weights
-            value_weights = np.load(os.path.join(model_dir, "value_net.npy"), allow_pickle=True).item()
-            value_net.W1 = value_weights['W1']
-            value_net.b1 = value_weights['b1']
-            value_net.W2 = value_weights['W2']
-            value_net.b2 = value_weights['b2']
-            value_net.W3 = value_weights['W3']
-            value_net.b3 = value_weights['b3']
+            # Load network weights
+            self._load_network_weights(policy_net, 'policy', os.path.join(model_dir, 'policy_weights.json'))
+            self._load_network_weights(value_net, 'value', os.path.join(model_dir, 'value_weights.json'))
             
             return True
         except Exception as e:
@@ -89,7 +115,7 @@ class ModelHandler:
     
     def get_training_progress(self):
         """Get training progress statistics."""
-        if not self.history['versions']:
+        if not hasattr(self, 'history') or not self.history.get('versions'):
             return None
         
         latest = self.history['versions'][-1]
@@ -107,43 +133,9 @@ class ModelHandler:
             }
         }
     
-    def save_checkpoint(self, policy_net, value_net, metrics=None):
-        """Save training checkpoint."""
-        checkpoint_id = datetime.now().strftime('%Y%m%d_%H%M%S')
-        checkpoint_dir = os.path.join(self.checkpoints_dir, checkpoint_id)
-        os.makedirs(checkpoint_dir, exist_ok=True)
-        
-        # Save network weights
-        self._save_network_weights(policy_net, 'policy', os.path.join(checkpoint_dir, 'policy_weights.json'))
-        self._save_network_weights(value_net, 'value', os.path.join(checkpoint_dir, 'value_weights.json'))
-        
-        # Save metrics if provided
-        if metrics:
-            with open(os.path.join(checkpoint_dir, 'metrics.json'), 'w') as f:
-                json.dump(metrics, f, indent=2)
-        
-        return checkpoint_id
-    
-    def load_checkpoint(self, policy_net, value_net, checkpoint_id):
-        """Load checkpoint."""
-        checkpoint_dir = os.path.join(self.checkpoints_dir, checkpoint_id)
-        if not os.path.exists(checkpoint_dir):
-            raise FileNotFoundError(f"No checkpoint found with ID {checkpoint_id}")
-        
-        # Load network weights
-        self._load_network_weights(policy_net, 'policy', os.path.join(checkpoint_dir, 'policy_weights.json'))
-        self._load_network_weights(value_net, 'value', os.path.join(checkpoint_dir, 'value_weights.json'))
-        
-        # Load metrics if available
-        metrics_path = os.path.join(checkpoint_dir, 'metrics.json')
-        if os.path.exists(metrics_path):
-            with open(metrics_path, 'r') as f:
-                return json.load(f)
-        return None
-    
     def list_versions(self):
         """List available model versions."""
-        if not os.path.exists(self.versions_dir):
+        if not hasattr(self, 'versions_dir'):
             return []
         return sorted(os.listdir(self.versions_dir))
     

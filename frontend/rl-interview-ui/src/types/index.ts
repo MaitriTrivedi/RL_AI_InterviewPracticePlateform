@@ -131,4 +131,15 @@ export interface AppState {
   currentResume: ResumeData | null;
   resumeId: string | null;
   interviewHistory: Interview[];
+}
+
+export interface AppQuestion {
+  id: string;
+  topic: string;
+  subtopic: string;
+  difficulty: number;
+  content: string;
+  follow_up_questions: string[];
+  evaluation_points: string[];
+  expected_time: number;
 } 

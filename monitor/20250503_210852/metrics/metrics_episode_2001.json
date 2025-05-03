@@ -1,0 +1,17 @@
+{
+  "total_episodes": 2001,
+  "epoch": 5,
+  "epoch_episode": 1,
+  "actor_loss": -0.0298289788998092,
+  "value_loss": 1.0,
+  "mean_reward": 0.13712134161137957,
+  "topic_performance": {
+    "ds": 0.11763861352143463,
+    "algo": 0.12063556165584512,
+    "oops": 0.3034750500176524,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  }
+}

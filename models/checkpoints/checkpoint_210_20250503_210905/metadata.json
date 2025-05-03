@@ -1,0 +1,19 @@
+{
+  "interview_num": 210,
+  "stats": {
+    "average_score": 0.273466055580784,
+    "time_efficiency": 0.43993986979590644,
+    "topic_performances": {
+      "ds": 0.38011092565571997,
+      "algo": 0.13796523541784916,
+      "oops": 0.186058485564514,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "current_streak": 0,
+    "difficulty_level": 10.0
+  },
+  "timestamp": "20250503_210905"
+}

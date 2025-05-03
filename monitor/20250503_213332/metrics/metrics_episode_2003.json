@@ -1,0 +1,17 @@
+{
+  "total_episodes": 2003,
+  "epoch": 5,
+  "epoch_episode": 3,
+  "actor_loss": -0.007742594536386371,
+  "value_loss": 1.0,
+  "mean_reward": 0.15720022409216175,
+  "topic_performance": {
+    "ds": 0.20552211267459541,
+    "algo": 0.09912273255553243,
+    "oops": 0.1645169263078085,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  }
+}

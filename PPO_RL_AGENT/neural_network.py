@@ -212,8 +212,9 @@ class ValueNetwork:
         x = np.dot(x, self.W2) + self.b2
         x = np.tanh(x)
         
-        # Output layer
+        # Output layer (with value clipping)
         value = np.dot(x, self.W3) + self.b3
+        value = np.clip(value, -10.0, 10.0)  # Clip value predictions
         return value
     
     def get_gradients(self, state, delta):
@@ -263,6 +264,10 @@ class ValueNetwork:
 
 def compute_gae(rewards, values, dones, gamma=0.99, lam=0.95):
     """Compute Generalized Advantage Estimation."""
+    # Ensure inputs are numpy arrays and clip values
+    rewards = np.clip(rewards, -10.0, 10.0)
+    values = np.clip(values, -10.0, 10.0)
+    
     advantages = np.zeros_like(rewards)
     last_advantage = 0
     last_value = values[-1] if len(values) > 0 else 0
@@ -273,14 +278,21 @@ def compute_gae(rewards, values, dones, gamma=0.99, lam=0.95):
         else:
             next_value = values[t + 1]
         
+        # Compute TD error with clipping
         delta = rewards[t] + gamma * next_value * (1 - dones[t]) - values[t]
+        delta = np.clip(delta, -1.0, 1.0)  # Clip TD error
+        
+        # Compute advantage with clipping
         advantages[t] = delta + gamma * lam * (1 - dones[t]) * last_advantage
+        advantages[t] = np.clip(advantages[t], -10.0, 10.0)  # Clip advantages
         last_advantage = advantages[t]
     
     returns = advantages + values
+    returns = np.clip(returns, -10.0, 10.0)  # Clip returns
     
     # Normalize advantages
     if len(advantages) > 0:
         advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+        advantages = np.clip(advantages, -3.0, 3.0)  # Clip normalized advantages
     
     return advantages, returns 
