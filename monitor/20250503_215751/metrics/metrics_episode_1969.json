@@ -1,0 +1,17 @@
+{
+  "total_episodes": 1969,
+  "epoch": 4,
+  "epoch_episode": 469,
+  "actor_loss": 1.3322676295501878e-16,
+  "value_loss": 1.0,
+  "mean_reward": 0.2748199728884374,
+  "topic_performance": {
+    "ds": 0.13691486156754576,
+    "algo": 0.4479566890118041,
+    "oops": 0.45195575195736615,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.26779960205386716
+  }
+}
