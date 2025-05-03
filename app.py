@@ -70,6 +70,129 @@ app.config['SESSION_COOKIE_DOMAIN'] = 'localhost'
 active_sessions = {}
 SESSION_TIMEOUT = 3600  # 1 hour timeout
 
+# Question templates for different difficulty levels
+question_templates = {
+    "ds": {  # Data Structures
+        "easy": [
+            "Explain the basic concept and implementation of {subtopic}",
+            "What are the main operations supported by {subtopic}?",
+            "Draw and explain a simple example of {subtopic}"
+        ],
+        "medium": [
+            "Compare and contrast different implementations of {subtopic}",
+            "Solve a problem using {subtopic} with time complexity analysis",
+            "Implement a specific operation in {subtopic} with error handling"
+        ],
+        "hard": [
+            "Design an optimized version of {subtopic} for a specific use case",
+            "Handle edge cases and performance bottlenecks in {subtopic}",
+            "Combine multiple concepts with {subtopic} to solve a complex problem"
+        ]
+    },
+    "algo": {  # Algorithms
+        "easy": [
+            "Explain how {subtopic} works with a simple example",
+            "What is the time and space complexity of {subtopic}?",
+            "Trace the execution of {subtopic} on a small input"
+        ],
+        "medium": [
+            "Implement {subtopic} with specific constraints",
+            "Optimize a basic implementation of {subtopic}",
+            "Apply {subtopic} to solve a real-world problem"
+        ],
+        "hard": [
+            "Design a variant of {subtopic} for a specific requirement",
+            "Handle special cases and optimize {subtopic} for scale",
+            "Combine {subtopic} with other algorithms to solve a complex problem"
+        ]
+    },
+    "dbms": {  # Database Management
+        "easy": [
+            "Write a basic {subtopic} query",
+            "Explain the concept of {subtopic} in DBMS",
+            "What are the main components of {subtopic}?"
+        ],
+        "medium": [
+            "Optimize a {subtopic} query for better performance",
+            "Handle concurrent operations in {subtopic}",
+            "Implement error handling in {subtopic}"
+        ],
+        "hard": [
+            "Design a scalable solution using {subtopic}",
+            "Handle distributed scenarios in {subtopic}",
+            "Optimize {subtopic} for high-load situations"
+        ]
+    },
+    "oops": {  # Object-Oriented Programming
+        "easy": [
+            "Explain the concept of {subtopic} in OOP",
+            "Give a simple example of {subtopic}",
+            "What are the basic principles of {subtopic}?"
+        ],
+        "medium": [
+            "Implement a design pattern using {subtopic}",
+            "Refactor code to better utilize {subtopic}",
+            "Handle inheritance and polymorphism with {subtopic}"
+        ],
+        "hard": [
+            "Design a complex system using {subtopic}",
+            "Solve design problems using multiple OOP concepts including {subtopic}",
+            "Optimize and scale a system using {subtopic}"
+        ]
+    },
+    "os": {  # Operating Systems
+        "easy": [
+            "Explain the basic concept of {subtopic} in OS",
+            "What are the main functions of {subtopic}?",
+            "How does {subtopic} work in a simple scenario?"
+        ],
+        "medium": [
+            "Handle synchronization in {subtopic}",
+            "Implement a solution for {subtopic} with error handling",
+            "Optimize resource usage in {subtopic}"
+        ],
+        "hard": [
+            "Design a complex scheduling system for {subtopic}",
+            "Handle deadlocks and race conditions in {subtopic}",
+            "Implement an optimized version of {subtopic} for multi-core systems"
+        ]
+    },
+    "cn": {  # Computer Networks
+        "easy": [
+            "Explain the basic concept of {subtopic} in networking",
+            "What are the main protocols used in {subtopic}?",
+            "How does {subtopic} work in a simple network?"
+        ],
+        "medium": [
+            "Configure and troubleshoot {subtopic}",
+            "Implement error handling in {subtopic}",
+            "Optimize network performance using {subtopic}"
+        ],
+        "hard": [
+            "Design a scalable network using {subtopic}",
+            "Handle security concerns in {subtopic}",
+            "Implement advanced protocols for {subtopic}"
+        ]
+    },
+    "system_design": {  # System Design
+        "easy": [
+            "Explain the basic components needed for {subtopic}",
+            "What are the key considerations in {subtopic}?",
+            "Design a simple version of {subtopic}"
+        ],
+        "medium": [
+            "Scale {subtopic} to handle more load",
+            "Add fault tolerance to {subtopic}",
+            "Optimize performance of {subtopic}"
+        ],
+        "hard": [
+            "Design a globally distributed {subtopic}",
+            "Handle extreme scale and reliability in {subtopic}",
+            "Optimize cost and performance trade-offs in {subtopic}"
+        ]
+    }
+}
+
 # Available topics with their subtopics
 sde_topics = {
     "ds": [
@@ -314,45 +437,56 @@ def create_fallback_evaluation(answer: str) -> dict:
 def generate_question(subtopic: str, difficulty: float) -> dict:
     """Generate a question using Gemini based on subtopic and difficulty."""
     try:
-        # Calculate target question length based on difficulty
+        # Determine difficulty level category
         if difficulty <= 3:
-            word_range = "50-100"
+            difficulty_category = "easy"
         elif difficulty <= 7:
-            word_range = "100-200"
+            difficulty_category = "medium"
         else:
-            word_range = "200-300"
+            difficulty_category = "hard"
 
-        # Construct prompt for Gemini with strict formatting instructions
-        prompt = f"""You MUST respond with ONLY a JSON object in the following format, with no additional text or explanation:
+        # Get topic category (ds, algo, dbms, etc.)
+        topic_category = None
+        for topic, subtopics in sde_topics.items():
+            if subtopic in subtopics:
+                topic_category = topic
+                break
+        
+        # Get relevant templates
+        templates = []
+        if topic_category and topic_category in question_templates:
+            templates = question_templates[topic_category][difficulty_category]
+        
+        # Construct prompt for Gemini with templates and focused instructions
+        template_suggestions = "\n".join([f"- {t.format(subtopic=subtopic)}" for t in templates]) if templates else ""
+        
+        prompt = f"""Generate a technical interview question about {subtopic}.
+Target difficulty: {difficulty}/10 (where 1 is easiest and 10 is hardest)
 
-{{
-    "content": "<insert main technical interview question here>",
-    "follow_up_questions": [
-        "<insert follow-up question 1>",
-        "<insert follow-up question 2>",
-        "<insert follow-up question 3>"
-    ],
-    "expected_time_minutes": <number>,
-    "evaluation_points": [
-        "<insert evaluation point 1>",
-        "<insert evaluation point 2>",
-        "<insert evaluation point 3>"
-    ]
-}}
-
-Generate a technical interview question about:
-Topic: {subtopic}
-Difficulty: {difficulty}/10 (where 1 is easiest and 10 is hardest)
-Question Length: {word_range} words
+Here are some suggested question patterns for this topic and difficulty:
+{template_suggestions}
 
 The question should be:
-1. Challenging but clear for the given difficulty level
-2. Within the specified word range
-3. More focused and concise for lower difficulties
-4. More complex and detailed for higher difficulties
-5. Include relevant context and constraints based on the difficulty level
+1. Clear and specific to {subtopic}
+2. Appropriate for the difficulty level {difficulty}/10
+3. Include practical aspects and real-world scenarios when possible
+4. Follow the pattern of the suggested templates but with your own specific details
+5. For difficulty {difficulty}/10, focus on {'basic concepts and definitions' if difficulty <= 3 else 'application and problem-solving' if difficulty <= 7 else 'advanced concepts and edge cases'}
 
-Remember: Respond with ONLY the JSON object, no other text."""
+Respond with ONLY a JSON object in this format:
+{{
+    "question": "Your main question here",
+    "follow_up_questions": [
+        "A relevant follow-up question",
+        "Another follow-up question"
+    ],
+    "difficulty_level": "{difficulty}",
+    "key_points": [
+        "Key concept or term to look for in answer",
+        "Another important point to evaluate"
+    ],
+    "expected_time_minutes": number
+}}"""
 
         # Generate response from Gemini
         response = model.generate_content(prompt)
@@ -377,18 +511,25 @@ Remember: Respond with ONLY the JSON object, no other text."""
             return create_fallback_question(subtopic, difficulty)
         
         # Validate required fields
-        required_fields = ['content', 'follow_up_questions', 'expected_time_minutes', 'evaluation_points']
+        required_fields = ['question', 'follow_up_questions', 'key_points', 'expected_time_minutes']
         missing_fields = [field for field in required_fields if field not in question_data]
         if missing_fields:
             logger.warning(f"Missing required fields in response: {', '.join(missing_fields)}")
             return create_fallback_question(subtopic, difficulty)
         
-        # Add metadata
-        question_data['id'] = str(uuid.uuid4())
-        question_data['topic'] = subtopic
-        question_data['difficulty'] = difficulty
+        # Format into our standard question structure
+        formatted_question = {
+            "id": str(uuid.uuid4()),
+            "topic": subtopic,
+            "difficulty": difficulty,
+            "content": question_data['question'],
+            "follow_up_questions": question_data['follow_up_questions'][:3],  # Limit to 3 follow-ups
+            "evaluation_points": question_data['key_points'],
+            "expected_time_minutes": question_data['expected_time_minutes']
+        }
         
-        return question_data
+        return formatted_question
+        
     except Exception as e:
         logger.error(f"Failed to generate question: {str(e)}")
         logger.error(f"Full error context: {e.__class__.__name__}")
@@ -626,24 +767,38 @@ def end_interview():
     """End the interview session."""
     try:
         data = request.get_json()
-        session_id = data.get('session_id')
+        logger.info(f"Request JSON: {data}")
         
+        session_id = data.get('session_id')
         if not session_id:
             return jsonify({'error': 'session_id is required'}), 400
             
-        session = get_session(session_id)
-        if not session:
-            return jsonify({'error': 'No active interview session found'}), 404
+        # Log active sessions for debugging
+        logger.info(f"Active sessions before lookup: {list(active_sessions.keys())}")
+        
+        if session_id not in active_sessions:
+            logger.error(f"Session {session_id} not found in active sessions")
+            return jsonify({
+                'final_stats': {
+                    'questions_asked': 0,
+                    'average_performance': 0,
+                    'final_difficulty': 5.0
+                }
+            })
             
+        session = active_sessions[session_id]
+        
         # Get final statistics
+        total_questions = max(1, session['questions_asked'])
         stats = {
             'questions_asked': session['questions_asked'],
-            'average_performance': session['total_performance'] / max(1, session['questions_asked']),
+            'average_performance': session['total_performance'] / total_questions,
             'final_difficulty': session['current_difficulty']
         }
         
         # Clean up session
         del active_sessions[session_id]
+        logger.info(f"Session {session_id} ended and removed. Remaining sessions: {list(active_sessions.keys())}")
         
         return jsonify({
             'message': 'Interview session ended',
@@ -651,6 +806,7 @@ def end_interview():
         })
         
     except Exception as e:
+        logger.error(f"Error in end_interview: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':

@@ -24,15 +24,19 @@ const InterviewCompletionPage: React.FC = () => {
   const { state, setError } = useAppContext();
   const [finalStats, setFinalStats] = React.useState<FinalStats | null>(null);
   const [loading, setLoading] = React.useState(true);
+  const [hasEnded, setHasEnded] = React.useState(false);
 
   useEffect(() => {
     const endInterview = async () => {
-      try {
+      // If interview has already been ended or no current interview, don't proceed
+      if (hasEnded || !state.currentInterview) {
         if (!state.currentInterview) {
           navigate('/');
-          return;
         }
+        return;
+      }
 
+      try {
         const response = await fetch(
           API_ENDPOINTS.END_INTERVIEW(state.currentInterview.interviewId),
           {
@@ -41,26 +45,46 @@ const InterviewCompletionPage: React.FC = () => {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              user_id: state.currentInterview.userId
+              session_id: state.currentInterview.interviewId
             })
           }
         );
 
-        if (!response.ok) {
-          throw new Error('Failed to end interview');
-        }
-
         const data = await response.json();
-        setFinalStats(data.final_stats);
+        
+        // Transform the stats to match our interface
+        const transformedStats: FinalStats = {
+          questions_asked: data.final_stats.questions_asked,
+          average_performance: data.final_stats.average_performance * 10, // Convert to 0-10 scale
+          final_difficulty: data.final_stats.final_difficulty,
+          topics_covered: state.currentInterview.questions
+            .map(q => q.topic)
+            .filter((value, index, self) => self.indexOf(value) === index) // Get unique topics
+        };
+        setFinalStats(transformedStats);
+        setHasEnded(true);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to end interview');
+        console.error('Error ending interview:', err);
+        // If there's an error, use the current interview state to show results
+        if (state.currentInterview) {
+          const fallbackStats: FinalStats = {
+            questions_asked: state.currentInterview.questions.length,
+            average_performance: (state.currentInterview.stats.average_performance || 0) * 10,
+            final_difficulty: state.currentInterview.difficulty,
+            topics_covered: state.currentInterview.questions
+              .map(q => q.topic)
+              .filter((value, index, self) => self.indexOf(value) === index)
+          };
+          setFinalStats(fallbackStats);
+          setHasEnded(true);
+        }
       } finally {
         setLoading(false);
       }
     };
 
     endInterview();
-  }, [navigate, state.currentInterview, setError]);
+  }, [navigate, state.currentInterview, hasEnded]); // Remove finalStats from dependencies
 
   if (loading) {
     return (

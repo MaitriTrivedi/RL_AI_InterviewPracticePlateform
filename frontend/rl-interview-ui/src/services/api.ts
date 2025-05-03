@@ -94,7 +94,7 @@ export const rlAgentApi = {
   
   endInterview: async (interviewId: string) => {
     const response = await axios.post(`${API_URL}/interview/end`, {
-      interview_id: interviewId
+      session_id: interviewId
     });
     return response;
   },

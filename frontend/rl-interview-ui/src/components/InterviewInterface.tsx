@@ -12,7 +12,9 @@ import {
   CardContent,
   Chip,
   Stack,
-  Divider
+  Divider,
+  Tooltip,
+  LinearProgress
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import ReactMarkdown from 'react-markdown';
@@ -85,6 +87,27 @@ interface AnswerSubmissionRequest {
   session_id: string;
 }
 
+// Add difficulty level helper with proper type
+const getDifficultyInfo = (difficulty: number): { 
+  label: string; 
+  color: 'success' | 'warning' | 'error' | 'default' | 'primary' | 'secondary' | 'info' 
+} => {
+  if (difficulty <= 3) {
+    return { label: 'Easy', color: 'success' };
+  } else if (difficulty <= 7) {
+    return { label: 'Medium', color: 'warning' };
+  } else {
+    return { label: 'Hard', color: 'error' };
+  }
+};
+
+// Add difficulty progress color helper with proper type
+const getDifficultyProgressColor = (difficulty: number): 'success' | 'warning' | 'error' | 'primary' | 'secondary' | 'info' => {
+  if (difficulty <= 3) return 'success';
+  if (difficulty <= 7) return 'warning';
+  return 'error';
+};
+
 export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd }): JSX.Element => {
   const navigate = useNavigate();
   const { state: { currentInterview }, setCurrentInterview, setError: setAppError } = useAppContext();
@@ -141,8 +164,17 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
         throw new Error(errorData.error || 'Failed to fetch next question');
       }
       
-      const question = await response.json();
-      setCurrentQuestion(question);
+      const data = await response.json();
+      
+      // Transform the question data to match our Question interface
+      const questionData = {
+        ...data,
+        difficulty: data.difficulty || currentInterview.difficulty || 5, // Use current interview difficulty as fallback
+        topic: data.topic || currentInterview.currentQuestion?.topic || 'General',
+        content: data.content || data.question || '', // Support both content and question fields
+      };
+      
+      setCurrentQuestion(questionData);
       setResult(null);
       setAnswer('');
     } catch (err) {
@@ -249,11 +281,33 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
             color="primary" 
             variant="outlined" 
           />
-          <Chip 
-            label={`Difficulty: ${currentQuestion?.difficulty}/10`} 
-            color="secondary" 
-            variant="outlined" 
-          />
+          <Tooltip title="Question difficulty level" arrow>
+            <Box sx={{ minWidth: 200 }}>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Chip 
+                  label={`Difficulty: ${currentQuestion?.difficulty}/10`} 
+                  color={getDifficultyInfo(currentQuestion?.difficulty || 5).color}
+                  variant="filled"
+                />
+                <Chip 
+                  label={getDifficultyInfo(currentQuestion?.difficulty || 5).label}
+                  color={getDifficultyInfo(currentQuestion?.difficulty || 5).color}
+                  variant="outlined"
+                />
+              </Stack>
+              <LinearProgress
+                variant="determinate"
+                value={(currentQuestion?.difficulty || 5) * 10}
+                color={getDifficultyProgressColor(currentQuestion?.difficulty || 5)}
+                sx={{ 
+                  mt: 1, 
+                  height: 8, 
+                  borderRadius: 4,
+                  bgcolor: 'grey.200'
+                }}
+              />
+            </Box>
+          </Tooltip>
           <Chip 
             label={`Score: ${totalScore}/${questionsAnswered * 10}`} 
             color="info" 
@@ -261,9 +315,25 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
           />
         </Stack>
 
-        <Typography variant="h6" gutterBottom>
-          Question {questionsAnswered + 1}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+          <Typography variant="h6">
+            Question {questionsAnswered + 1}
+          </Typography>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Chip 
+              size="small"
+              label={getDifficultyInfo(currentQuestion?.difficulty || currentInterview?.difficulty || 5).label}
+              color={getDifficultyInfo(currentQuestion?.difficulty || currentInterview?.difficulty || 5).color}
+              variant="filled"
+              sx={{ minWidth: 80 }}
+            />
+            <Typography variant="body2" color="text.secondary">
+              ({(currentQuestion?.difficulty || currentInterview?.difficulty || 5).toFixed(1)}/10)
+            </Typography>
+          </Stack>
+        </Box>
+        
+        <Divider sx={{ mb: 3 }} />
         
         <Box mb={3}>
           <ReactMarkdown>{currentQuestion?.content || ''}</ReactMarkdown>
