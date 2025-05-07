@@ -1,0 +1,25 @@
+{
+  "total_episodes": 1018,
+  "epoch": 3,
+  "epoch_episode": 18,
+  "question_number": 6,
+  "topic": "ds",
+  "subtopic": "Heaps",
+  "difficulty": 2.7788367915636845,
+  "performance": 0.1743683648547582,
+  "time_taken": 19.270793243258286,
+  "actor_loss": 0.0026289644428348956,
+  "value_loss": 23.612998229332295,
+  "entropy_loss": 0.001802272715441159,
+  "topic_means": {
+    "ds": 0.2813086194189325,
+    "algo": 0.1724142354906281,
+    "oops": 0.6312070144509109,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 3,
+  "safety_constraints_applied": true
+}

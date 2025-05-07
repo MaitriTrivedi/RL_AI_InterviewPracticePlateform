@@ -1,0 +1,64 @@
+{
+  "interview_id": "751dfe09-25a2-442d-921f-40393dabb821",
+  "timestamp": "2025-05-07T09:34:27.097159",
+  "total_questions": 5,
+  "total_score": 4.3,
+  "current_interaction": {
+    "question": {
+      "id": "302ba356-cd8b-4de9-a20a-d2682fa76831",
+      "topic": "ds",
+      "subtopic": "Strings",
+      "difficulty": 1.0,
+      "content": "What is a string? Can you give a simple example of how you might use a string in a program?",
+      "follow_up_questions": [
+        "How is a string stored in memory?",
+        "Name a common operation you might perform on a string, like finding its length or combining two strings."
+      ],
+      "evaluation_points": [
+        "A sequence of characters.",
+        "Example: Storing a name, a message, or a password."
+      ],
+      "expected_time_minutes": 2
+    },
+    "answer": "A string is a sequence of characters used to represent text in programming. It can include letters, numbers, symbols, and spaces, enclosed in quotes (single or double). Strings are commonly used to store and manipulate text data in a program. For example, in Python, you might use a string to store a user's name and then print a personalized greeting:\nname = \"Alice\"\nprint(\"Hello, \" + name + \"!\")\nIn this case, \"Alice\" is a string, and the program outputs a greeting by concatenating the string with other text, resulting in the message Hello, Alice!.",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer is excellent. It accurately defines a string and provides a clear, concise, and practical example in Python. The explanation of how the string is used (storing a name and concatenating it for a personalized greeting) demonstrates a solid understanding. The use of quotes (single or double) is correctly mentioned. The example is well-chosen and easy to understand. There's not much to improve.",
+      "strengths": [
+        "Accurate definition of a string.",
+        "Clear and concise explanation.",
+        "Practical and easily understandable example.",
+        "Correct use of terminology (e.g., concatenation)."
+      ],
+      "areas_for_improvement": [],
+      "follow_up_suggestions": [
+        "You could briefly mention different string encodings (e.g., ASCII, UTF-8), though it wasn't explicitly asked.",
+        "You could briefly touch upon string immutability in some languages (if applicable to the candidate's primary language)."
+      ]
+    },
+    "time_taken": 366.114
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.8,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [
+        0.8
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 1.0
+  }
+}

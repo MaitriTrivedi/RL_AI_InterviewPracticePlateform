@@ -1,0 +1,66 @@
+{
+  "interview_id": "9efae0b2-817e-44f8-9b76-3b33ee1fe6cf",
+  "timestamp": "2025-05-07T14:33:16.688466",
+  "total_questions": 1,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "d644fb5b-389e-457f-909d-08b9bd776690",
+      "topic": "ds",
+      "subtopic": "Arrays",
+      "difficulty": 3.5661395546965817,
+      "content": "Imagine you are developing a system to manage meeting room bookings. Each room booking is represented by a start time and an end time (represented as integers from 0 to 23, indicating hours of the day). You are given an array of meeting room booking times, where each booking is represented as a pair `[start_time, end_time]`. Write a function that determines the maximum number of meetings that can be scheduled in a single meeting room without any overlaps. You should consider that a meeting can start at the exact time another meeting ends. For example, `[[0, 1], [3, 5], [1, 2]]` can schedule all three without conflicts.",
+      "follow_up_questions": [
+        "What is the time complexity of your solution?",
+        "How would you handle edge cases such as empty input or bookings with invalid start/end times (e.g., end time before start time)? How would you improve the efficiency if the number of bookings is extremely large?"
+      ],
+      "evaluation_points": [
+        "Sorting of bookings based on end time is crucial.",
+        "Iterating through the sorted bookings and selecting non-overlapping ones.",
+        "Correctness of the logic to check for overlaps."
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "Don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they don't know the answer. This indicates a lack of understanding of common algorithm problems involving scheduling or interval management. The core concept revolves around greedy algorithms and sorting by end times. No code or explanation was provided, making it impossible to assess technical accuracy, completeness, or clarity.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of greedy algorithms.",
+        "Knowledge of interval scheduling problems.",
+        "Ability to apply sorting to solve optimization problems.",
+        "Communicating problem-solving approaches even if a complete solution isn't available."
+      ],
+      "follow_up_suggestions": [
+        "Study common algorithmic problems related to interval scheduling and greedy algorithms, such as activity selection.",
+        "Practice coding problems involving sorting and decision-making based on sorted data. Focus on problems where you need to maximize the number of selected non-overlapping intervals.",
+        "When faced with a problem you don't immediately know the answer to, try to break it down into smaller, manageable parts. Explain your thought process, even if you can't arrive at a complete solution. For example, you could have mentioned that sorting the intervals might be relevant."
+      ]
+    },
+    "time_taken": 34.161
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 4.0
+  }
+}

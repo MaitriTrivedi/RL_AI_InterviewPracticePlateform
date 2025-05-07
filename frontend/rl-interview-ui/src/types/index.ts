@@ -58,6 +58,7 @@ export interface InterviewStats {
   current_subtopic: string;
   max_questions: number;
   current_difficulty: number;
+  last_score?: number;
 }
 
 export interface Interview {

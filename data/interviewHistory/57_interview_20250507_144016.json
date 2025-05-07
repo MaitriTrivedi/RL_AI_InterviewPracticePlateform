@@ -1,0 +1,82 @@
+{
+  "interview_id": "ffcbdf6e-8928-4588-ac4c-14a45d2097c2",
+  "timestamp": "2025-05-07T14:40:16.440995",
+  "total_questions": 2,
+  "total_score": 0.7,
+  "current_interaction": {
+    "question": {
+      "id": "bc707570-1896-4666-9bbd-aa183cc36dce",
+      "topic": "system_design",
+      "subtopic": "Rate Limiting",
+      "difficulty": 10.0,
+      "content": "Design a globally distributed, eventually consistent rate limiting service for a social media platform experiencing viral spikes. The platform allows users to post, like, and comment. Assume a global user base and a need to handle sustained rates of 1 million requests per second, with bursts potentially exceeding 10x that. The rate limiter must prevent abuse and ensure fair usage. Your design should specifically address the challenges of minimizing latency for global users while maintaining consistency across geographically dispersed datacenters. Focus on a multi-layered approach that optimizes for cost, performance, and fault tolerance, and explain how you would handle a situation where a datacenter becomes completely unavailable. Consider both client-side and server-side rate limiting strategies and how they interact. Provide justifications for your technology choices and data structures, including the rationale behind eventual consistency and how you would mitigate its potential drawbacks.",
+      "follow_up_questions": [
+        "How would you monitor the effectiveness of your rate limiting system and detect potential attacks that circumvent your rules?",
+        "Describe the trade-offs between different consistency models (e.g., strong vs. eventual consistency) in this scenario and why you chose the specific approach.",
+        "How would you dynamically adjust rate limits based on system load and identified threat patterns without causing significant service disruptions?"
+      ],
+      "evaluation_points": [
+        "Multi-layered rate limiting (client-side, edge, origin)",
+        "Eventually consistent distributed data store (e.g., DynamoDB, Cassandra) and strategies to mitigate consistency issues (e.g., vector clocks, conflict resolution)",
+        "Adaptive rate limiting algorithms (e.g., reinforcement learning, feedback loops)",
+        "Hot key detection and mitigation strategies (e.g., caching, sharding)",
+        "Datacenter failover and redundancy strategies",
+        "Monitoring, alerting, and anomaly detection capabilities",
+        "Cost optimization considerations (e.g., choosing appropriate instance sizes and storage tiers)",
+        "Security considerations (e.g., preventing rate limiting bypass attacks)",
+        "Technology justifications and data structure rationale"
+      ],
+      "expected_time_minutes": 60
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they do not know the answer. This indicates a complete lack of understanding or preparation for the question. The response provides no information about rate limiting strategies, distributed systems design, or any related technologies. There's no attempt to address any of the core concepts presented in the prompt, such as multi-layered rate limiting, eventual consistency, or datacenter failover.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of rate limiting concepts and algorithms (e.g., token bucket, leaky bucket, fixed window, sliding window).",
+        "Knowledge of distributed systems design principles, including consistency models (e.g., eventual consistency, strong consistency).",
+        "Familiarity with distributed data stores like DynamoDB or Cassandra and their properties.",
+        "Ability to design for high availability and fault tolerance in distributed systems, including datacenter failover strategies.",
+        "Understanding of techniques for mitigating hot key problems and handling burst traffic.",
+        "Knowledge of monitoring, alerting, and anomaly detection systems and their application to rate limiting.",
+        "Understanding of the trade-offs involved in choosing different rate limiting strategies (e.g., cost, performance, consistency).",
+        "Ability to discuss security aspects of rate limiting and potential bypass attacks."
+      ],
+      "follow_up_suggestions": [
+        "Study common rate limiting algorithms (Token Bucket, Leaky Bucket, Fixed Window, Sliding Window Log, Sliding Window Counter).",
+        "Research distributed systems concepts such as CAP theorem, consistency models (eventual consistency, strong consistency), and consensus algorithms.",
+        "Read about distributed data stores like DynamoDB and Cassandra and their use cases.",
+        "Learn about designing for high availability and fault tolerance, including concepts like redundancy, failover, and load balancing.",
+        "Explore techniques for mitigating hot key problems, such as caching, sharding, and replication.",
+        "Review common security vulnerabilities related to rate limiting and methods for prevention."
+      ]
+    },
+    "time_taken": 58.798
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.21,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.7
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": [
+        0.0
+      ]
+    },
+    "current_difficulty": 4.0
+  }
+}

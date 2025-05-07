@@ -1,0 +1,25 @@
+{
+  "total_episodes": 2100,
+  "epoch": 5,
+  "epoch_episode": 100,
+  "question_number": 2,
+  "topic": "ds",
+  "subtopic": "Arrays",
+  "difficulty": 3.5014014115754044,
+  "performance": 0.2633129521418938,
+  "time_taken": 18.50865743183046,
+  "actor_loss": -0.0024794903563838426,
+  "value_loss": 32.187005679237224,
+  "entropy_loss": 0.004033002009249539,
+  "topic_means": {
+    "ds": 0.2633129521418938,
+    "algo": 0.16713380385846804,
+    "oops": 0.0,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 1,
+  "safety_constraints_applied": true
+}

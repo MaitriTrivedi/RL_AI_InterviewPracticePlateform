@@ -1,0 +1,25 @@
+{
+  "total_episodes": 474,
+  "epoch": 1,
+  "epoch_episode": 474,
+  "question_number": 6,
+  "topic": "oops",
+  "subtopic": "Polymorphism",
+  "difficulty": 4.1043464401562275,
+  "performance": 0.2240822219363892,
+  "time_taken": 9.249346019563935,
+  "actor_loss": -0.0014227878232212071,
+  "value_loss": 20.273879039811114,
+  "entropy_loss": -0.00290647522093323,
+  "topic_means": {
+    "ds": 0.0,
+    "algo": 0.0,
+    "oops": 0.0,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 0,
+  "safety_constraints_applied": false
+}

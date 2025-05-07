@@ -1,0 +1,25 @@
+{
+  "total_episodes": 432,
+  "epoch": 1,
+  "epoch_episode": 432,
+  "question_number": 10,
+  "topic": "algo",
+  "subtopic": "Dynamic Programming",
+  "difficulty": 1.584,
+  "performance": 0.25965816616158605,
+  "time_taken": 9.253444355703639,
+  "actor_loss": 0.0015260801893386539,
+  "value_loss": 28.548839245490722,
+  "entropy_loss": -5.334537434955712e-05,
+  "topic_means": {
+    "ds": 0.0,
+    "algo": 0.2177340849353148,
+    "oops": 0.0993821355493313,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.16034911172432323,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 9,
+  "safety_constraints_applied": true
+}

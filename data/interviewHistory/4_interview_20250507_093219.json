@@ -1,0 +1,65 @@
+{
+  "interview_id": "751dfe09-25a2-442d-921f-40393dabb821",
+  "timestamp": "2025-05-07T09:32:19.094091",
+  "total_questions": 3,
+  "total_score": 2.5,
+  "current_interaction": {
+    "question": {
+      "id": "1a935f56-0e6a-41c4-b5f6-ed0e8ce1af96",
+      "topic": null,
+      "subtopic": "Basic SQL",
+      "difficulty": 1.5,
+      "content": "Imagine you have a table named `Customers` with columns `CustomerID`, `FirstName`, `LastName`, and `City`. Write a SQL query to retrieve only the `FirstName` and `LastName` columns from the `Customers` table.",
+      "follow_up_questions": [
+        "What does the asterisk (*) represent when used in a SELECT statement?",
+        "How would you retrieve all columns from the Customers table?",
+        "Why is selecting specific columns better than selecting all columns using `SELECT *`?"
+      ],
+      "evaluation_points": [
+        "Understanding of the SELECT statement.",
+        "Ability to specify column names in the SELECT clause.",
+        "Basic SQL syntax."
+      ],
+      "expected_time_minutes": 3
+    },
+    "answer": "To retrieve only the FirstName and LastName columns from the Customers table, you can use a simple SELECT statement in SQL. This query specifies the columns you want to retrieve from the table, without including other columns such as CustomerID or City. Here's the SQL query to achieve this:\n\nsql\nCopy\nEdit\nSELECT FirstName, LastName\nFROM Customers;\nIn this query, SELECT is used to specify the columns you want to retrieve (FirstName and LastName). The FROM Customers part indicates that the data should be fetched from the Customers table. This query will return a result set containing only the FirstName and LastName for all customers in the table, excluding the other columns like CustomerID and City.",
+    "evaluation": {
+      "score": 10,
+      "feedback": "The answer is perfect. The SQL query is correct and retrieves the requested data. The explanation provided is clear, concise, and accurately describes the functionality of the query. The response demonstrates a strong understanding of basic SQL syntax and the SELECT statement.",
+      "strengths": [
+        "Correct SQL syntax",
+        "Clear and concise explanation",
+        "Demonstrated understanding of the SELECT statement"
+      ],
+      "areas_for_improvement": [],
+      "follow_up_suggestions": [
+        "Consider asking the candidate about using aliases for the column names in the SELECT statement (e.g., `SELECT FirstName AS GivenName, LastName AS Surname FROM Customers;`).",
+        "You could explore slightly more advanced scenarios, such as filtering the results using a WHERE clause (e.g., retrieving first and last names for customers in a specific city)."
+      ]
+    },
+    "time_taken": 238.219
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.8,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [
+        0.8
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 1.5
+  }
+}

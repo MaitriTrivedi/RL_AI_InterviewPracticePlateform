@@ -1,0 +1,64 @@
+{
+  "interview_id": "9efae0b2-817e-44f8-9b76-3b33ee1fe6cf",
+  "timestamp": "2025-05-07T14:33:52.120407",
+  "total_questions": 2,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "08191fbd-52d3-49ae-bdf8-643ffcf1720d",
+      "topic": null,
+      "subtopic": "OSI Model",
+      "difficulty": 1.1,
+      "content": "When you browse a website, like Google.com, which layer of the OSI model is primarily responsible for translating the human-readable domain name (Google.com) into an IP address that computers can understand?",
+      "follow_up_questions": [
+        "What is an IP address?",
+        "Can you name another layer of the OSI model and briefly describe its function?"
+      ],
+      "evaluation_points": [
+        "Application Layer",
+        "DNS (Domain Name System) operates at the Application Layer"
+      ],
+      "expected_time_minutes": 3
+    },
+    "answer": "The **Application Layer** (Layer 7) is primarily responsible for translating the human-readable domain name (like Google.com) into an IP address using **DNS** (Domain Name System).\n",
+    "evaluation": {
+      "score": 10,
+      "feedback": "The answer is accurate, complete, and clearly explains the role of the Application Layer and DNS in translating a domain name to an IP address. It correctly identifies the Application Layer (Layer 7) as the layer where DNS operates, enabling the translation process necessary for accessing websites.",
+      "strengths": [
+        "Technical accuracy: The answer correctly identifies the Application Layer and DNS.",
+        "Completeness: The answer provides the necessary information to answer the question fully.",
+        "Clarity: The explanation is easy to understand and concise."
+      ],
+      "areas_for_improvement": [],
+      "follow_up_suggestions": [
+        "To further demonstrate understanding, you could briefly describe how the DNS query process works (e.g., recursive vs. iterative queries).",
+        "You could also mention how DNS caching contributes to faster website access."
+      ]
+    },
+    "time_taken": 70.328
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0,
+        0.0
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 4.0
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "total_episodes": 1991,
+  "epoch": 4,
+  "epoch_episode": 491,
+  "actor_loss": 0.0017771293075854254,
+  "value_loss": 7.930808062084331,
+  "entropy_loss": -0.00909006177012972,
+  "mean_reward": 0.13786013136482178,
+  "topic_performance": {
+    "ds": 0.0,
+    "algo": 0.0,
+    "oops": 0.13539170624322097,
+    "dbms": 0.0,
+    "os": 0.28304432387422895,
+    "cn": 0.0,
+    "system_design": 0.0
+  }
+}

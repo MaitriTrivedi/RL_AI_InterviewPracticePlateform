@@ -1,0 +1,25 @@
+{
+  "total_episodes": 263,
+  "epoch": 1,
+  "epoch_episode": 263,
+  "question_number": 4,
+  "topic": "oops",
+  "subtopic": "Abstraction",
+  "difficulty": 2.4585910659498853,
+  "performance": 0.13697268869908263,
+  "time_taken": 13.84427432654998,
+  "actor_loss": -0.0006749069644315833,
+  "value_loss": 25.144826187904318,
+  "entropy_loss": -0.007658909722581051,
+  "topic_means": {
+    "ds": 0.0,
+    "algo": 0.4703638692062758,
+    "oops": 0.13192155435532119,
+    "dbms": 0.0,
+    "os": 0.18926575388219558,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 2,
+  "safety_constraints_applied": true
+}

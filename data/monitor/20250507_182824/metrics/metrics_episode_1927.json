@@ -1,0 +1,25 @@
+{
+  "total_episodes": 1927,
+  "epoch": 4,
+  "epoch_episode": 427,
+  "question_number": 4,
+  "topic": "oops",
+  "subtopic": "Inheritance",
+  "difficulty": 1.584,
+  "performance": 0.43948882269910494,
+  "time_taken": 9.285360035603949,
+  "actor_loss": -0.0030696902225126974,
+  "value_loss": 23.561503389855012,
+  "entropy_loss": 0.006905470467643211,
+  "topic_means": {
+    "ds": 0.0,
+    "algo": 0.14268178376567597,
+    "oops": 0.35147338096537545,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 2,
+  "safety_constraints_applied": true
+}

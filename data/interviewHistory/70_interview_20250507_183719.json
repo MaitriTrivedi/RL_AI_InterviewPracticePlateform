@@ -1,0 +1,72 @@
+{
+  "interview_id": "54099a03-a2b1-4262-bdd0-048cfecb2a94",
+  "timestamp": "2025-05-07T18:37:19.526417",
+  "total_questions": 5,
+  "total_score": 1.4,
+  "current_interaction": {
+    "question": {
+      "id": "c0112667-e112-46c1-b424-4f75ef6fe175",
+      "topic": "ds",
+      "subtopic": "Trees",
+      "difficulty": 2.4,
+      "content": "Imagine you're organizing files on your computer. We often use folders within folders to create a hierarchy. Explain how this file system can be represented using a Tree data structure. Specifically, what do the folders and files represent in the tree, and what does the relationship between them represent?",
+      "follow_up_questions": [
+        "What is the name we give to the top-most folder in this tree representation?",
+        "If you wanted to find a specific file within this file system (tree), how might you start your search?"
+      ],
+      "evaluation_points": [
+        "Folders represent nodes in the tree.",
+        "Files represent leaf nodes (or nodes) in the tree.",
+        "Relationship between folders represents parent-child relationships (branches).",
+        "Understanding of hierarchical structure is key"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated that they did not know the answer. This demonstrates a lack of understanding of how tree data structures can be applied to represent file systems. The answer provides no information related to folders as nodes, files as leaf nodes, or the parent-child relationships between folders.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of Tree Data Structures",
+        "Application of Data Structures to Real-World Scenarios (File Systems)"
+      ],
+      "follow_up_suggestions": [
+        "Study the concept of Tree data structures and their properties (nodes, edges, root, leaves).",
+        "Research how hierarchical file systems are commonly implemented using tree-like structures.",
+        "Practice examples of representing simple file systems as trees on paper."
+      ]
+    },
+    "time_taken": 267.701
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.21,
+      "cn": 0.0,
+      "system_design": 0.21
+    },
+    "topic_performances": {
+      "ds": [
+        0.0
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [
+        0.0,
+        0.7
+      ],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.7
+      ]
+    },
+    "current_difficulty": 4.0
+  }
+}

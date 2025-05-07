@@ -1,0 +1,78 @@
+{
+  "interview_id": "e115d62a-b88d-45dd-b126-68b70ff16934",
+  "timestamp": "2025-05-07T12:20:34.126371",
+  "total_questions": 1,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "498bc254-a174-4c21-8b39-73c88a3cab1b",
+      "topic": null,
+      "subtopic": "API Design",
+      "difficulty": 10.0,
+      "content": "Imagine you are designing a highly scalable, distributed API for a global financial institution that handles interbank transfers. This API must support extremely high transaction volumes, low latency (sub-50ms for 99.99% of requests), and absolute data consistency. Furthermore, regulatory requirements mandate detailed audit logs for every transaction and strict compliance with GDPR (including the right to be forgotten). Specifically, design the API endpoints, data structures, and underlying architectural considerations (including queuing, data storage, and consistency mechanisms) needed to support the following functionality:\n\n1.  Initiate a transfer between two banks, specifying the source bank, destination bank, amount, currency, and purpose.\n2.  Query the status of a specific transfer by its unique ID.\n3.  Process a transfer (called by an internal settlement service, not exposed externally).\n4.  Redact all personal data associated with a transfer, adhering to GDPR requirements while preserving the transaction's integrity for auditing purposes. The redaction should not impact the accuracy of financial records.\n\nDescribe the tradeoffs you would consider in designing this API, especially concerning performance, consistency, security, and compliance.",
+      "follow_up_questions": [
+        "How would you handle eventual consistency issues when querying transfer status if the transaction involves multiple microservices?",
+        "Explain your choice of data storage technologies and why they are suitable for this use case. Consider both transactional data and audit logs.",
+        "Describe your approach to security, including authentication, authorization, and data encryption, considering the sensitive nature of the financial data."
+      ],
+      "evaluation_points": [
+        "Understanding of distributed systems concepts like CAP theorem, eventual consistency, and distributed transactions.",
+        "Knowledge of API design best practices including RESTful principles, idempotency, and error handling.",
+        "Familiarity with data storage options like relational databases (SQL), NoSQL databases, and message queues.",
+        "Understanding of security considerations including authentication, authorization, encryption, and compliance (GDPR, PCI DSS).",
+        "Ability to balance performance, consistency, security, and compliance tradeoffs.",
+        "Understanding of regulatory impacts on data retention and right to be forgotten."
+      ],
+      "expected_time_minutes": 60
+    },
+    "answer": "don't know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate responded with \"don't know,\" indicating a complete lack of familiarity with the concepts involved in designing a scalable, distributed API for a financial institution. This response provides no information about API design, distributed systems, data storage, security, compliance, or any of the specific functionalities outlined in the question. The response demonstrates no understanding of the trade-offs involved in building such a system, failing to address any of the evaluation points.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of API design principles (REST, idempotency, error handling)",
+        "Knowledge of distributed systems concepts (CAP theorem, consistency models, distributed transactions)",
+        "Familiarity with data storage options (SQL, NoSQL, message queues) and their tradeoffs",
+        "Understanding of security considerations in financial systems (authentication, authorization, encryption, PCI DSS)",
+        "Knowledge of compliance requirements (GDPR, data retention policies, right to be forgotten)",
+        "Ability to balance performance, consistency, security, and compliance tradeoffs in system design",
+        "Knowledge of queuing systems and their use in asynchronous processing",
+        "Understanding of data redaction techniques and their impact on auditing",
+        "Understanding of the complexities of interbank transfers and settlement processes"
+      ],
+      "follow_up_suggestions": [
+        "Study API design principles and best practices, focusing on RESTful APIs and idempotency.",
+        "Learn about distributed systems concepts, including the CAP theorem, consistency models (eventual vs. strong consistency), and distributed transactions (e.g., two-phase commit).",
+        "Research different data storage options (SQL, NoSQL databases, message queues) and their tradeoffs in terms of performance, consistency, and scalability.",
+        "Study security considerations for financial systems, including authentication, authorization, encryption (at rest and in transit), and compliance standards such as PCI DSS.",
+        "Read about GDPR and other relevant compliance regulations related to data privacy and data retention.",
+        "Consider working through some case studies or design exercises related to building scalable and secure APIs."
+      ]
+    },
+    "time_taken": 27.486
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [
+        0.0
+      ],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 4.0
+  }
+}

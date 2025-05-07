@@ -1,0 +1,15 @@
+{
+  "version": "model_v1_20250507_153406_reward_0.629",
+  "metrics": {
+    "actor_loss": -0.0008645171879541329,
+    "value_loss": 25.33240829779596,
+    "entropy_loss": 0.0031994752544846493,
+    "total_loss": 0.0,
+    "mean_reward": 0.628660047014812,
+    "clip_fraction": 0.0,
+    "approx_kl": 0.0,
+    "difficulty_accuracy": 0.0,
+    "topic_diversity": 0.0
+  },
+  "timestamp": "20250507_153406"
+}

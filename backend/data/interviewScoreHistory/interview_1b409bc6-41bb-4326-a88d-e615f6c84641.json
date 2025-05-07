@@ -1,0 +1,27 @@
+{
+  "interviewId": "1b409bc6-41bb-4326-a88d-e615f6c84641",
+  "startTime": "2025-05-07T06:49:34.559Z",
+  "questions": [
+    {
+      "questionNumber": 3,
+      "difficulty": 8.04057475755569,
+      "score": 0,
+      "topic": "unknown",
+      "timeTaken": 87.037,
+      "timestamp": "2025-05-07T06:49:34.559Z"
+    },
+    {
+      "questionNumber": 4,
+      "difficulty": 9.354622801274918,
+      "score": 0,
+      "topic": "ds",
+      "timeTaken": 98.993,
+      "timestamp": "2025-05-07T06:49:46.641Z"
+    }
+  ],
+  "totalQuestions": 2,
+  "averageScore": 0.0,
+  "averageDifficulty": 8.697598779415305,
+  "totalTime": 186.03,
+  "lastUpdated": "2025-05-07T06:49:46.641Z"
+}

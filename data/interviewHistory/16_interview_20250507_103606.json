@@ -1,0 +1,62 @@
+{
+  "interview_id": "c01fbdc4-900f-4786-a5c6-f70b617ca3e4",
+  "timestamp": "2025-05-07T10:36:06.198602",
+  "total_questions": 5,
+  "total_score": 4.5,
+  "current_interaction": {
+    "question": {
+      "id": "27823f0f-15de-41b9-8de6-4b9e652d01e3",
+      "topic": null,
+      "subtopic": "CPU Scheduling",
+      "difficulty": 3.0,
+      "content": "Imagine you have three tasks running on a CPU: Task A, Task B, and Task C. Task A requires 10 units of CPU time, Task B requires 5 units, and Task C requires 2 units. If you were to use First-Come, First-Served (FCFS) scheduling, and the tasks arrive in the order A, B, then C, what is the average waiting time for each task before they start execution?",
+      "follow_up_questions": [
+        "What is a potential disadvantage of using FCFS scheduling?",
+        "Can you think of a situation where FCFS would be a suitable scheduling algorithm?"
+      ],
+      "evaluation_points": [
+        "Calculating the waiting time for each task (A=0, B=10, C=15)",
+        "Calculating the average waiting time ((0+10+15)/3 = 8.33)",
+        "Understanding the basic principle of FCFS"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The candidate stated that they do not know the answer. This demonstrates a lack of knowledge regarding basic CPU scheduling algorithms, specifically First-Come, First-Served (FCFS). The expected answer would have included calculating the waiting time for each task (A=0, B=10, C=15) and then calculating the average waiting time ((0+10+15)/3 = 8.33).",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of fundamental CPU scheduling algorithms like FCFS.",
+        "Ability to calculate waiting times in scheduling scenarios."
+      ],
+      "follow_up_suggestions": [
+        "Study basic CPU scheduling algorithms, including FCFS, Shortest Job First (SJF), Priority Scheduling, and Round Robin.",
+        "Practice calculating waiting time, turnaround time, and throughput for each algorithm using different arrival times and burst times."
+      ]
+    },
+    "time_taken": 221.238
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0,
+      "null": 0.9
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 3.0
+  }
+}

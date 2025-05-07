@@ -1,0 +1,25 @@
+{
+  "total_episodes": 749,
+  "epoch": 2,
+  "epoch_episode": 249,
+  "question_number": 8,
+  "topic": "algo",
+  "subtopic": "Greedy",
+  "difficulty": 2.558442566407815,
+  "performance": 0.36963106988966254,
+  "time_taken": 8.552346237398307,
+  "actor_loss": -0.0015111581783966072,
+  "value_loss": 28.142959065129947,
+  "entropy_loss": -0.0012323795485924148,
+  "topic_means": {
+    "ds": 0.47069014884938537,
+    "algo": 0.388825639774007,
+    "oops": 0.20059020507263092,
+    "dbms": 0.16461556568618685,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 3,
+  "safety_constraints_applied": true
+}

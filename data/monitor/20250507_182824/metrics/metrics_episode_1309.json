@@ -1,0 +1,25 @@
+{
+  "total_episodes": 1309,
+  "epoch": 3,
+  "epoch_episode": 309,
+  "question_number": 8,
+  "topic": "ds",
+  "subtopic": "Trees",
+  "difficulty": 1.584,
+  "performance": 0.08684639783303695,
+  "time_taken": 15.106671405751792,
+  "actor_loss": 0.001899776657787032,
+  "value_loss": 32.65288389826146,
+  "entropy_loss": 0.0042212352406462966,
+  "topic_means": {
+    "ds": 0.0729609979077564,
+    "algo": 0.35449022746177067,
+    "oops": 0.12048478838340947,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.15002963547465611,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 5,
+  "safety_constraints_applied": true
+}

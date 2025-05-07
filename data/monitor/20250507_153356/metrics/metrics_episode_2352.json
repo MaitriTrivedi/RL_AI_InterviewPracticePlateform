@@ -1,0 +1,25 @@
+{
+  "total_episodes": 2352,
+  "epoch": 5,
+  "epoch_episode": 352,
+  "question_number": 10,
+  "topic": "oops",
+  "subtopic": "Design Patterns",
+  "difficulty": 1.584,
+  "performance": 0.3359989635077257,
+  "time_taken": 9.511418965791439,
+  "actor_loss": 0.09631626935017934,
+  "value_loss": 24.07005463532589,
+  "entropy_loss": 0.009902618892662845,
+  "topic_means": {
+    "ds": 0.18982679159307148,
+    "algo": 0.13121469431011465,
+    "oops": 0.24885768880073084,
+    "dbms": 0.0,
+    "os": 0.23097626025626183,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 9,
+  "safety_constraints_applied": true
+}

@@ -1,0 +1,88 @@
+{
+  "interview_id": "e115d62a-b88d-45dd-b126-68b70ff16934",
+  "timestamp": "2025-05-07T12:21:38.494908",
+  "total_questions": 6,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "71e25df7-f25a-4e88-8725-2c9f0d412407",
+      "topic": null,
+      "subtopic": "Polymorphism",
+      "difficulty": 10.0,
+      "content": "Consider a large-scale distributed system for processing financial transactions. Each transaction type (e.g., stock trade, wire transfer, credit card purchase) requires different validation rules, security protocols, and logging formats. To manage this complexity, a base `Transaction` class is defined with abstract methods for `validate`, `process`, and `log`. Each transaction type then inherits from this base class and implements these methods accordingly. Now, imagine a scenario where a new regulatory requirement mandates a pre-processing step involving complex data masking and encryption *before* the `validate` method is invoked for *certain* transaction types (e.g., wire transfers and credit card purchases involving international transfers). This pre-processing logic is highly sensitive and requires access to a secure hardware security module (HSM) accessible only via a specific API.\n\nDiscuss how you would design and implement this pre-processing requirement leveraging polymorphism, while adhering to the following constraints:\n\n1.  Minimize code duplication across transaction type implementations.\n2.  Maintain the existing polymorphic structure of the `Transaction` class hierarchy.\n3.  Ensure high performance, considering the latency associated with the HSM interaction. The HSM interaction should ideally occur only when necessary.\n4.  Provide a mechanism to dynamically enable/disable the pre-processing step for specific transaction types without requiring code changes or redeployments of individual transaction implementations.\n5.  Consider how your solution would handle error scenarios during the HSM interaction, and how you would gracefully degrade if the HSM is temporarily unavailable.",
+      "follow_up_questions": [
+        "How would you implement a configuration mechanism to dynamically enable/disable the pre-processing step without code changes? What considerations need to be made for thread safety and concurrent access to this configuration?",
+        "Explain how you would unit test your solution, specifically focusing on testing the interaction with the HSM (consider mocking strategies) and handling error scenarios.",
+        "What are the trade-offs between using inheritance and composition in this scenario, and how would you defend your chosen approach?"
+      ],
+      "evaluation_points": [
+        "Demonstrated understanding of polymorphism and its limitations.",
+        "Efficient handling of cross-cutting concerns.",
+        "Awareness of performance implications of HSM interaction and mitigation strategies.",
+        "Ability to design for flexibility and maintainability.",
+        "Consideration of error handling and graceful degradation.",
+        "Knowledge of design patterns applicable to the problem (e.g., Decorator, Strategy, Template Method).",
+        "Understanding of configuration management and thread safety.",
+        "Awareness of testing techniques including mocking external dependencies."
+      ],
+      "expected_time_minutes": 45
+    },
+    "answer": "don't know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate responded \"don't know\", indicating a complete lack of understanding or inability to articulate a solution to the problem. This demonstrates a significant gap in knowledge regarding object-oriented design principles, handling cross-cutting concerns, and strategies for dealing with external dependencies like HSMs. The response fails to address any of the specific constraints outlined in the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of polymorphism and its application in complex scenarios.",
+        "Knowledge of design patterns like Decorator, Strategy, and Template Method.",
+        "Ability to handle cross-cutting concerns efficiently.",
+        "Understanding of performance implications of interacting with external services (like HSMs) and mitigation strategies.",
+        "Design for flexibility and maintainability in a distributed system.",
+        "Implementation of error handling and graceful degradation in case of HSM unavailability.",
+        "Configuration management and dynamic feature toggling.",
+        "Testing strategies including mocking external dependencies.",
+        "Thread safety considerations in a concurrent environment."
+      ],
+      "follow_up_suggestions": [
+        "Study common design patterns like Decorator, Strategy, Template Method, and understand their applicability in various scenarios.",
+        "Research techniques for handling cross-cutting concerns such as aspect-oriented programming or custom decorators.",
+        "Learn about strategies for dealing with external dependencies and mitigating performance bottlenecks, especially when interacting with services like HSMs.",
+        "Practice designing systems with a focus on flexibility, maintainability, and error handling.",
+        "Review the concepts of polymorphism and inheritance in object-oriented programming.",
+        "Explore techniques for implementing feature toggles or dynamic configuration to enable/disable functionalities without code changes."
+      ]
+    },
+    "time_taken": 92.21
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "algo": [
+        0.0
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [
+        0.0
+      ],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 4.0
+  }
+}

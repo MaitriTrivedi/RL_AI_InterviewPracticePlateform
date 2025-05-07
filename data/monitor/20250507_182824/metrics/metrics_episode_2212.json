@@ -1,0 +1,25 @@
+{
+  "total_episodes": 2212,
+  "epoch": 5,
+  "epoch_episode": 212,
+  "question_number": 2,
+  "topic": "ds",
+  "subtopic": "Linked Lists",
+  "difficulty": 3.4618197025666175,
+  "performance": 0.4606712389422189,
+  "time_taken": 12.219932867085436,
+  "actor_loss": -0.00346511897696349,
+  "value_loss": 19.261927308538255,
+  "entropy_loss": 0.005586775279085868,
+  "topic_means": {
+    "ds": 0.4606712389422189,
+    "algo": 0.15393990085553916,
+    "oops": 0.0,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 1,
+  "safety_constraints_applied": true
+}

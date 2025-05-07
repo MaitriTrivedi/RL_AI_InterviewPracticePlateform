@@ -100,4 +100,21 @@ export const rlAgentApi = {
   },
 };
 
+export const scoreHistoryApi = {
+  saveScore: async (interviewId: string, questionData: {
+    questionNumber: number,
+    difficulty: number,
+    score: number,
+    topic: string,
+    timeTaken: number
+  }) => {
+    const response = await api.post('/interview/score-history', {
+      interviewId,
+      ...questionData,
+      timestamp: new Date().toISOString()
+    });
+    return response.data;
+  }
+};
+
 export default api; 

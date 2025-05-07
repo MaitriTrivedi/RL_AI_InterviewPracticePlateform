@@ -1,0 +1,78 @@
+{
+  "interview_id": "54099a03-a2b1-4262-bdd0-048cfecb2a94",
+  "timestamp": "2025-05-07T18:38:30.684245",
+  "total_questions": 9,
+  "total_score": 2.0999999999999996,
+  "current_interaction": {
+    "question": {
+      "id": "815caaea-fae0-4747-bf53-0d5b412d83a0",
+      "topic": "oops",
+      "subtopic": "Design Patterns",
+      "difficulty": 2.64,
+      "content": "Explain the concept of the Singleton Design Pattern and provide a simple, real-world scenario where it might be useful. What problem does the Singleton pattern solve?",
+      "follow_up_questions": [
+        "What are some potential drawbacks of using the Singleton pattern?",
+        "Can you give a basic code example (in any language) of a Singleton class?"
+      ],
+      "evaluation_points": [
+        "Ensuring only one instance of a class exists.",
+        "Global point of access to that instance.",
+        "Example scenario (e.g., logging, configuration manager).",
+        "Understanding the problem of uncontrolled instantiation."
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "don't know the asnwer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they do not know the answer. As such, they demonstrated no understanding of the Singleton pattern, its purpose, or its applications.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the Singleton Design Pattern",
+        "Explaining the purpose of design patterns in software development",
+        "Providing real-world examples of design pattern usage"
+      ],
+      "follow_up_suggestions": [
+        "Study the Singleton Design Pattern from resources like 'Design Patterns: Elements of Reusable Object-Oriented Software' (Gang of Four book) or online tutorials.",
+        "Practice implementing the Singleton pattern in a programming language you are familiar with.",
+        "Research other creational design patterns and compare/contrast them with the Singleton pattern."
+      ]
+    },
+    "time_taken": 339.239
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.357,
+      "cn": 0.0,
+      "system_design": 0.21
+    },
+    "topic_performances": {
+      "ds": [
+        0.0,
+        0.0
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [
+        0.0,
+        0.0
+      ],
+      "os": [
+        0.0,
+        0.7,
+        0.7
+      ],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.7
+      ]
+    },
+    "current_difficulty": 4.0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "total_episodes": 2176,
+  "epoch": 5,
+  "epoch_episode": 176,
+  "question_number": 10,
+  "topic": "algo",
+  "subtopic": "Backtracking",
+  "difficulty": 1.584,
+  "performance": 0.06765102710242574,
+  "time_taken": 17.697545110996952,
+  "actor_loss": 0.10988184203218058,
+  "value_loss": 29.911988049428665,
+  "entropy_loss": 0.009343412947407849,
+  "topic_means": {
+    "ds": 0.17134281815562027,
+    "algo": 0.20951252222173075,
+    "oops": 0.15766712954199325,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 8,
+  "safety_constraints_applied": true
+}

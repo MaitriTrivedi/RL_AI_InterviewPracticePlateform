@@ -1,0 +1,25 @@
+{
+  "total_episodes": 13,
+  "epoch": 1,
+  "epoch_episode": 13,
+  "question_number": 8,
+  "topic": "oops",
+  "subtopic": "Classes",
+  "difficulty": 2.4151671016080245,
+  "performance": 0.11497261235243666,
+  "time_taken": 16.48705446418112,
+  "actor_loss": -0.02091913845291382,
+  "value_loss": 46.88300877076126,
+  "entropy_loss": -0.014273833678880896,
+  "topic_means": {
+    "ds": 0.1462079858991056,
+    "algo": 0.41457296243312997,
+    "oops": 0.10215881816007955,
+    "dbms": 0.0,
+    "os": 0.1459857725606309,
+    "cn": 0.0,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 4,
+  "safety_constraints_applied": true
+}

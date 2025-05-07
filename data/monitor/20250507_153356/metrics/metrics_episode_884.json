@@ -1,0 +1,25 @@
+{
+  "total_episodes": 884,
+  "epoch": 2,
+  "epoch_episode": 384,
+  "question_number": 2,
+  "topic": "algo",
+  "subtopic": "Sorting",
+  "difficulty": 4.429121557045146,
+  "performance": 0.13856044813943189,
+  "time_taken": 11.037804583906658,
+  "actor_loss": 0.0030240778643718597,
+  "value_loss": 22.226651146922883,
+  "entropy_loss": -0.0017137070420328846,
+  "topic_means": {
+    "ds": 0.0,
+    "algo": 0.13856044813943189,
+    "oops": 0.0,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.0,
+    "system_design": 0.1430405190150489
+  },
+  "consecutive_low_scores": 1,
+  "safety_constraints_applied": true
+}

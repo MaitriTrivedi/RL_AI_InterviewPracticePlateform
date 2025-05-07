@@ -1,0 +1,25 @@
+{
+  "total_episodes": 1789,
+  "epoch": 4,
+  "epoch_episode": 289,
+  "question_number": 8,
+  "topic": "ds",
+  "subtopic": "Graphs",
+  "difficulty": 2.3988868745548073,
+  "performance": 0.08482574975100642,
+  "time_taken": 12.702427212289725,
+  "actor_loss": 0.005518611026872447,
+  "value_loss": 24.30259493951773,
+  "entropy_loss": 0.007864451882063415,
+  "topic_means": {
+    "ds": 0.11393999823071807,
+    "algo": 0.26627181123643073,
+    "oops": 0.2133557308998829,
+    "dbms": 0.0,
+    "os": 0.0,
+    "cn": 0.22509383047869844,
+    "system_design": 0.0
+  },
+  "consecutive_low_scores": 6,
+  "safety_constraints_applied": true
+}

@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
-import { rlAgentApi } from '../services/api';
+import { rlAgentApi, scoreHistoryApi } from '../services/api';
 import Layout from '../components/layout/Layout';
 import { Interview, Question, SubmitAnswerResponse } from '../types';
 import axios from 'axios';
@@ -69,6 +69,19 @@ const InterviewPage: React.FC = () => {
       );
 
       const data = response.data as SubmitAnswerResponse;
+      
+      // Save score history
+      try {
+        await scoreHistoryApi.saveScore(state.currentInterview.interviewId, {
+          questionNumber: state.currentInterview.currentQuestionIdx + 1,
+          difficulty: state.currentInterview.currentQuestion.difficulty,
+          score: data.evaluation.score / 10,
+          topic: state.currentInterview.currentQuestion.topic || 'unknown',
+          timeTaken
+        });
+      } catch (scoreErr) {
+        console.error('Error saving score history:', scoreErr);
+      }
       
       // Check if interview is complete
       if (data.next_state.interview_complete) {
