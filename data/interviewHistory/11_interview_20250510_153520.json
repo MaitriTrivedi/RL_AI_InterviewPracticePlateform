@@ -1,0 +1,67 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:35:20.947078",
+  "total_questions": 0,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "7facd974-a71d-4fe3-a497-4f89ef8f933c",
+      "topic": "oops",
+      "subtopic": "Abstraction",
+      "difficulty": 3.5,
+      "content": "Imagine you are building a system to process payments. You need to support different payment gateways like Stripe and PayPal. Using abstraction, how would you design your system so that adding a new payment gateway in the future requires minimal code changes? Specifically, define an abstract class or interface and describe how Stripe and PayPal would implement it.",
+      "follow_up_questions": [
+        "What are the benefits of using abstraction in this scenario?",
+        "How would you handle payment-specific details (e.g., Stripe's charges vs. PayPal's fees) while maintaining the abstraction?"
+      ],
+      "evaluation_points": [
+        "Identification of the need for an abstract PaymentGateway class/interface.",
+        "Clear implementation of Stripe/PayPal as concrete classes implementing the abstract PaymentGateway, overriding abstract methods.",
+        "Demonstration of understanding that the core payment processing logic remains consistent regardless of the underlying gateway.",
+        "Basic understanding of method overriding."
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "afasc",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer 'afasc' demonstrates no understanding of the problem, object-oriented programming principles, or the concept of abstraction. It doesn't address any of the requirements outlined in the question. There is no attempt to define an abstract class/interface, implement concrete classes for Stripe and PayPal, or explain how the core payment processing logic would remain consistent. It is essentially a null response.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of object-oriented programming principles, particularly abstraction and interfaces/abstract classes.",
+        "Ability to apply these principles to design a system that supports multiple payment gateways.",
+        "Implementation of concrete classes that inherit from or implement an abstract class/interface.",
+        "Understanding of method overriding.",
+        "Communication skills to clearly explain technical concepts."
+      ],
+      "follow_up_suggestions": [
+        "Review the concepts of abstraction, interfaces, and abstract classes in object-oriented programming.",
+        "Work through examples of implementing interfaces or abstract classes in a language like Java, Python, or C#.",
+        "Practice designing systems that utilize these principles to solve real-world problems.",
+        "Research common design patterns like the Strategy pattern, which is relevant to this problem."
+      ]
+    },
+    "time_taken": 2.883
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.5
+  }
+}

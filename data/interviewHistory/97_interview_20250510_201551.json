@@ -1,0 +1,69 @@
+{
+  "interview_id": "3c57f49a-9d3b-42e6-bc89-c7b0b9fccfd9",
+  "timestamp": "2025-05-10T20:15:51.224394",
+  "total_questions": 6,
+  "total_score": 4.2,
+  "current_interaction": {
+    "question": {
+      "id": "85c61180-2d9b-4a6a-958f-3f451eea5163",
+      "topic": "algo",
+      "subtopic": "Sorting",
+      "difficulty": 6.972117779755471,
+      "content": "You are building a real-time analytics platform that processes a massive stream of user activity events. Each event contains a timestamp (in milliseconds since epoch), user ID, and event type. Your task is to design a system that can efficiently calculate and continuously update the top K most active users within a sliding time window of the last N milliseconds. Assume K is relatively small (e.g., K <= 100) but N is significantly large (e.g., N = 60,000, representing a 1-minute window). The event stream arrives at a rate of millions of events per second. Describe your approach, focusing on the data structures and algorithms used for maintaining and updating the top K active users, and explain how you handle the high throughput and large time window. Consider memory usage and processing latency. Specifically, how do you efficiently evict expired events while maintaining the sorted order for top K tracking, and how would you distribute the load across multiple machines if necessary?",
+      "follow_up_questions": [
+        "How would you handle potential ties in activity counts among users? Which users should be prioritized in the top K?",
+        "What are the tradeoffs between different data structures you considered (e.g., priority queue, sorted list, hash map combined with tree structure) regarding time complexity, space complexity, and implementation complexity?",
+        "How would you monitor the performance of your system (e.g., event processing latency, memory consumption, CPU utilization) and detect potential bottlenecks?"
+      ],
+      "evaluation_points": [
+        "Use of a sliding window technique to process events within the last N milliseconds.",
+        "Efficient data structures such as priority queue (heap), sorted list, or a combination of hash map and a sorted tree (e.g., TreeMap) to maintain and update the top K active users.",
+        "Handling high throughput by employing techniques like sharding/partitioning the event stream and distributing the workload across multiple machines.",
+        "Efficient eviction of expired events based on timestamp using appropriate data structures and algorithms.",
+        "Consideration of time and space complexity of different approaches and the trade-offs involved."
+      ],
+      "expected_time_minutes": 45
+    },
+    "answer": "i love you ",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The provided answer \"i love you\" is completely irrelevant and does not address the technical question. It demonstrates no understanding of the problem or the required technical concepts. It fails to address any aspect of the problem, including data structures, algorithms, high throughput handling, eviction of expired events, or distributed processing.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of real-time analytics platforms.",
+        "Knowledge of sliding window techniques.",
+        "Proficiency in data structures (priority queue, sorted list, hash map, sorted tree).",
+        "Understanding of algorithms for maintaining top K elements.",
+        "Experience with high throughput processing and distributed systems.",
+        "Ability to analyze time and space complexity."
+      ],
+      "follow_up_suggestions": [
+        "Study relevant data structures and algorithms for maintaining top K elements in a stream.",
+        "Research distributed stream processing frameworks like Apache Kafka, Apache Flink, or Apache Spark Streaming.",
+        "Practice designing systems for real-time analytics with high throughput and low latency requirements."
+      ]
+    },
+    "time_taken": 430.744
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

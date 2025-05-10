@@ -10,13 +10,15 @@ import {
   Stack,
   Divider,
   Tooltip,
-  LinearProgress
+  LinearProgress,
+  Grid
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from '../contexts/AppContext';
 import { rlAgentApi, scoreHistoryApi } from '../services/api';
 import Layout from '../components/layout/Layout';
 import { Interview, Question, SubmitAnswerResponse } from '../types';
+import { ScoreHistoryPanel } from '../components/ScoreHistoryPanel';
 import axios from 'axios';
 
 // Add difficulty level helper
@@ -46,6 +48,13 @@ const InterviewPage: React.FC = () => {
   const [answer, setAnswer] = useState('');
   const [isSubmitting, setSubmitting] = useState(false);
   const [startTime] = useState(Date.now());
+  const [scoreHistory, setScoreHistory] = useState<Array<{
+    questionNumber: number;
+    difficulty: number;
+    score: number;
+    topic: string;
+    timeTaken: number;
+  }>>([]);
 
   useEffect(() => {
     // Check for active interview
@@ -71,14 +80,18 @@ const InterviewPage: React.FC = () => {
       const data = response.data as SubmitAnswerResponse;
       
       // Save score history
+      const newScore = {
+        questionNumber: state.currentInterview.currentQuestionIdx + 1,
+        difficulty: state.currentInterview.currentQuestion.difficulty,
+        score: data.evaluation.score / 10,
+        topic: state.currentInterview.currentQuestion.topic || 'unknown',
+        timeTaken
+      };
+      
+      setScoreHistory(prev => [...prev, newScore]);
+      
       try {
-        await scoreHistoryApi.saveScore(state.currentInterview.interviewId, {
-          questionNumber: state.currentInterview.currentQuestionIdx + 1,
-          difficulty: state.currentInterview.currentQuestion.difficulty,
-          score: data.evaluation.score / 10,
-          topic: state.currentInterview.currentQuestion.topic || 'unknown',
-          timeTaken
-        });
+        await scoreHistoryApi.saveScore(state.currentInterview.interviewId, newScore);
       } catch (scoreErr) {
         console.error('Error saving score history:', scoreErr);
       }
@@ -89,169 +102,123 @@ const InterviewPage: React.FC = () => {
         navigate('/interview/complete');
         return;
       }
-
+      
       // Update interview state with next question
-      if (state.currentInterview) {
-        const updatedInterview: Interview = {
+      if (state.currentInterview && data.next_state.next_question) {
+        setCurrentInterview({
           ...state.currentInterview,
           currentQuestion: data.next_state.next_question,
-          questions: [...state.currentInterview.questions, data.next_state.next_question],
           currentQuestionIdx: state.currentInterview.currentQuestionIdx + 1,
-          stats: data.current_state.session_stats
-        };
-        setCurrentInterview(updatedInterview);
+          difficulty: data.next_state.next_question.difficulty
+        });
         setAnswer('');
       }
-      
     } catch (err) {
-      console.error('Error submitting answer:', err);
-      if (axios.isAxiosError(err) && err.response?.status === 404) {
-        localStorage.removeItem('interviewId'); // Clear invalid session
-        navigate('/');
-      } else {
-        setError(err instanceof Error ? err.message : 'Failed to submit answer');
-      }
+      setError(err instanceof Error ? err.message : 'Failed to submit answer');
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (!state.currentInterview?.currentQuestion) {
+  if (!state.currentInterview) {
     return (
       <Layout>
-        <Typography>No active interview found. Please start a new interview.</Typography>
-        <Button variant="contained" onClick={() => navigate('/')}>
-          Go to Home
-        </Button>
+        <Box display="flex" justifyContent="center" alignItems="center" minHeight="60vh">
+          <CircularProgress />
+        </Box>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
-        {/* Question Section */}
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <Stack direction="row" spacing={2} mb={2} alignItems="center">
-            <Typography variant="h6">
-              Question {state.currentInterview.currentQuestionIdx + 1} of {state.currentInterview.maxQuestions}
-            </Typography>
-            <Tooltip title="Question difficulty level" arrow>
-              <Box sx={{ minWidth: 200 }}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip 
-                    label={`Difficulty: ${state.currentInterview.currentQuestion.difficulty.toFixed(1)}/10`} 
-                    color={getDifficultyInfo(state.currentInterview.currentQuestion.difficulty).color}
-                    variant="filled"
-                  />
-                  <Chip 
-                    label={getDifficultyInfo(state.currentInterview.currentQuestion.difficulty).label}
-                    color={getDifficultyInfo(state.currentInterview.currentQuestion.difficulty).color}
-                    variant="outlined"
-                  />
-                </Stack>
-                <LinearProgress
-                  variant="determinate"
-                  value={state.currentInterview.currentQuestion.difficulty * 10}
-                  color={getDifficultyProgressColor(state.currentInterview.currentQuestion.difficulty)}
-                  sx={{ 
-                    mt: 1, 
-                    height: 8, 
-                    borderRadius: 4,
-                    bgcolor: 'grey.200'
+      <Grid container spacing={3}>
+        {/* Main Interview Area */}
+        <Grid item xs={12} md={8}>
+          <Box sx={{ maxWidth: '100%', mx: 'auto', p: 3 }}>
+            {/* Question Section */}
+            <Paper sx={{ p: 3, mb: 3 }}>
+              <Stack direction="row" spacing={2} mb={2} alignItems="center">
+                <Typography variant="h6">
+                  Question {state.currentInterview.currentQuestionIdx + 1}
+                </Typography>
+                <Tooltip title="Question difficulty level" arrow>
+                  <Box sx={{ minWidth: 200 }}>
+                    <Stack direction="row" spacing={1} alignItems="center">
+                      <Chip 
+                        label={`Difficulty: ${state.currentInterview.currentQuestion.difficulty.toFixed(1)}/10`} 
+                        color={getDifficultyInfo(state.currentInterview.currentQuestion.difficulty).color}
+                        variant="filled"
+                      />
+                      <Chip 
+                        label={getDifficultyInfo(state.currentInterview.currentQuestion.difficulty).label}
+                        color={getDifficultyInfo(state.currentInterview.currentQuestion.difficulty).color}
+                        variant="outlined"
+                      />
+                    </Stack>
+                    <LinearProgress
+                      variant="determinate"
+                      value={state.currentInterview.currentQuestion.difficulty * 10}
+                      color={getDifficultyProgressColor(state.currentInterview.currentQuestion.difficulty)}
+                      sx={{ 
+                        mt: 1, 
+                        height: 8, 
+                        borderRadius: 4,
+                        bgcolor: 'grey.200'
+                      }}
+                    />
+                  </Box>
+                </Tooltip>
+              </Stack>
+              
+              <Divider sx={{ mb: 3 }} />
+              
+              <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 2 }}>
+                {state.currentInterview.currentQuestion.content}
+              </Typography>
+              
+              <TextField
+                fullWidth
+                multiline
+                rows={6}
+                variant="outlined"
+                placeholder="Type your answer here..."
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                disabled={isSubmitting}
+                sx={{ mb: 2 }}
+              />
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 2 }}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    localStorage.removeItem('interviewId');
+                    navigate('/interview/complete');
                   }}
-                />
+                >
+                  End Interview
+                </Button>
+
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSubmitAnswer}
+                  disabled={isSubmitting || !answer.trim()}
+                >
+                  {isSubmitting ? <CircularProgress size={24} /> : 'Submit Answer'}
+                </Button>
               </Box>
-            </Tooltip>
-          </Stack>
-          
-          <Divider sx={{ mb: 3 }} />
-          
-          <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap', mb: 2 }}>
-            {state.currentInterview.currentQuestion.content}
-          </Typography>
-          
-          {/* Follow-up Questions */}
-          {state.currentInterview.currentQuestion.follow_up_questions && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="subtitle2" gutterBottom>
-                Follow-up Questions:
-              </Typography>
-              <ul>
-                {state.currentInterview.currentQuestion.follow_up_questions.map((q, idx) => (
-                  <li key={idx}>
-                    <Typography variant="body2">{q}</Typography>
-                  </li>
-                ))}
-              </ul>
-            </Box>
-          )}
-
-          {/* Evaluation Points */}
-          {state.currentInterview.currentQuestion.evaluation_points && (
-            <Box sx={{ mt: 2 }}>
-              <Typography variant="subtitle2" gutterBottom>
-                Key Points to Address:
-              </Typography>
-              <ul>
-                {state.currentInterview.currentQuestion.evaluation_points.map((point, idx) => (
-                  <li key={idx}>
-                    <Typography variant="body2">{point}</Typography>
-                  </li>
-                ))}
-              </ul>
-            </Box>
-          )}
-        </Paper>
-
-        {/* Answer Section */}
-        <Paper sx={{ p: 3, mb: 3 }}>
-          <TextField
-            fullWidth
-            multiline
-            rows={6}
-            variant="outlined"
-            label="Your Answer"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            disabled={isSubmitting}
-            sx={{ mb: 2 }}
-          />
-          
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
-              Topic: {state.currentInterview.currentQuestion.topic} - {state.currentInterview.currentQuestion.subtopic}
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={handleSubmitAnswer}
-              disabled={!answer.trim() || isSubmitting}
-            >
-              {isSubmitting ? 'Submitting...' : 'Submit Answer'}
-            </Button>
+            </Paper>
           </Box>
-        </Paper>
+        </Grid>
 
-        {/* Loading Overlay */}
-        {state.loading && (
-          <Box
-            sx={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              bgcolor: 'rgba(0, 0, 0, 0.5)',
-              zIndex: 9999,
-            }}
-          >
-            <CircularProgress />
-          </Box>
-        )}
-      </Box>
+        {/* Score History Panel */}
+        <Grid item xs={12} md={4}>
+          <ScoreHistoryPanel scores={scoreHistory} />
+        </Grid>
+      </Grid>
     </Layout>
   );
 };

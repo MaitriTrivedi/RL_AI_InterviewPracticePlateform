@@ -18,12 +18,11 @@ import { rlAgentApi } from '../services/api';
 import { INTERVIEW_CONFIG } from '../config/interview';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Layout from '../components/layout/Layout';
-import { Interview, Question } from '../types';
+import { Interview, Question, SessionStats } from '../types';
 
 interface FormData {
   topic: string;
   difficulty: number;
-  maxQuestions: number;
 }
 
 const InterviewSetupPage: React.FC = () => {
@@ -31,9 +30,8 @@ const InterviewSetupPage: React.FC = () => {
   const { state, setCurrentInterview, setLoading, setError } = useAppContext();
   
   const [formData, setFormData] = useState<FormData>({
-    topic: INTERVIEW_CONFIG.DEFAULT_TOPIC,
-    difficulty: INTERVIEW_CONFIG.DEFAULT_DIFFICULTY,
-    maxQuestions: INTERVIEW_CONFIG.MAX_QUESTIONS
+    topic: 'ds',
+    difficulty: 5
   });
 
   const handleStartInterview = async () => {
@@ -41,8 +39,7 @@ const InterviewSetupPage: React.FC = () => {
     try {
       const response = await rlAgentApi.createInterview(
         formData.topic,
-        formData.difficulty,
-        formData.maxQuestions
+        formData.difficulty
       );
 
       const data = response.data;
@@ -58,6 +55,17 @@ const InterviewSetupPage: React.FC = () => {
         subtopic: data.first_question.subtopic,
         expected_time: data.first_question.expected_time_minutes
       };
+
+      // Transform session stats to match our SessionStats interface
+      const sessionStats: SessionStats = {
+        questions_asked: data.session_stats.questions_asked,
+        average_performance: data.session_stats.average_performance,
+        current_topic: data.session_stats.current_topic,
+        current_subtopic: data.session_stats.current_subtopic,
+        current_difficulty: data.session_stats.current_difficulty,
+        topic_performances: data.session_stats.topic_performances || {},
+        learning_progress: data.session_stats.learning_progress || {}
+      };
   
       // Create interview object
       const newInterview: Interview = {
@@ -65,12 +73,11 @@ const InterviewSetupPage: React.FC = () => {
         userId: Date.now().toString(), // Generate temporary user ID
         currentQuestion: firstQuestion,
         currentQuestionIdx: 0,
-        maxQuestions: data.session_stats.max_questions || formData.maxQuestions,
         questions: [firstQuestion],
         answers: [],
         status: 'in_progress',
         difficulty: data.initial_difficulty,
-        stats: data.session_stats
+        stats: sessionStats
       };
       
       // Store session ID in localStorage for persistence
@@ -130,17 +137,13 @@ const InterviewSetupPage: React.FC = () => {
                 <Slider
                   value={formData.difficulty}
                   onChange={handleDifficultyChange}
-                  min={1}
-                  max={10}
+                  min={INTERVIEW_CONFIG.DIFFICULTY_RANGE.MIN}
+                  max={INTERVIEW_CONFIG.DIFFICULTY_RANGE.MAX}
                   step={1}
                   marks
                   valueLabelDisplay="auto"
                 />
               </Box>
-
-              <Typography variant="body2" color="text.secondary">
-                Number of Questions: {formData.maxQuestions}
-              </Typography>
             </Stack>
           </Paper>
 

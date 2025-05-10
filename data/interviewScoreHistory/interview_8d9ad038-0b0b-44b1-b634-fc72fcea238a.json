@@ -1,0 +1,19 @@
+{
+  "interviewId": "8d9ad038-0b0b-44b1-b634-fc72fcea238a",
+  "startTime": "2025-05-10T15:20:16.121Z",
+  "questions": [
+    {
+      "questionNumber": 1,
+      "difficulty": 3,
+      "score": 0.9,
+      "topic": "dbms",
+      "timeTaken": 46.46,
+      "timestamp": "2025-05-10T15:20:16.121Z"
+    }
+  ],
+  "totalQuestions": 1,
+  "averageScore": 0.9,
+  "averageDifficulty": 3.0,
+  "totalTime": 46.46,
+  "lastUpdated": "2025-05-10T15:20:16.121Z"
+}

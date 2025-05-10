@@ -1,0 +1,65 @@
+{
+  "interview_id": "7f1ba7f4-c2b6-4a07-92a1-845b04fe8cd7",
+  "timestamp": "2025-05-10T20:26:31.847272",
+  "total_questions": 0,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "6856ff41-473f-4560-9e41-96de9a6e24b1",
+      "topic": "ds",
+      "subtopic": "Stacks and Queues",
+      "difficulty": 2.0,
+      "content": "Explain the difference between a Stack and a Queue using a simple analogy. For example, you could use a stack of plates and a line at a grocery store. Describe how items are added and removed in each data structure.",
+      "follow_up_questions": [
+        "Which data structure, Stack or Queue, would be more appropriate for processing tasks in the order they were received?",
+        "Give another real-world example of where a Stack could be used."
+      ],
+      "evaluation_points": [
+        "Stack: LIFO (Last-In, First-Out)",
+        "Queue: FIFO (First-In, First-Out)",
+        "Correct analogy explaining addition and removal in both data structures"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "**Stack**: Think of a stack of plates. Plates are added to the top, and when you need one, you take the top plate. This follows the **LIFO (Last In, First Out)** principle \u2014 the last plate added is the first one to be removed.\n\n**Queue**: Imagine a line at a grocery store. People join the line at the back, and the person at the front of the line is served first. This follows the **FIFO (First In, First Out)** principle \u2014 the first person to enter the line is the first to leave.\n\nIn summary:\n\n* **Stack**: LIFO \u2014 \"Last In, First Out\" (plates).\n* **Queue**: FIFO \u2014 \"First In, First Out\" (grocery line).\n",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer is excellent. It clearly and accurately explains the difference between a Stack and a Queue using appropriate analogies. The LIFO and FIFO principles are correctly identified and related to the examples. The explanation is easy to understand and comprehensive, addressing all key aspects of the question. Minor improvement could be to explicitly mention terms like 'push' and 'pop' for the stack and 'enqueue' and 'dequeue' for the queue, to show a slightly more technical understanding.",
+      "strengths": [
+        "Clear and concise explanation.",
+        "Correctly identifies and explains LIFO and FIFO.",
+        "Uses relevant and easily understandable analogies.",
+        "Accurately describes how items are added and removed in each data structure."
+      ],
+      "areas_for_improvement": [
+        "Could include more technical terms like 'push', 'pop', 'enqueue', and 'dequeue'."
+      ],
+      "follow_up_suggestions": [
+        "Explain how Stacks and Queues are implemented using arrays or linked lists.",
+        "Give real-world examples of where Stacks and Queues are used in software development (e.g., function call stack, print queue)."
+      ]
+    },
+    "time_taken": 31.185
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

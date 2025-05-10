@@ -1,4 +1,5 @@
 import numpy as np
+import torch
 
 def relu(x):
     """ReLU activation function."""
@@ -79,27 +80,33 @@ class Layer:
             return np.zeros_like(self.input)
 
 class GaussianPolicy:
-    def __init__(self, state_dim, action_dim, hidden_dim=64):
+    def __init__(self, state_dim, action_dim, hidden_dim):
         """Initialize policy network."""
         self.state_dim = state_dim
         self.action_dim = action_dim
         self.hidden_dim = hidden_dim
         
-        # Initialize weights and biases
-        self.W1 = np.random.randn(state_dim, hidden_dim) / np.sqrt(state_dim)
+        # Initialize weights with Xavier initialization
+        scale = np.sqrt(2.0 / (state_dim + hidden_dim))
+        self.W1 = np.random.randn(state_dim, hidden_dim) * scale
         self.b1 = np.zeros(hidden_dim)
         
-        self.W2 = np.random.randn(hidden_dim, hidden_dim) / np.sqrt(hidden_dim)
+        scale = np.sqrt(2.0 / (hidden_dim + hidden_dim))
+        self.W2 = np.random.randn(hidden_dim, hidden_dim) * scale
         self.b2 = np.zeros(hidden_dim)
         
-        self.W_mean = np.random.randn(hidden_dim, action_dim) / np.sqrt(hidden_dim)
+        scale = np.sqrt(2.0 / (hidden_dim + action_dim))
+        self.W_mean = np.random.randn(hidden_dim, action_dim) * scale
         self.b_mean = np.zeros(action_dim)
         
-        self.W_std = np.random.randn(hidden_dim, action_dim) / np.sqrt(hidden_dim)
-        self.b_std = np.zeros(action_dim)
+        self.W_std = np.random.randn(hidden_dim, action_dim) * 0.01
+        self.b_std = np.zeros(action_dim) - 1.0  # Initialize to small std
     
     def forward(self, state):
-        """Forward pass through network."""
+        """Forward pass through the network."""
+        if isinstance(state, torch.Tensor):
+            state = state.numpy()
+        
         # First hidden layer
         x = np.dot(state, self.W1) + self.b1
         x = np.tanh(x)
@@ -108,83 +115,29 @@ class GaussianPolicy:
         x = np.dot(x, self.W2) + self.b2
         x = np.tanh(x)
         
-        # Output layers
+        # Mean and std outputs
         mean = np.dot(x, self.W_mean) + self.b_mean
-        mean = np.tanh(mean) * 0.5 + 0.5  # Scale to [0, 1]
-        
-        std = np.dot(x, self.W_std) + self.b_std
-        std = np.exp(np.clip(std, -20, 2))  # Ensure positive and reasonable
+        log_std = np.dot(x, self.W_std) + self.b_std
+        std = np.exp(np.clip(log_std, -20, 2))  # Prevent too large/small std
         
         return mean, std
     
-    def sample(self, mean, std):
-        """Sample action from Gaussian distribution."""
-        return mean + std * np.random.randn(*mean.shape)
+    def __call__(self, state):
+        """Make the policy callable."""
+        return self.forward(state)
     
-    def log_prob(self, action, mean, std):
-        """Compute log probability of action under Gaussian distribution."""
-        return -0.5 * (np.log(2 * np.pi) + 2 * np.log(std) + ((action - mean) / std) ** 2)
-    
-    def get_gradients(self, state, delta):
-        """Compute gradients for policy update."""
-        # Forward pass storing intermediates
-        h1 = np.dot(state, self.W1) + self.b1
-        h1_act = np.tanh(h1)
-        
-        h2 = np.dot(h1_act, self.W2) + self.b2
-        h2_act = np.tanh(h2)
-        
-        mean = np.dot(h2_act, self.W_mean) + self.b_mean
-        mean = np.tanh(mean) * 0.5 + 0.5
-        
-        std = np.dot(h2_act, self.W_std) + self.b_std
-        std = np.exp(np.clip(std, -20, 2))
-        
-        # Backward pass
-        d_mean = delta
-        d_std = delta
-        
-        # Mean path
-        d_h2_mean = np.dot(d_mean, self.W_mean.T)
-        d_W_mean = np.dot(h2_act.T, d_mean)
-        d_b_mean = np.sum(d_mean, axis=0)
-        
-        # Std path
-        d_h2_std = np.dot(d_std, self.W_std.T)
-        d_W_std = np.dot(h2_act.T, d_std)
-        d_b_std = np.sum(d_std, axis=0)
-        
-        # Combined gradients for h2
-        d_h2 = d_h2_mean + d_h2_std
-        d_h2_act = d_h2 * (1 - h2_act**2)
-        
-        # Second layer
-        d_h1 = np.dot(d_h2_act, self.W2.T)
-        d_W2 = np.dot(h1_act.T, d_h2_act)
-        d_b2 = np.sum(d_h2_act, axis=0)
-        
-        # First layer
-        d_h1_act = d_h1 * (1 - h1_act**2)
-        d_W1 = np.dot(state.T, d_h1_act)
-        d_b1 = np.sum(d_h1_act, axis=0)
-        
-        return {
-            'W1': d_W1, 'b1': d_b1,
-            'W2': d_W2, 'b2': d_b2,
-            'W_mean': d_W_mean, 'b_mean': d_b_mean,
-            'W_std': d_W_std, 'b_std': d_b_std
-        }
-    
-    def apply_gradients(self, grads, learning_rate):
-        """Apply computed gradients."""
-        self.W1 += learning_rate * grads['W1']
-        self.b1 += learning_rate * grads['b1']
-        self.W2 += learning_rate * grads['W2']
-        self.b2 += learning_rate * grads['b2']
-        self.W_mean += learning_rate * grads['W_mean']
-        self.b_mean += learning_rate * grads['b_mean']
-        self.W_std += learning_rate * grads['W_std']
-        self.b_std += learning_rate * grads['b_std']
+    def get_log_prob(self, state, action):
+        """Compute log probability of action under the Gaussian policy."""
+        mean, std = self.forward(state)
+        if isinstance(mean, np.ndarray):
+            mean = torch.FloatTensor(mean)
+        if isinstance(std, np.ndarray):
+            std = torch.FloatTensor(std)
+        if isinstance(action, np.ndarray):
+            action = torch.FloatTensor(action)
+            
+        log_prob = -0.5 * (((action - mean) / (std + 1e-8)) ** 2 + 2 * torch.log(std + 1e-8) + np.log(2 * np.pi))
+        return log_prob.sum(dim=-1)
 
 class ValueNetwork:
     def __init__(self, state_dim, hidden_dim=64):
@@ -204,6 +157,14 @@ class ValueNetwork:
     
     def forward(self, state):
         """Forward pass through network."""
+        # Convert input to numpy if it's a torch tensor
+        if isinstance(state, torch.Tensor):
+            state = state.numpy()
+            
+        # Ensure state is 2D
+        if len(state.shape) == 1:
+            state = state.reshape(1, -1)
+            
         # First hidden layer
         x = np.dot(state, self.W1) + self.b1
         x = np.tanh(x)
@@ -215,6 +176,11 @@ class ValueNetwork:
         # Output layer (with value clipping)
         value = np.dot(x, self.W3) + self.b3
         value = np.clip(value, -10.0, 10.0)  # Clip value predictions
+        
+        # Ensure output is the right shape
+        if value.shape[0] == 1:
+            value = value.flatten()
+            
         return value
     
     def get_gradients(self, state, delta):

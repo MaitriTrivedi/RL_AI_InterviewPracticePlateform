@@ -1,0 +1,91 @@
+{
+  "interviewId": "c8db62fe-81c6-415b-b38d-19adff62da58",
+  "startTime": "2025-05-10T13:50:49.532Z",
+  "questions": [
+    {
+      "questionNumber": 1,
+      "difficulty": 3,
+      "score": 0.7,
+      "topic": "algo",
+      "timeTaken": 30.973,
+      "timestamp": "2025-05-10T13:50:49.532Z"
+    },
+    {
+      "questionNumber": 2,
+      "difficulty": 3,
+      "score": 0.9,
+      "topic": "dbms",
+      "timeTaken": 101.269,
+      "timestamp": "2025-05-10T13:52:00.261Z"
+    },
+    {
+      "questionNumber": 3,
+      "difficulty": 3.5,
+      "score": 0.9,
+      "topic": "system_design",
+      "timeTaken": 131.777,
+      "timestamp": "2025-05-10T13:52:32.006Z"
+    },
+    {
+      "questionNumber": 4,
+      "difficulty": 6.216723955787499,
+      "score": 0.8,
+      "topic": "system_design",
+      "timeTaken": 160.835,
+      "timestamp": "2025-05-10T13:53:02.526Z"
+    },
+    {
+      "questionNumber": 5,
+      "difficulty": 5.765026852104914,
+      "score": 0.9,
+      "topic": "dbms",
+      "timeTaken": 214.315,
+      "timestamp": "2025-05-10T13:53:54.686Z"
+    },
+    {
+      "questionNumber": 6,
+      "difficulty": 5.949790296670389,
+      "score": 0.7,
+      "topic": "cn",
+      "timeTaken": 302.493,
+      "timestamp": "2025-05-10T13:55:24.042Z"
+    },
+    {
+      "questionNumber": 7,
+      "difficulty": 4.505133036517289,
+      "score": 0.7,
+      "topic": "ds",
+      "timeTaken": 340.144,
+      "timestamp": "2025-05-10T13:56:03.057Z"
+    },
+    {
+      "questionNumber": 8,
+      "difficulty": 7.503820607742112,
+      "score": 0,
+      "topic": "ds",
+      "timeTaken": 358.159,
+      "timestamp": "2025-05-10T13:56:19.148Z"
+    },
+    {
+      "questionNumber": 9,
+      "difficulty": 8.235408053408454,
+      "score": 0,
+      "topic": "dbms",
+      "timeTaken": 388.585,
+      "timestamp": "2025-05-10T13:56:48.728Z"
+    },
+    {
+      "questionNumber": 10,
+      "difficulty": 7.540927793356014,
+      "score": 0,
+      "topic": "system_design",
+      "timeTaken": 404.248,
+      "timestamp": "2025-05-10T13:57:01.117Z"
+    }
+  ],
+  "totalQuestions": 10,
+  "averageScore": 0.56,
+  "averageDifficulty": 5.521683059558667,
+  "totalTime": 2432.7980000000002,
+  "lastUpdated": "2025-05-10T13:57:01.117Z"
+}

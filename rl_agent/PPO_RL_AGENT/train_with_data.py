@@ -44,60 +44,87 @@ def setup_monitoring(base_dir=None):
 def plot_training_curves(history, monitor_dir):
     """Plot and save training curves."""
     plots_dir = os.path.join(monitor_dir, 'plots')
-    
-    # Plot episode rewards
-    plt.figure(figsize=(10, 6))
-    plt.plot([float(r) for r in history.episode_rewards])
-    plt.title('Episode Rewards Over Time')
-    plt.xlabel('Episode')
-    plt.ylabel('Total Reward')
-    plt.savefig(os.path.join(plots_dir, 'rewards.png'))
-    plt.close()
-    
-    # Plot topic performances
-    plt.figure(figsize=(12, 6))
-    for topic, scores in history.topic_performances.items():
-        # Flatten nested lists and convert to float
-        flattened_scores = []
-        for score_list in scores:
-            if isinstance(score_list, (list, tuple, np.ndarray)):
-                flattened_scores.extend([float(s) for s in score_list])
-            else:
-                flattened_scores.append(float(score_list))
-        plt.plot(flattened_scores, label=topic)
-    plt.title('Topic Performance Over Time')
-    plt.xlabel('Question Number')
-    plt.ylabel('Performance Score')
-    plt.legend()
-    plt.savefig(os.path.join(plots_dir, 'topic_performance.png'))
-    plt.close()
+    os.makedirs(plots_dir, exist_ok=True)
     
     # Plot training losses
-    plt.figure(figsize=(10, 6))
-    plt.plot([float(l) for l in history.policy_losses], label='Policy Loss')
-    plt.plot([float(l) for l in history.value_losses], label='Value Loss')
-    plt.title('Training Losses')
-    plt.xlabel('Update Step')
-    plt.ylabel('Loss')
-    plt.legend()
-    plt.savefig(os.path.join(plots_dir, 'losses.png'))
-    plt.close()
+    policy_losses = [float(x) for x in history.policy_losses if x is not None]
+    value_losses = [float(x) for x in history.value_losses if x is not None]
+    entropy_losses = [float(x) for x in history.entropy_losses if x is not None]
+    
+    if policy_losses and value_losses:  # Only plot if we have valid data
+        plt.figure(figsize=(10, 6))
+        plt.plot(policy_losses, label='Policy Loss', alpha=0.8)
+        plt.plot(value_losses, label='Value Loss', alpha=0.8)
+        if entropy_losses:
+            plt.plot(entropy_losses, label='Entropy Loss', alpha=0.8)
+        plt.grid(True, alpha=0.3)
+        plt.title('Training Losses')
+        plt.xlabel('Update Step')
+        plt.ylabel('Loss')
+        plt.legend()
+        plt.tight_layout()
+        plt.savefig(os.path.join(plots_dir, 'losses.png'))
+        plt.close()
+        logging.info(f"Saved loss plot with {len(policy_losses)} points")
+    
+    # Plot episode rewards
+    if history.episode_rewards:
+        rewards = [float(x) for x in history.episode_rewards if x is not None]
+        if rewards:
+            plt.figure(figsize=(10, 6))
+            plt.plot(rewards, alpha=0.8)
+            plt.grid(True, alpha=0.3)
+            plt.title('Episode Rewards Over Time')
+            plt.xlabel('Episode')
+            plt.ylabel('Total Reward')
+            plt.tight_layout()
+            plt.savefig(os.path.join(plots_dir, 'rewards.png'))
+            plt.close()
+    
+    # Plot topic performances
+    if history.topic_performances:
+        valid_topics = False
+        plt.figure(figsize=(12, 6))
+        for topic, scores in history.topic_performances.items():
+            if scores:
+                # Flatten nested lists and convert to float
+                flattened_scores = []
+                for score_list in scores:
+                    if isinstance(score_list, (list, tuple, np.ndarray)):
+                        flattened_scores.extend([float(s) for s in score_list if s is not None])
+                    elif score_list is not None:
+                        flattened_scores.append(float(score_list))
+                if flattened_scores:  # Only plot if we have data
+                    plt.plot(flattened_scores, label=topic, alpha=0.8)
+                    valid_topics = True
+        if valid_topics:
+            plt.grid(True, alpha=0.3)
+            plt.title('Topic Performance Over Time')
+            plt.xlabel('Question Number')
+            plt.ylabel('Performance Score')
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(os.path.join(plots_dir, 'topic_performance.png'))
+        plt.close()
     
     # Plot difficulty progression
-    plt.figure(figsize=(10, 6))
-    # Flatten and convert difficulty history
-    flattened_difficulties = []
-    for diff in history.difficulty_history:
-        if isinstance(diff, (list, tuple, np.ndarray)):
-            flattened_difficulties.extend([float(d) for d in diff])
-        else:
-            flattened_difficulties.append(float(diff))
-    plt.plot(flattened_difficulties)
-    plt.title('Question Difficulty Over Time')
-    plt.xlabel('Question Number')
-    plt.ylabel('Difficulty Level')
-    plt.savefig(os.path.join(plots_dir, 'difficulty.png'))
-    plt.close()
+    if history.difficulty_history:
+        difficulties = []
+        for diff in history.difficulty_history:
+            if isinstance(diff, (list, tuple, np.ndarray)):
+                difficulties.extend([float(d) for d in diff if d is not None])
+            elif diff is not None:
+                difficulties.append(float(diff))
+        if difficulties:
+            plt.figure(figsize=(10, 6))
+            plt.plot(difficulties, alpha=0.8)
+            plt.grid(True, alpha=0.3)
+            plt.title('Question Difficulty Over Time')
+            plt.xlabel('Question Number')
+            plt.ylabel('Difficulty Level')
+            plt.tight_layout()
+            plt.savefig(os.path.join(plots_dir, 'difficulty.png'))
+            plt.close()
 
 def convert_numpy_types(obj):
     """Convert numpy types to Python native types for JSON serialization."""
@@ -215,8 +242,10 @@ def train_agent(
                     difficulty = raw_difficulty
                 
                 # Consider topic difficulty in final action
-                topic_factor = agent.topic_difficulty[topic] / 3.0  # Normalize to 0-1
-                max_topic_difficulty = 7.0 + (topic_factor * 3.0)  # Max difficulty based on topic
+                topic_base_diff = agent.topic_difficulty[topic]['base']
+                topic_max_diff = agent.topic_difficulty[topic]['max']
+                topic_factor = (topic_base_diff / 3.0)  # Normalize base difficulty to 0-1
+                max_topic_difficulty = topic_max_diff  # Use topic's max difficulty as ceiling
                 difficulty = min(difficulty, max_topic_difficulty)
                 
                 # Ensure difficulty is within valid range
@@ -242,18 +271,20 @@ def train_agent(
                 
                 # Log training metrics if available
                 if metrics and isinstance(metrics, dict):
+                    # Store training metrics in history
+                    history.add_training_metrics(
+                        policy_loss=float(metrics.get('policy_loss', 0.0)),
+                        value_loss=float(metrics.get('value_loss', 0.0)),
+                        entropy_loss=float(metrics.get('entropy_loss', 0.0))
+                    )
+                    
+                    # Log metrics
                     logging.info(
                         f"Training step {total_episodes} - "
-                        f"Actor Loss: {metrics.get('actor_loss', 0.0):.3f}, "
+                        f"Policy Loss: {metrics.get('policy_loss', 0.0):.3f}, "
                         f"Value Loss: {metrics.get('value_loss', 0.0):.3f}, "
                         f"Entropy Loss: {metrics.get('entropy_loss', 0.0):.3f}, "
                         f"Mean Reward: {performance_score:.3f}"
-                    )
-                    
-                    history.add_training_metrics(
-                        policy_loss=float(metrics.get('actor_loss', 0.0)),
-                        value_loss=float(metrics.get('value_loss', 0.0)),
-                        entropy_loss=float(metrics.get('entropy_loss', 0.0))
                     )
                     
                     # Calculate mean scores for each topic
@@ -273,7 +304,7 @@ def train_agent(
                         'difficulty': float(difficulty),
                         'performance': float(performance_score),
                         'time_taken': float(time_taken),
-                        'actor_loss': float(metrics.get('actor_loss', 0.0)),
+                        'policy_loss': float(metrics.get('policy_loss', 0.0)),
                         'value_loss': float(metrics.get('value_loss', 0.0)),
                         'entropy_loss': float(metrics.get('entropy_loss', 0.0)),
                         'topic_means': topic_means,
@@ -317,7 +348,7 @@ def train_agent(
                 for t, avg in topic_averages.items():
                     if avg > 0:  # Only log topics that were covered
                         logging.info(f"  {t}: {avg:.3f}")
-            
+                
             # Save checkpoint if best performance
             if episode_mean_reward > best_reward:
                 best_reward = episode_mean_reward
@@ -333,15 +364,23 @@ def train_agent(
                     f"checkpoint_ep{total_episodes}.pt"
                 )
                 agent.save_checkpoint(checkpoint_path)
+                # Generate plots at checkpoints
+                plot_training_curves(history, monitor_dir)
+                logging.info(f"Generated training plots at episode {total_episodes}")
         
         # End of epoch processing
-        plot_training_curves(history, monitor_dir)
-        
         # Save final model for this epoch
         model_path = os.path.join(save_dir, f"model_epoch_{epoch + 1}.pt")
         agent.save_model()
         logging.info(f"Saved model for epoch {epoch + 1}")
+        
+        # Generate plots at end of each epoch
+        plot_training_curves(history, monitor_dir)
+        logging.info(f"Generated training plots for epoch {epoch + 1}")
     
+    # Final plotting after all training is complete
+    plot_training_curves(history, monitor_dir)
+    logging.info("Generated final training plots")
     return agent, history
 
 if __name__ == "__main__":

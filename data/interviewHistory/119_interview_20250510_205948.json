@@ -1,0 +1,67 @@
+{
+  "interview_id": "b3880bab-779d-4bb8-ae88-a645e99a443b",
+  "timestamp": "2025-05-10T20:59:48.093180",
+  "total_questions": 6,
+  "total_score": 2.8,
+  "current_interaction": {
+    "question": {
+      "id": "194dd39f-f236-44fc-9ab6-d86dd6fc25d7",
+      "topic": "system_design",
+      "subtopic": "API Design",
+      "difficulty": 5.65305186100892,
+      "content": "You're designing an API for a ride-sharing application. The `GET /rides/{ride_id}` endpoint currently returns all details about a ride, including driver information, passenger information, location history, and payment details. This endpoint is heavily used by both drivers and passengers. However, you've noticed performance degradation, especially during peak hours. Analyze the API design and propose solutions to optimize its performance without significantly altering the core functionality. Consider factors like data transfer size, database load, and caching strategies.",
+      "follow_up_questions": [
+        "How would you implement a caching strategy for this API? What are the trade-offs between different caching approaches (e.g., client-side, server-side, CDN)?",
+        "How could you monitor the performance of this API endpoint, and what metrics would you focus on to identify bottlenecks or areas for improvement?",
+        "If driver and passenger roles require slightly different data, how would you modify the API to accommodate both roles efficiently without duplicating the endpoint? (Consider using query parameters or separate endpoints). What are the tradeoffs of each approach?"
+      ],
+      "evaluation_points": [
+        "Data transfer optimization (e.g., field selection, compression)",
+        "Caching strategies (e.g., TTL, invalidation)",
+        "Database query optimization (e.g., indexing, efficient queries)",
+        "Understanding of API design principles (e.g., RESTful design, endpoint granularity)"
+      ],
+      "expected_time_minutes": 25
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated that they do not know the answer. This indicates a lack of knowledge regarding API optimization strategies, database performance tuning, and caching mechanisms. A strong answer would have included considerations for reducing data transfer size (e.g., using field selection or compression), implementing caching strategies to alleviate database load, and optimizing database queries to improve response times.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of API optimization techniques.",
+        "Knowledge of database performance tuning (indexing, query optimization).",
+        "Familiarity with caching strategies (TTL, invalidation).",
+        "Comprehension of RESTful API design principles (endpoint granularity)."
+      ],
+      "follow_up_suggestions": [
+        "Research common API optimization techniques, such as field selection (using query parameters to specify the desired fields), payload compression (e.g., gzip), and pagination.",
+        "Study database indexing strategies and query optimization techniques. Explore tools for analyzing query performance and identifying bottlenecks.",
+        "Learn about various caching strategies (e.g., client-side caching, server-side caching, CDN caching) and their tradeoffs. Understand concepts like TTL (Time-To-Live) and cache invalidation.",
+        "Review RESTful API design principles, focusing on the importance of endpoint granularity and resource representation."
+      ]
+    },
+    "time_taken": 157.501
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

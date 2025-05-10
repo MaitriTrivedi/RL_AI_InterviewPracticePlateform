@@ -1,0 +1,76 @@
+{
+  "interview_id": "6dbe62f8-84c0-4db7-8580-4f5e708c2461",
+  "timestamp": "2025-05-10T16:23:21.692967",
+  "total_questions": 8,
+  "total_score": 0.1,
+  "current_interaction": {
+    "question": {
+      "id": "d7fd08e6-2d81-409c-9415-4b5bff6c1052",
+      "topic": "algo",
+      "subtopic": "Routing",
+      "difficulty": 2.5,
+      "content": "Imagine you are building a simple website with three pages: a homepage ( `/` ), an about page ( `/about` ), and a contact page ( `/contact` ). Briefly explain how routing works to display the correct page content when a user navigates to each of these URLs.",
+      "follow_up_questions": [
+        "What is a 'route' in this context?",
+        "In a simple routing system, what might be used to decide which page to display based on the URL?"
+      ],
+      "evaluation_points": [
+        "Mapping URLs to specific content/components.",
+        "Router acts as a dispatcher based on the URL.",
+        "Mentioning a simple matching process (e.g., if-else statements or a lookup table)."
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "123456789",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The answer provided is completely inadequate and does not address the question in any meaningful way. It provides only a numeric string and demonstrates no understanding of routing concepts in web development.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of web routing concepts.",
+        "Ability to explain technical concepts clearly and concisely.",
+        "Demonstrates a basic understanding of how URLs map to content."
+      ],
+      "follow_up_suggestions": [
+        "Research different routing methods used in web frameworks (e.g., using a simple if-else chain or a more sophisticated routing library).",
+        "Practice implementing a basic routing system in a language like JavaScript or Python using a simple web server."
+      ]
+    },
+    "time_taken": 136.435
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 2.0,
+      "algo": 1.0,
+      "oops": 1.0,
+      "dbms": 2.0,
+      "os": 0.0,
+      "cn": 1.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0,
+        0.0
+      ],
+      "algo": [
+        0.0
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [
+        0.0,
+        0.0
+      ],
+      "os": [],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 1.5
+  }
+}

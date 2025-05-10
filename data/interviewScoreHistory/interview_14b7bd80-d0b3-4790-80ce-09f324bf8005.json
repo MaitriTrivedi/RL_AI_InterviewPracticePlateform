@@ -1,0 +1,91 @@
+{
+  "interviewId": "14b7bd80-d0b3-4790-80ce-09f324bf8005",
+  "startTime": "2025-05-10T10:07:21.067Z",
+  "questions": [
+    {
+      "questionNumber": 1,
+      "difficulty": 2.6833333333333327,
+      "score": 0.9,
+      "topic": "dbms",
+      "timeTaken": 21.829,
+      "timestamp": "2025-05-10T10:07:21.067Z"
+    },
+    {
+      "questionNumber": 2,
+      "difficulty": 2.6833333333333327,
+      "score": 0.9,
+      "topic": "os",
+      "timeTaken": 45.398,
+      "timestamp": "2025-05-10T10:07:45.269Z"
+    },
+    {
+      "questionNumber": 3,
+      "difficulty": 4,
+      "score": 0.8,
+      "topic": "cn",
+      "timeTaken": 70.976,
+      "timestamp": "2025-05-10T10:08:10.732Z"
+    },
+    {
+      "questionNumber": 4,
+      "difficulty": 4,
+      "score": 0.9,
+      "topic": "system_design",
+      "timeTaken": 99.411,
+      "timestamp": "2025-05-10T10:08:39.098Z"
+    },
+    {
+      "questionNumber": 5,
+      "difficulty": 4,
+      "score": 0.8,
+      "topic": "oops",
+      "timeTaken": 134.79,
+      "timestamp": "2025-05-10T10:09:14.324Z"
+    },
+    {
+      "questionNumber": 6,
+      "difficulty": 4,
+      "score": 0.9,
+      "topic": "system_design",
+      "timeTaken": 167.104,
+      "timestamp": "2025-05-10T10:09:47.913Z"
+    },
+    {
+      "questionNumber": 7,
+      "difficulty": 4,
+      "score": 0.6,
+      "topic": "algo",
+      "timeTaken": 196.111,
+      "timestamp": "2025-05-10T10:10:15.423Z"
+    },
+    {
+      "questionNumber": 8,
+      "difficulty": 2.786427878677928,
+      "score": 0.8,
+      "topic": "oops",
+      "timeTaken": 225.072,
+      "timestamp": "2025-05-10T10:10:44.644Z"
+    },
+    {
+      "questionNumber": 9,
+      "difficulty": 2.1166666666666667,
+      "score": 0.9,
+      "topic": "os",
+      "timeTaken": 251.172,
+      "timestamp": "2025-05-10T10:11:10.552Z"
+    },
+    {
+      "questionNumber": 10,
+      "difficulty": 3.6,
+      "score": 1,
+      "topic": "oops",
+      "timeTaken": 276.976,
+      "timestamp": "2025-05-10T10:11:33.999Z"
+    }
+  ],
+  "totalQuestions": 10,
+  "averageScore": 0.85,
+  "averageDifficulty": 3.3869761212011262,
+  "totalTime": 1488.839,
+  "lastUpdated": "2025-05-10T10:11:33.999Z"
+}

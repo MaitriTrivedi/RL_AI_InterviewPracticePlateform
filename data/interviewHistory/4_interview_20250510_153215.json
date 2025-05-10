@@ -1,0 +1,69 @@
+{
+  "interview_id": "dcfb17f5-1796-450f-9977-f0d7f69ba3c8",
+  "timestamp": "2025-05-10T15:32:15.498855",
+  "total_questions": 3,
+  "total_score": 1.8,
+  "current_interaction": {
+    "question": {
+      "id": "64cf9a2c-1bd5-4a9b-bbd2-a399291f4c5a",
+      "topic": "algo",
+      "subtopic": "Searching",
+      "difficulty": 3.879471055272967,
+      "content": "You are building a simple search feature for a library database. The database contains a list of books, each represented as a string of the book title. The book titles are sorted alphabetically. Given a search query (a string), you need to find if a book with that title exists in the library database. Implement a function that efficiently searches for the book title in the database. You must use Binary Search.",
+      "follow_up_questions": [
+        "What is the time complexity of your solution?",
+        "How would you handle cases where the search query is a prefix of an existing book title? Should it return true in that scenario?"
+      ],
+      "evaluation_points": [
+        "Correct implementation of Binary Search",
+        "Understanding of time complexity of Binary Search (O(log n))"
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "bjadb\n",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The submitted answer 'bjadb' is completely inadequate for the question. It does not represent any attempt at implementing a binary search algorithm or any relevant code. It shows no understanding of the problem or how to approach it. The student did not provide any code, pseudocode, or explanation of their thought process.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of Binary Search algorithm.",
+        "Ability to translate problem description into code.",
+        "Understanding of basic programming concepts.",
+        "Problem-solving skills."
+      ],
+      "follow_up_suggestions": [
+        "Review the Binary Search algorithm and its implementation.",
+        "Practice implementing Binary Search with different examples.",
+        "Work through simpler search problems before attempting Binary Search.",
+        "Study code examples of Binary Search in different programming languages."
+      ]
+    },
+    "time_taken": 141.505
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.261,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.27,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.1,
+        0.8
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [
+        0.9
+      ],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 3.0
+  }
+}

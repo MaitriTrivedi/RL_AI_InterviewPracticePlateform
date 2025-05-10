@@ -1,0 +1,69 @@
+{
+  "interview_id": "6dbe62f8-84c0-4db7-8580-4f5e708c2461",
+  "timestamp": "2025-05-10T16:21:14.499834",
+  "total_questions": 0,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "5b13ea2d-bbea-42a3-a508-1ec0ea390787",
+      "topic": "system_design",
+      "subtopic": "CAP Theorem",
+      "difficulty": 4.5,
+      "content": "Imagine you are designing a simple online store. You need to choose a database for storing product information (name, description, price, quantity in stock). Considering the CAP theorem, and given that showing slightly outdated inventory is acceptable during a network partition (e.g., displaying \"in stock\" when the last item was just purchased, leading to a minor oversell), which property of CAP would you prioritize? Explain your choice and give a specific example of a scenario where this prioritization is beneficial.",
+      "follow_up_questions": [
+        "What are the trade-offs of choosing this property over the others?",
+        "How would your choice change if the online store also handled financial transactions (e.g., storing credit card information, processing payments)?",
+        "What are some common database systems that are designed around the property you selected?"
+      ],
+      "evaluation_points": [
+        "Understanding of CAP theorem (Consistency, Availability, Partition Tolerance)",
+        "Recognizing the trade-offs between consistency and availability",
+        "Applying CAP to a practical scenario (online store inventory)",
+        "Justification for prioritizing Availability (AP) over Consistency (CP) in this context",
+        "Understanding the concept of eventual consistency"
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "do not know",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The candidate indicated they do not know the answer. This demonstrates a lack of fundamental knowledge related to database selection and the CAP theorem. The answer provides no insight into the trade-offs involved in database design. Therefore, the response receives a very low score.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of the CAP theorem (Consistency, Availability, Partition Tolerance)",
+        "Ability to explain the trade-offs between consistency and availability",
+        "Applying CAP to practical scenarios (online store inventory)",
+        "Justification for prioritizing Availability (AP) over Consistency (CP) or vice-versa in a given context",
+        "Understanding the concept of eventual consistency",
+        "General knowledge of database design principles"
+      ],
+      "follow_up_suggestions": [
+        "Research the CAP theorem and its implications for distributed systems.",
+        "Study examples of how different databases prioritize consistency or availability (e.g., MongoDB vs. Cassandra).",
+        "Practice applying the CAP theorem to different real-world scenarios involving data storage and retrieval."
+      ]
+    },
+    "time_taken": 8.88
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 3.5
+  }
+}

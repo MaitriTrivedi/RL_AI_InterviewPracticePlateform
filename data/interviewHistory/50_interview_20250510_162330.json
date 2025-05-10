@@ -1,0 +1,82 @@
+{
+  "interview_id": "6dbe62f8-84c0-4db7-8580-4f5e708c2461",
+  "timestamp": "2025-05-10T16:23:30.812260",
+  "total_questions": 9,
+  "total_score": 0.2,
+  "current_interaction": {
+    "question": {
+      "id": "dd22fce0-24b5-4eb7-a653-4cc4a651bb9c",
+      "topic": "dbms",
+      "subtopic": "Indexes",
+      "difficulty": 2.5,
+      "content": "Imagine you have a large table of customer data with millions of rows, and you frequently need to look up customers by their 'last_name'. Explain in simple terms what an index on the 'last_name' column would do, and how it could help improve the speed of these lookups. Provide a real-world analogy to help illustrate your explanation.",
+      "follow_up_questions": [
+        "What is a potential downside to having too many indexes on a table?",
+        "Can you give a simple example of when you might NOT want to use an index?"
+      ],
+      "evaluation_points": [
+        "Index is a data structure that speeds up data retrieval.",
+        "Index helps avoid full table scans by creating a faster lookup mechanism.",
+        "Real-world analogy such as an index in a book or a phone book is used.",
+        "Basic understanding of trade-offs of using indexes."
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "123456789",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The answer provided is simply a sequence of numbers and does not address the prompt at all. It demonstrates no understanding of indexing or its application to database performance. The answer fails to explain the concept of an index, its benefits, or provide a relevant analogy. There is a complete lack of technical accuracy, completeness, clarity, and practical application.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the concept of database indexing.",
+        "Explaining how indexes improve query performance.",
+        "Providing real-world analogies to illustrate technical concepts.",
+        "Understanding the trade-offs associated with using indexes.",
+        "Formulating a complete and coherent response to technical questions."
+      ],
+      "follow_up_suggestions": [
+        "Study the fundamentals of database indexing, including different index types (e.g., B-tree, hash).",
+        "Research the impact of indexes on read and write performance in databases.",
+        "Practice explaining technical concepts using simple analogies.",
+        "Review common database interview questions and prepare comprehensive answers."
+      ]
+    },
+    "time_taken": 145.022
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 2.0,
+      "algo": 2.0,
+      "oops": 1.0,
+      "dbms": 2.0,
+      "os": 0.0,
+      "cn": 1.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0,
+        0.0
+      ],
+      "algo": [
+        0.0,
+        0.1
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [
+        0.0,
+        0.0
+      ],
+      "os": [],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 1.5
+  }
+}

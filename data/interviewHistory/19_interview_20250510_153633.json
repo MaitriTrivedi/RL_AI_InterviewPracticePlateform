@@ -1,0 +1,80 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:36:33.250081",
+  "total_questions": 8,
+  "total_score": 0.4,
+  "current_interaction": {
+    "question": {
+      "id": "8e68002c-6654-42d7-b738-3deb9f3886a4",
+      "topic": "system_design",
+      "subtopic": "CAP Theorem",
+      "difficulty": 3.4499999999999997,
+      "content": "Imagine you are designing a simple social media platform where users can post updates and follow each other. Given CAP Theorem, how would you prioritize consistency vs. availability when a user attempts to post a new update, considering that network partitions are possible (e.g., a server goes down, or network connectivity is lost)? What are the trade-offs of choosing strong consistency versus high availability in this specific scenario?",
+      "follow_up_questions": [
+        "What strategies could you use to mitigate the impact of prioritizing availability on data consistency in the short term (e.g., eventual consistency)?",
+        "How might your choice of consistency vs. availability change if, instead of user posts, we were dealing with financial transactions (e.g., transferring funds between accounts)?"
+      ],
+      "evaluation_points": [
+        "Understanding of CAP Theorem and its three properties: Consistency, Availability, Partition Tolerance.",
+        "Ability to articulate the trade-offs between consistency and availability in the context of a real-world application.",
+        "Awareness of eventual consistency and other strategies for handling data inconsistencies in a distributed system.",
+        "Recognizing the difference in requirements between different types of data (e.g., social media posts vs. financial transactions)."
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "cscac",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The answer provided is 'cscac', which offers no relevant information or demonstrates any understanding of the CAP Theorem, distributed systems, or the trade-offs between consistency and availability. The answer is completely inadequate and shows no attempt to address the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of CAP Theorem (Consistency, Availability, Partition Tolerance)",
+        "Ability to explain the trade-offs between consistency and availability.",
+        "Knowledge of eventual consistency strategies.",
+        "Understanding how to apply CAP Theorem to a real-world scenario (social media platform).",
+        "Communication skills in articulating technical concepts."
+      ],
+      "follow_up_suggestions": [
+        "Study the CAP Theorem in detail, focusing on the definitions of Consistency, Availability, and Partition Tolerance.",
+        "Research different consistency models (e.g., strong consistency, eventual consistency) and their implications.",
+        "Consider the trade-offs between consistency and availability in the context of various real-world applications (e.g., social media, banking, e-commerce).",
+        "Practice explaining complex technical concepts clearly and concisely."
+      ]
+    },
+    "time_taken": 75.398
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.03,
+      "algo": 0.020999999999999998,
+      "oops": 0.03,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.03
+    },
+    "topic_performances": {
+      "ds": [
+        0.1
+      ],
+      "algo": [
+        0.1,
+        0.0
+      ],
+      "oops": [
+        0.0,
+        0.0,
+        0.1
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 3.0
+  }
+}

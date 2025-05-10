@@ -1,0 +1,70 @@
+{
+  "interview_id": "6dbe62f8-84c0-4db7-8580-4f5e708c2461",
+  "timestamp": "2025-05-10T16:22:03.350230",
+  "total_questions": 4,
+  "total_score": 0.1,
+  "current_interaction": {
+    "question": {
+      "id": "14ba1d3c-a8fa-487c-95f5-6b86efbe29c6",
+      "topic": "oops",
+      "subtopic": "System Modeling",
+      "difficulty": 1.9166666666666663,
+      "content": "In the context of System Modeling, briefly explain what a 'class diagram' represents and give a simple, real-world example of what you might include in a class diagram for a 'Vehicle'.",
+      "follow_up_questions": [
+        "What is the purpose of creating class diagrams?",
+        "Name one relationship type that you might find between classes in a class diagram."
+      ],
+      "evaluation_points": [
+        "Representation of classes, attributes, and relationships.",
+        "Example should include basic vehicle attributes (e.g., color, number of wheels) or operations (e.g., startEngine, accelerate)."
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "do not know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they do not know the answer. This indicates a lack of understanding of basic System Modeling concepts and class diagrams. The answer provides no information about what a class diagram represents, nor does it offer a relevant example. The candidate needs to study the fundamental principles of object-oriented design and UML diagrams.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of class diagrams and their purpose in system modeling.",
+        "Knowledge of object-oriented principles like classes, attributes, and relationships.",
+        "Ability to provide real-world examples to illustrate abstract concepts."
+      ],
+      "follow_up_suggestions": [
+        "Study the basics of UML (Unified Modeling Language) with a focus on class diagrams.",
+        "Review object-oriented programming principles, including classes, objects, attributes, and methods.",
+        "Practice creating class diagrams for simple real-world scenarios, like library systems, banking systems, or online stores."
+      ]
+    },
+    "time_taken": 57.84
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 1.0,
+      "oops": 0.0,
+      "dbms": 1.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0
+      ],
+      "algo": [
+        0.0
+      ],
+      "oops": [],
+      "dbms": [
+        0.0
+      ],
+      "os": [],
+      "cn": [],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 1.5
+  }
+}

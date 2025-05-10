@@ -1,0 +1,71 @@
+{
+  "interview_id": "6dbe62f8-84c0-4db7-8580-4f5e708c2461",
+  "timestamp": "2025-05-10T16:21:53.119535",
+  "total_questions": 3,
+  "total_score": 0.1,
+  "current_interaction": {
+    "question": {
+      "id": "2efd9d0c-139a-4509-a5d9-d0e00727b885",
+      "topic": "dbms",
+      "subtopic": "Indexes",
+      "difficulty": 2.6833333333333327,
+      "content": "You have a `users` table with columns `id`, `username`, and `email`. You frequently run queries to retrieve users by their email address. The `users` table currently doesn't have any indexes. Describe how you would add an index to improve the performance of these email-based queries and explain *why* adding this index would likely make the queries faster.",
+      "follow_up_questions": [
+        "What type of index would be most appropriate in this scenario and why?",
+        "Are there any potential drawbacks to adding an index to the `email` column?"
+      ],
+      "evaluation_points": [
+        "Understanding of index creation syntax (e.g., CREATE INDEX)",
+        "Recognition that an index speeds up SELECT queries based on the indexed column.",
+        "Basic understanding of how an index works (like a table of contents for the database)"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "do not know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated that they \"do not know\" how to approach the problem. This indicates a lack of understanding of basic database indexing concepts. The answer provided no technical information, explanation, or application of indexing principles.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of database indexing concepts.",
+        "Knowledge of index creation syntax (e.g., CREATE INDEX).",
+        "Understanding how indexes improve query performance (specifically SELECT queries).",
+        "Ability to explain the basic mechanics of how indexes work."
+      ],
+      "follow_up_suggestions": [
+        "Study basic database indexing concepts and the purpose of indexes.",
+        "Learn the syntax for creating indexes in SQL (e.g., CREATE INDEX).",
+        "Research how database indexes work internally (e.g., B-trees).",
+        "Practice creating and using indexes on sample databases."
+      ]
+    },
+    "time_taken": 47.549
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 1.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0
+      ],
+      "algo": [
+        0.0
+      ],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 2.0
+  }
+}

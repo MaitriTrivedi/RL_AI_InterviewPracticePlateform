@@ -50,15 +50,32 @@ export interface Answer {
   overall_feedback?: string;
 }
 
+// Add Evaluation interface before InterviewState
+export interface Evaluation {
+  score: number;
+  feedback: string;
+  strengths: string[];
+  improvements: string[];
+}
+
 // Interview Types
-export interface InterviewStats {
+export interface SessionStats {
   questions_asked: number;
   average_performance: number;
   current_topic: string;
   current_subtopic: string;
-  max_questions: number;
   current_difficulty: number;
-  last_score?: number;
+  topic_performances: Record<string, number>;
+  learning_progress: Record<string, number>;
+}
+
+export interface InterviewState {
+  sessionId: string;
+  currentQuestion: Question;
+  sessionStats: SessionStats;
+  answers: Answer[];
+  evaluations: Evaluation[];
+  isComplete: boolean;
 }
 
 export interface Interview {
@@ -66,12 +83,11 @@ export interface Interview {
   userId: string;
   currentQuestion: Question;
   currentQuestionIdx: number;
-  maxQuestions: number;
   questions: Question[];
-  answers: string[];
+  answers: Answer[];
   status: 'in_progress' | 'completed';
   difficulty: number;
-  stats: InterviewStats;
+  stats: SessionStats;
 }
 
 export interface SubmitAnswerResponse {
@@ -83,7 +99,7 @@ export interface SubmitAnswerResponse {
   };
   current_state: {
     current_question: Question;
-    session_stats: InterviewStats;
+    session_stats: SessionStats;
   };
   next_state: {
     next_question: Question;

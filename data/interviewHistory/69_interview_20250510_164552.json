@@ -1,0 +1,90 @@
+{
+  "interview_id": "cdb632b7-4bd7-4e2a-aff1-f5ba016c68ae",
+  "timestamp": "2025-05-10T16:45:52.441982",
+  "total_questions": 8,
+  "total_score": 5.9,
+  "current_interaction": {
+    "question": {
+      "id": "c44f6b9a-20cd-4b1c-88c2-6939f39b60dd",
+      "topic": "system_design",
+      "subtopic": "API Design",
+      "difficulty": 9.5,
+      "content": "Design a globally distributed API for a real-time, collaborative document editing service (similar to Google Docs). The API must support concurrent edits from millions of users with minimal latency (ideally < 50ms for most regions). Focus on the API endpoints necessary for core editing functionalities (insert, delete, replace), conflict resolution, and state synchronization. Assume users are distributed across multiple geographical regions with varying network conditions and connectivity. Your design should address the following:\n\n1.  **API Endpoints:** Define the core API endpoints for insert, delete, and replace operations, specifying the request/response formats and data structures (focus on compactness and efficiency). Consider how to represent the document state and changesets.\n2.  **Conflict Resolution:** Describe your conflict resolution strategy, detailing how to handle concurrent edits and ensure eventual consistency across all clients. Consider techniques like Operational Transformation (OT) or Conflict-free Replicated Data Types (CRDTs), explaining your choice and its implications for the API design.\n3.  **Data Distribution and Replication:** Outline your data distribution and replication strategy to minimize latency for users in different regions. Discuss the trade-offs between consistency and availability (using CAP theorem). How do you handle data localization/regionalization requirements?\n4.  **Scalability and Performance:** Detail the architectural components and technologies (e.g., load balancers, caching mechanisms, database selection) to ensure the API can handle millions of concurrent users with low latency. Consider strategies like sharding and connection pooling.\n5.  **Real-time State Synchronization:** Explain how clients maintain a consistent view of the document in near real-time. Describe the mechanism for pushing updates to clients (e.g., WebSockets, Server-Sent Events) and how to handle potential disconnections and reconnections efficiently. Address the potential for \"thundering herd\" problems when a document is updated.\n6.  **Error Handling and Resilience:** How will your API handle various error conditions (e.g., network failures, data corruption, server outages)? Describe the mechanisms for retries, idempotency, and fault tolerance.",
+      "follow_up_questions": [
+        "How would you monitor the performance and health of your globally distributed API?",
+        "What security considerations are critical in designing this API (e.g., authentication, authorization, data encryption)?",
+        "How would you handle versioning of the API and backwards compatibility?"
+      ],
+      "evaluation_points": [
+        "Efficient and compact API endpoint design using appropriate serialization formats (e.g., Protocol Buffers, FlatBuffers).",
+        "Thorough understanding of conflict resolution algorithms (OT or CRDTs) and their impact on the API.",
+        "Strategic data distribution and replication across regions, considering latency and consistency trade-offs.",
+        "Scalable architecture leveraging load balancing, caching, and database sharding.",
+        "Efficient real-time state synchronization mechanisms using WebSockets or similar technologies, handling reconnections and thundering herd issues.",
+        "Robust error handling, retries, and fault tolerance mechanisms for a resilient API.",
+        "Address specific challenges of distributed systems like eventual consistency, network latency, and regionalization."
+      ],
+      "expected_time_minutes": 90
+    },
+    "answer": "12345678",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The student provided an invalid response ('12345678') indicating they were unable or unwilling to answer the question. This demonstrates a complete lack of understanding or engagement with the prompt. The response fails to address any aspect of the problem, including API design, conflict resolution, data distribution, scalability, real-time synchronization, or error handling. Given the lack of content, it's impossible to assess technical accuracy, completeness, clarity, or practical application.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of distributed systems architecture.",
+        "Knowledge of API design principles.",
+        "Familiarity with conflict resolution strategies (OT/CRDTs).",
+        "Understanding of data distribution and replication techniques.",
+        "Knowledge of scalability and performance optimization.",
+        "Ability to articulate technical solutions clearly and concisely.",
+        "Engagement with the problem and willingness to provide a reasoned response."
+      ],
+      "follow_up_suggestions": [
+        "Study the fundamentals of distributed systems, including consistency models, CAP theorem, and common architectural patterns.",
+        "Research API design best practices, focusing on RESTful principles and efficient data serialization formats.",
+        "Learn about conflict resolution algorithms like Operational Transformation (OT) and Conflict-free Replicated Data Types (CRDTs).",
+        "Explore data distribution and replication strategies for geographically distributed applications.",
+        "Practice designing scalable architectures using load balancing, caching, and database sharding.",
+        "Review real-time communication protocols like WebSockets and Server-Sent Events.",
+        "Work through example scenarios involving collaborative document editing to gain practical experience."
+      ]
+    },
+    "time_taken": 845.784
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 1.0,
+      "oops": 2.0,
+      "dbms": 1.0,
+      "os": 2.0,
+      "cn": 1.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.9
+      ],
+      "algo": [
+        0.9
+      ],
+      "oops": [
+        0.9,
+        0.8
+      ],
+      "dbms": [
+        0.0
+      ],
+      "os": [
+        0.8,
+        0.8
+      ],
+      "cn": [
+        0.8
+      ],
+      "system_design": []
+    },
+    "current_difficulty": 8.5
+  }
+}

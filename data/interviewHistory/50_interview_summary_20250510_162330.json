@@ -1,0 +1,49 @@
+{
+  "interview_id": "6dbe62f8-84c0-4db7-8580-4f5e708c2461",
+  "completion_time": "2025-05-10T16:23:30.834779",
+  "total_questions_answered": 10,
+  "final_score": 0.30000000000000004,
+  "average_score": 0.030000000000000006,
+  "agent_final_state": {
+    "question_history": {
+      "ds": 2.0,
+      "algo": 2.0,
+      "oops": 1.0,
+      "dbms": 3.0,
+      "os": 0.0,
+      "cn": 1.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0,
+        0.0
+      ],
+      "algo": [
+        0.0,
+        0.1
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [
+        0.0,
+        0.0,
+        0.1
+      ],
+      "os": [],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.1
+      ]
+    },
+    "final_difficulty": 1.5
+  },
+  "performance_metrics": {
+    "time_efficiency": 2.0686516528526706,
+    "topic_coverage": 6,
+    "difficulty_progression": 1.5
+  }
+}

@@ -1,0 +1,76 @@
+{
+  "interview_id": "c8db62fe-81c6-415b-b38d-19adff62da58",
+  "timestamp": "2025-05-10T19:27:01.114989",
+  "total_questions": 9,
+  "total_score": 5.6000000000000005,
+  "current_interaction": {
+    "question": {
+      "id": "b85a81f9-09c6-49ef-bbfa-01c2286391bb",
+      "topic": "system_design",
+      "subtopic": "High Availability",
+      "difficulty": 7.540927793356014,
+      "content": "Imagine you are designing a highly available, globally distributed key-value store. Your service must provide strong consistency for critical financial transactions. Data needs to be replicated across multiple geographic regions to ensure resilience against regional failures. Design a solution that balances strong consistency requirements with the need for low latency reads and writes for users globally. Specifically, describe the chosen consistency model, the replication strategy, and how your design addresses potential network partitions and leader election scenarios across regions. Furthermore, detail how you would monitor and alert on performance and consistency violations, and how your design optimizes for both cost and latency while maintaining the high availability requirements.",
+      "follow_up_questions": [
+        "How would your design change if the consistency requirement was relaxed to eventual consistency for non-critical data?",
+        "What strategies would you employ to minimize the impact of cross-region latency on write performance?",
+        "How would you handle data migration and schema evolution across different regions in your strongly consistent system?"
+      ],
+      "evaluation_points": [
+        "Understanding of strong consistency models (e.g., Paxos, Raft) in a distributed environment",
+        "Trade-offs between consistency, latency, and availability (CAP Theorem)",
+        "Strategies for minimizing cross-region latency (e.g., quorum optimizations, locality-aware routing)",
+        "Handling network partitions and leader election with geographical distribution",
+        "Comprehensive monitoring and alerting strategies for both performance and consistency violations",
+        "Cost optimization techniques in a globally distributed system",
+        "Replication strategies suitable for strong consistency (e.g., synchronous, semi-synchronous)",
+        "Data migration and schema evolution strategies minimizing downtime and data inconsistencies"
+      ],
+      "expected_time_minutes": 45
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they don't know the answer. This indicates a lack of understanding of distributed systems concepts, consistency models, replication strategies, and fault tolerance mechanisms. The candidate didn't demonstrate any knowledge related to CAP theorem, network partition handling, leader election, or monitoring in a globally distributed environment. There's no evidence of understanding cost optimization or schema evolution in this context.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of strong consistency models like Paxos or Raft.",
+        "Knowledge of replication strategies and their trade-offs (synchronous, asynchronous, semi-synchronous).",
+        "Ability to discuss the CAP theorem and its implications for distributed systems.",
+        "Familiarity with network partition handling and leader election algorithms in geographically distributed setups.",
+        "Understanding of monitoring and alerting strategies for distributed systems.",
+        "Knowledge of cost optimization techniques for globally distributed systems.",
+        "Understanding of data migration and schema evolution techniques minimizing downtime.",
+        "General understanding of distributed system design and trade-offs."
+      ],
+      "follow_up_suggestions": [
+        "Study distributed consensus algorithms like Paxos, Raft, and Multi-Paxos.",
+        "Research different replication strategies and their consistency guarantees.",
+        "Read about the CAP theorem and its implications for system design.",
+        "Explore techniques for handling network partitions and leader election in distributed systems (e.g., using ZooKeeper or etcd).",
+        "Practice designing distributed systems and consider the trade-offs involved."
+      ]
+    },
+    "time_taken": 404.248
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "interview_id": "fd593a29-e831-4ccf-b0be-c7d3a0ef664b",
+  "timestamp": "2025-05-10T16:20:02.006828",
+  "total_questions": 7,
+  "total_score": 5.2,
+  "current_interaction": {
+    "question": {
+      "id": "cf4cf31b-311f-44b3-beb5-b16894943de4",
+      "topic": "oops",
+      "subtopic": "Inheritance",
+      "difficulty": 4.65,
+      "content": "Please explain the concept of Inheritance and its practical applications.",
+      "follow_up_questions": [
+        "What are the main use cases of Inheritance?",
+        "What are common challenges when working with Inheritance?",
+        "How would you optimize Inheritance implementations?"
+      ],
+      "evaluation_points": [
+        "Basic understanding of the concept",
+        "Practical applications",
+        "Common challenges and solutions"
+      ],
+      "expected_time_minutes": 10
+    },
+    "answer": "I don't know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they do not know the answer. This indicates a complete lack of understanding of the concept of Inheritance. This demonstrates a significant knowledge gap in fundamental object-oriented programming principles. No aspects of the question were addressed.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the definition of Inheritance.",
+        "Understanding how Inheritance promotes code reuse.",
+        "Understanding how Inheritance establishes 'is-a' relationships.",
+        "Identifying practical applications of Inheritance.",
+        "Recognizing common challenges associated with Inheritance (e.g., tight coupling, the fragile base class problem) and potential solutions (e.g., careful design, using interfaces or composition over inheritance)."
+      ],
+      "follow_up_suggestions": [
+        "Study the principles of Object-Oriented Programming (OOP), focusing on Inheritance.",
+        "Practice implementing Inheritance in a programming language like Java, Python, or C++ to solidify the understanding."
+      ]
+    },
+    "time_taken": 426.031
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 0.0,
+      "oops": 1.0,
+      "dbms": 0.0,
+      "os": 3.0,
+      "cn": 1.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.7
+      ],
+      "algo": [],
+      "oops": [
+        0.6
+      ],
+      "dbms": [],
+      "os": [
+        0.7,
+        0.8,
+        0.7
+      ],
+      "cn": [
+        0.9
+      ],
+      "system_design": [
+        0.8
+      ]
+    },
+    "current_difficulty": 5.5
+  }
+}

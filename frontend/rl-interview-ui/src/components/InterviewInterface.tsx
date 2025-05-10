@@ -20,7 +20,7 @@ import { styled } from '@mui/material/styles';
 import ReactMarkdown from 'react-markdown';
 import { useAppContext } from '../contexts/AppContext';
 import { API_ENDPOINTS } from '../config/api';
-import { Question, InterviewStats } from '../types';
+import { Question, SessionStats, SubmitAnswerResponse } from '../types';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -49,7 +49,8 @@ interface InterviewInterfaceProps {
 interface EvaluationResult {
   score: number;
   feedback: string;
-  correctAnswer?: string;
+  strengths: string[];
+  improvements: string[];
 }
 
 interface RawEvaluationResponse {
@@ -64,15 +65,19 @@ interface EvaluationResponse {
     score: number;
     feedback: string;
     strengths: string[];
-    areas_for_improvement: string[];
+    improvements: string[];
   };
-  next_question?: Question;
-  session_stats?: {
-    questions_asked: number;
-    average_score: number;
-    remaining_questions: number;
+  current_state: {
+    current_question: Question;
+    session_stats: SessionStats;
   };
-  message?: string;
+  next_state: {
+    next_question: Question;
+    next_difficulty: number;
+    next_topic: string;
+    next_subtopic: string;
+    interview_complete: boolean;
+  };
 }
 
 interface AnswerSubmissionRequest {
@@ -127,12 +132,6 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
       setIsInitialized(true);
     }
   }, [currentInterview?.interviewId, isInitialized, navigate]);
-
-  useEffect(() => {
-    if (currentInterview && questionsAnswered >= currentInterview.maxQuestions) {
-      onEnd();
-    }
-  }, [questionsAnswered, currentInterview, onEnd]);
 
   const fetchNextQuestion = async () => {
     if (!currentInterview?.interviewId) return;
@@ -192,67 +191,48 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const responseData = await response.json();
+      const responseData: SubmitAnswerResponse = await response.json();
       console.log('Response data:', responseData);
 
       // Handle evaluation result
       if (responseData.evaluation) {
         setResult({
           score: responseData.evaluation.score,
-          feedback: `${responseData.evaluation.feedback}\n\nStrengths:\n${responseData.evaluation.strengths.map((s: string) => `• ${s}`).join('\n')}\n\nAreas for Improvement:\n${responseData.evaluation.improvements.map((i: string) => `• ${i}`).join('\n')}`,
-          correctAnswer: undefined
+          feedback: responseData.evaluation.feedback,
+          strengths: responseData.evaluation.strengths,
+          improvements: responseData.evaluation.improvements
         });
 
         // Update interview stats
-        if (responseData.current_state?.session_stats) {
-          setQuestionsAnswered(responseData.current_state.session_stats.questions_asked);
-          setTotalScore(prev => prev + responseData.evaluation.score);
-        }
-
-        // If interview is complete
-        if (responseData.next_state?.interview_complete) {
-          onEnd && onEnd();
-          return;
-        }
-
-        // Update the current interview with next question
-        if (responseData.next_state?.next_question && currentInterview) {
-          const nextQuestion: Question = {
-            questionId: responseData.next_state.next_question.id || responseData.next_state.next_question.questionId,
-            topic: responseData.next_state.next_topic,
-            subtopic: responseData.next_state.next_subtopic,
-            difficulty: responseData.next_state.next_difficulty,
-            content: responseData.next_state.next_question.content,
-            follow_up_questions: responseData.next_state.next_question.follow_up_questions || [],
-            evaluation_points: responseData.next_state.next_question.evaluation_points || [],
-            expected_time: responseData.next_state.next_question.expected_time || 5
-          };
-
+        if (responseData.current_state && currentInterview) {
           const updatedInterview = {
             ...currentInterview,
-            currentQuestion: nextQuestion,
-            questions: [...(currentInterview.questions || []), nextQuestion],
-            currentQuestionIdx: (currentInterview.currentQuestionIdx || 0) + 1,
+            currentQuestion: responseData.next_state.next_question,
+            questions: [...currentInterview.questions, responseData.next_state.next_question],
+            answers: [...currentInterview.answers, {
+              questionId: currentQuestion?.questionId || '',
+              answer: answer.trim(),
+              score: responseData.evaluation.score,
+              overall_feedback: responseData.evaluation.feedback,
+              improvement_suggestions: responseData.evaluation.improvements
+            }],
             stats: responseData.current_state.session_stats
           };
           setCurrentInterview(updatedInterview);
-          
-          // Automatically transition to next question after delay
-          setTimeout(() => {
-            setCurrentQuestion(nextQuestion);
-            setAnswer('');
-            setResult(null);
-            setStartTime(Date.now());
-          }, 3000); // 3 second delay to show the result
         }
-      } else {
-        // Handle error case when evaluation is missing
-        throw new Error('Invalid response format from server');
-      }
 
-    } catch (error) {
-      console.error('Error in submit handler:', error);
-      setError(error instanceof Error ? error.message : 'Failed to submit answer');
+        // Check if interview is complete
+        if (responseData.next_state.interview_complete) {
+          onEnd();
+          return;
+        }
+
+        setQuestionsAnswered(prev => prev + 1);
+        setTotalScore(prev => prev + responseData.evaluation.score);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to submit answer');
+      setAppError(err instanceof Error ? err.message : 'Failed to submit answer');
     } finally {
       setIsEvaluating(false);
     }
@@ -357,24 +337,26 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
           disabled={isEvaluating || !!result}
         />
 
-        <Stack direction="row" spacing={2} justifyContent="flex-end">
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={onEnd}
+            sx={{ minWidth: '120px' }}
+          >
+            End Interview
+          </Button>
+
           <Button
             variant="contained"
             color="primary"
             onClick={handleSubmit}
             disabled={isEvaluating || !answer.trim() || !!result}
+            sx={{ minWidth: '120px' }}
           >
             {isEvaluating ? <CircularProgress size={24} /> : 'Submit'}
           </Button>
-          
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={onEnd}
-          >
-            End Interview
-          </Button>
-        </Stack>
+        </Box>
       </StyledPaper>
 
       {result && (
@@ -390,13 +372,23 @@ export const InterviewInterface: React.FC<InterviewInterfaceProps> = ({ onEnd })
             <Typography variant="body1" color="text.secondary" paragraph>
               {result.feedback}
             </Typography>
-            {result.correctAnswer && (
+            {result.strengths.length > 0 && (
               <>
                 <Typography variant="subtitle1" gutterBottom>
-                  Sample Solution:
+                  Strengths:
                 </Typography>
                 <Box sx={{ backgroundColor: 'grey.100', p: 2, borderRadius: 1 }}>
-                  <ReactMarkdown>{result.correctAnswer}</ReactMarkdown>
+                  <ReactMarkdown>{result.strengths.map((s: string) => `• ${s}`).join('\n')}</ReactMarkdown>
+                </Box>
+              </>
+            )}
+            {result.improvements.length > 0 && (
+              <>
+                <Typography variant="subtitle1" gutterBottom>
+                  Areas for Improvement:
+                </Typography>
+                <Box sx={{ backgroundColor: 'grey.100', p: 2, borderRadius: 1 }}>
+                  <ReactMarkdown>{result.improvements.map((i: string) => `• ${i}`).join('\n')}</ReactMarkdown>
                 </Box>
               </>
             )}

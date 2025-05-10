@@ -1,0 +1,78 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:36:24.027381",
+  "total_questions": 7,
+  "total_score": 0.30000000000000004,
+  "current_interaction": {
+    "question": {
+      "id": "7454ce3c-eb0d-435d-bfe4-c8d084eec429",
+      "topic": "oops",
+      "subtopic": "Abstraction",
+      "difficulty": 2.0,
+      "content": "Explain the concept of abstraction in object-oriented programming using a real-world example like a car. What essential information about the car does a driver need to know, and what internal complexities are hidden from them?",
+      "follow_up_questions": [
+        "Why is abstraction useful in software development?",
+        "Can you give another simple example of abstraction, different from a car?"
+      ],
+      "evaluation_points": [
+        "Hiding complex implementation details",
+        "Exposing only essential information",
+        "Focus on 'what' rather than 'how'"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "cakcbsc",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The answer 'cakcbsc' provides no explanation of abstraction or any other topic. It doesn't even attempt to address the question. It demonstrates no understanding of the concept, its real-world application, or the example of a car used for illustration. The response fails to address any aspect of the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the concept of abstraction in object-oriented programming.",
+        "Providing a real-world example to explain abstraction.",
+        "Identifying essential information needed by a user (driver) in the car example.",
+        "Explaining how internal complexities are hidden from the user (driver) in the car example.",
+        "Articulating the 'what' versus 'how' principle in the context of abstraction.",
+        "Developing communication skills to explain technical concepts clearly."
+      ],
+      "follow_up_suggestions": [
+        "Study the definition and principles of abstraction in object-oriented programming.",
+        "Research real-world examples of abstraction, such as using a car or remote control.",
+        "Practice explaining abstraction to someone else, focusing on clarity and conciseness."
+      ]
+    },
+    "time_taken": 65.99
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.03,
+      "algo": 0.020999999999999998,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.03
+    },
+    "topic_performances": {
+      "ds": [
+        0.1
+      ],
+      "algo": [
+        0.1,
+        0.0
+      ],
+      "oops": [
+        0.0,
+        0.0
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 3.0
+  }
+}

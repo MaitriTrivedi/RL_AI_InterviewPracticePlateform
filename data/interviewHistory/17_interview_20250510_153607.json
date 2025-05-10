@@ -1,0 +1,75 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:36:07.847244",
+  "total_questions": 6,
+  "total_score": 0.30000000000000004,
+  "current_interaction": {
+    "question": {
+      "id": "413f5b1f-7640-4465-88a1-40adc6f59234",
+      "topic": "oops",
+      "subtopic": "Abstraction",
+      "difficulty": 2.0,
+      "content": "Explain the concept of Abstraction in Object-Oriented Programming (OOP). Can you give a simple, real-world example of how abstraction is used?",
+      "follow_up_questions": [
+        "Why is abstraction useful in programming?",
+        "What is the difference between abstraction and encapsulation?"
+      ],
+      "evaluation_points": [
+        "Hiding complex implementation details",
+        "Showing only essential information to the user/client",
+        "Example should relate to simplifying interaction (e.g., driving a car, using a coffee machine)"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "acbasjbc",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer provided, \"acbasjbc\", is not a valid explanation of Abstraction in Object-Oriented Programming. It does not demonstrate any understanding of the concept or provide any relevant examples. It is essentially gibberish.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the concept of Abstraction in OOP",
+        "Ability to explain technical concepts clearly",
+        "Providing relevant and understandable examples",
+        "Demonstrating knowledge of OOP principles"
+      ],
+      "follow_up_suggestions": [
+        "Study the definition of Abstraction in OOP thoroughly, focusing on hiding complexity and exposing only essential information.",
+        "Practice explaining the concept in your own words, using different real-world examples.",
+        "Review common OOP design patterns that utilize Abstraction, such as Facade or Abstract Factory."
+      ]
+    },
+    "time_taken": 50.232
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.03,
+      "algo": 0.020999999999999998,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.03
+    },
+    "topic_performances": {
+      "ds": [
+        0.1
+      ],
+      "algo": [
+        0.1,
+        0.0
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 3.0
+  }
+}

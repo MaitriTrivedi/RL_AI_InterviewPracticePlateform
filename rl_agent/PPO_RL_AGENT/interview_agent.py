@@ -32,18 +32,39 @@ class InterviewAgent:
         if model_version:
             self.load_model(model_version)
             
-        # Topic difficulty levels
+        # Topic difficulty levels and progression thresholds
         self.topic_difficulty = {
-            'ds': 1,      # Base level
-            'algo': 2,    # More complex
-            'oops': 1,    # Conceptual, base level
-            'dbms': 2,    # More complex
-            'os': 2,      # More complex
-            'cn': 2,      # More complex
-            'system_design': 3  # Most complex
+            'ds': {'base': 1, 'max': 8, 'progression_rate': 0.5},
+            'algo': {'base': 2, 'max': 9, 'progression_rate': 0.6},
+            'oops': {'base': 1, 'max': 8, 'progression_rate': 0.5},
+            'dbms': {'base': 2, 'max': 9, 'progression_rate': 0.6},
+            'os': {'base': 2, 'max': 9, 'progression_rate': 0.6},
+            'cn': {'base': 2, 'max': 9, 'progression_rate': 0.6},
+            'system_design': {'base': 3, 'max': 10, 'progression_rate': 0.7}
         }
         
-        # Available topics and subtopics
+        # Performance thresholds
+        self.performance_thresholds = {
+            'excellent': 0.8,
+            'good': 0.7,
+            'average': 0.5,
+            'poor': 0.3
+        }
+        
+        # Difficulty adjustment rates
+        self.difficulty_adjustment = {
+            'increase_rate': 0.5,    # Slower increase
+            'decrease_rate': 1.0,    # Faster decrease
+            'max_increase': 1.5,     # Maximum single increase
+            'max_decrease': 2.0      # Maximum single decrease
+        }
+        
+        # Topic cooldown and recovery
+        self.topic_cooldown = {}     # Track topics that need cooldown
+        self.cooldown_threshold = 2  # Number of poor performances before cooldown
+        self.recovery_threshold = 3   # Number of good performances needed for recovery
+        
+        # Initialize other components as before...
         self.topics = ['ds', 'algo', 'oops', 'dbms', 'os', 'cn', 'system_design']
         self.subtopics = {
             'ds': ["Arrays", "Strings", "Linked Lists", "Stacks and Queues", 
@@ -69,122 +90,45 @@ class InterviewAgent:
                             "System Architecture"]
         }
         
-        # Subtopic name mapping for handling variations
-        self.subtopic_mapping = {
-            # Data Structures
-            'Linked Lists (Singly, Doubly)': 'Linked Lists',
-            'Stacks and Queues': 'Stacks and Queues',
-            'Hashing (HashMaps, HashSets)': 'Hashing',
-            'Trees (Binary Tree, BST, Traversals)': 'Trees',
-            'Heaps (Min/Max Heap, Priority Queue)': 'Heaps',
-            'Tries (Prefix Trees)': 'Tries',
-            'Graphs (Adjacency List/Matrix, BFS, DFS)': 'Graphs',
-            'Segment Trees / Binary Indexed Trees': 'Segment Trees',
-            
-            # Algorithms
-            'Sorting (Bubble, Selection, Insertion)': 'Sorting',
-            'Searching (Linear, Binary Search)': 'Searching',
-            'Two Pointer Techniques': 'Two Pointer',
-            'Two Pointers': 'Two Pointer',
-            'Greedy Algorithms': 'Greedy',
-            'Graph Algorithms (Dijkstra, Floyd-Warshall, Topological Sort, Union-Find)': 'Graph Algorithms',
-            
-            # OOPS
-            'Classes': 'Classes and Objects',
-            'Interfaces and Abstract Classes': 'Interfaces',
-            'Design Patterns (Singleton, Factory, Observer)': 'Design Patterns',
-            'UML & Class Diagrams': 'UML',
-            'Real-world System Modeling': 'System Modeling',
-            
-            # DBMS
-            'Basic SQL (SELECT, INSERT, UPDATE, DELETE)': 'Basic SQL',
-            'SQL': 'Basic SQL',
-            'Joins (INNER, LEFT, RIGHT, FULL)': 'Joins',
-            'Constraints & Normalization (1NF, 2NF, 3NF)': 'Normalization',
-            'Indexes & Views': 'Indexes',
-            'Indexing': 'Indexes',
-            'Transactions (ACID Properties)': 'Transactions',
-            'Stored Procedures & Triggers': 'Stored Procedures',
-            'Concurrency & Locking': 'Concurrency',
-            'NoSQL vs RDBMS': 'NoSQL',
-            'CAP Theorem & Distributed DB Concepts': 'CAP Theorem',
-            
-            # Operating Systems
-            'Process vs Thread': 'Process Management',
-            'Memory Management (Paging, Segmentation)': 'Memory Management',
-            'CPU Scheduling Algorithms (FCFS, SJF, RR)': 'CPU Scheduling',
-            'Deadlocks (Conditions, Prevention)': 'Deadlocks',
-            'Virtual Memory & Thrashing': 'Virtual Memory',
-            'File Systems & Inodes': 'File Systems',
-            'Mutex vs Semaphore': 'Synchronization',
-            'Context Switching & Scheduling': 'Context Switching',
-            
-            # Computer Networks
-            'OSI vs TCP/IP Models': 'OSI Model',
-            'TCP/IP': 'TCP/UDP',
-            'DNS, DHCP, ARP': 'DNS/DHCP',
-            'HTTP/HTTPS & REST APIs': 'HTTP/HTTPS',
-            'Routing & Switching Basics': 'Routing',
-            'Networking': 'Socket Programming',
-            'Security': 'Firewalls',
-            'Application Layer Protocols': 'Application Protocols',
-            'Protocols': 'Application Protocols',
-            'Network Protocols': 'Application Protocols',
-            'Communication Protocols': 'Application Protocols',
-            
-            # System Design
-            'Basics of Scalability (Vertical vs Horizontal)': 'Scalability',
-            'Caching (Redis, CDN)': 'Caching',
-            'Database Sharding & Replication': 'Database Design',
-            'Databases': 'Database Design',
-            'Designing RESTful APIs': 'API Design',
-            'Rate Limiting & Throttling': 'Rate Limiting',
-            'High Availability & Fault Tolerance': 'High Availability',
-            'End-to-End Design of Systems': 'System Architecture',
-            'Microservices': 'System Architecture',
-            'System Architecture Design': 'System Architecture'
-        }
-        
-        # Initialize enhanced components
-        self.difficulty_manager = DifficultyManager()
-        self.topic_manager = TopicManager(self.topics, self.subtopics)
-        self.fatigue_manager = FatigueManager()
+        # Enhanced tracking
+        self.topic_difficulty_ceilings = {topic: self.topic_difficulty[topic]['max'] for topic in self.topics}
+        self.topic_current_difficulty = {topic: self.topic_difficulty[topic]['base'] for topic in self.topics}
+        self.consecutive_performances = {topic: [] for topic in self.topics}
         
         # Reset interview state
         self.reset_interview_state()
     
     def reset_interview_state(self):
         """Reset interview state with enhanced tracking."""
-        self.current_step = 0                                                                                                               
+        self.current_step = 0
         self.current_score = 0.0
         self.current_streak = 0
         self.time_efficiency = 1.0
-        self.current_difficulty = 5.0  # Start with medium difficulty
+        self.current_difficulty = 2.0  # Start easier to assess user level
         self.current_topic = None
         self.last_topic = None
         self.topic_transition_count = 0
         self.consecutive_topic_changes = 0
         
-        # Initialize performance tracking
+        # Enhanced performance tracking
         self.question_history = {topic: 0.0 for topic in self.topics}
         self.performances = []
         self.topic_performances = {topic: [] for topic in self.topics}
-        self.subtopic_performances = {
-            topic: {subtopic: [] for subtopic in subtopics}
-            for topic, subtopics in self.subtopics.items()
-        }
+        self.topic_difficulty_history = {topic: [] for topic in self.topics}
+        self.topic_time_history = {topic: [] for topic in self.topics}
         
-        # Enhanced time tracking
+        # Reset topic-specific difficulties
+        self.topic_current_difficulty = {topic: self.topic_difficulty[topic]['base'] for topic in self.topics}
+        
+        # Reset cooldowns
+        self.topic_cooldown = {}
+        
+        # Initialize other tracking as before...
         self.time_efficiency_history = []
         self.topic_time_spent = {topic: 0 for topic in self.topics}
         self.expected_time_per_topic = 300  # 5 minutes per topic
         self.warmup_phase = True
         self.warmup_questions = 0
-        
-        # Reset enhanced components
-        self.difficulty_manager = DifficultyManager()
-        self.topic_manager = TopicManager(self.topics, self.subtopics)
-        self.fatigue_manager = FatigueManager()
         
         # Reset PPO state
         self.current_state = None
@@ -192,355 +136,341 @@ class InterviewAgent:
         self.current_value = None
         self.current_log_prob = None
     
+    def _adjust_difficulty_for_topic(self, topic, performance_score, time_taken, expected_time):
+        """Adjust difficulty based on performance and topic-specific factors."""
+        current_diff = self.topic_current_difficulty[topic]
+        base_diff = self.topic_difficulty[topic]['base']
+        max_diff = self.topic_difficulty_ceilings[topic]
+        
+        # Time efficiency factor (0 to 1)
+        time_factor = min(1.0, expected_time / max(time_taken, 1))
+        
+        # Calculate performance-based adjustment
+        if performance_score >= self.performance_thresholds['excellent']:
+            if time_factor >= 0.8:  # Only increase if time efficiency is good
+                # Excellent performance - steady increase
+                adjustment = self.difficulty_adjustment['increase_rate']
+            else:
+                # Good performance but slow - maintain current level
+                adjustment = 0
+        elif performance_score <= self.performance_thresholds['poor']:
+            # Poor performance - guaranteed decrease
+            adjustment = -self.difficulty_adjustment['decrease_rate']
+        elif performance_score >= self.performance_thresholds['good']:
+            # Good performance - small increase
+            if time_factor >= 0.7:
+                adjustment = self.difficulty_adjustment['increase_rate'] * 0.5
+            else:
+                adjustment = 0
+        else:
+            # Below average performance - small decrease
+            adjustment = -self.difficulty_adjustment['decrease_rate'] * 0.3
+        
+        # Apply time penalty for very slow responses
+        if time_factor < 0.5:  # Taking more than twice the expected time
+            time_penalty = (0.5 - time_factor) * self.difficulty_adjustment['decrease_rate']
+            adjustment -= time_penalty
+        
+        # Ensure adjustment stays within bounds
+        if adjustment > 0:
+            adjustment = min(adjustment, self.difficulty_adjustment['max_increase'])
+        else:
+            adjustment = max(adjustment, -self.difficulty_adjustment['max_decrease'])
+        
+        # Calculate new difficulty
+        new_difficulty = current_diff + adjustment
+        
+        # Ensure difficulty stays within topic bounds
+        new_difficulty = max(base_diff, min(max_diff, new_difficulty))
+        
+        # Ensure smooth transition (prevent large jumps)
+        max_change = self.difficulty_adjustment['max_increase']
+        new_difficulty = max(
+            current_diff - max_change,
+            min(current_diff + max_change, new_difficulty)
+        )
+        
+        # Log significant changes for debugging
+        if abs(new_difficulty - current_diff) > 0.5:
+            logging.info(f"Significant difficulty change for {topic}: {current_diff:.2f} -> {new_difficulty:.2f}")
+            logging.info(f"Performance: {performance_score:.2f}, Time factor: {time_factor:.2f}")
+        
+        # Update topic difficulty
+        self.topic_current_difficulty[topic] = new_difficulty
+        self.topic_difficulty_history[topic].append(new_difficulty)
+        
+        return new_difficulty
+
+    def _update_topic_cooldown(self, topic, performance_score):
+        """Update topic cooldown status based on performance."""
+        # Keep track of consecutive performances (up to last 5)
+        self.consecutive_performances[topic].append(performance_score)
+        if len(self.consecutive_performances[topic]) > 5:
+            self.consecutive_performances[topic].pop(0)
+        
+        recent_performances = self.consecutive_performances[topic]
+        
+        # Check for cooldown condition - stricter conditions
+        if len(recent_performances) >= 2:
+            recent_poor = all(score <= self.performance_thresholds['poor'] for score in recent_performances[-2:])
+            avg_score = sum(recent_performances[-2:]) / 2
+            
+            if recent_poor or avg_score < self.performance_thresholds['poor']:
+                self.topic_cooldown[topic] = {
+                    'count': 0,
+                    'required_recovery': self.recovery_threshold,
+                    'original_difficulty': self.topic_current_difficulty[topic]
+                }
+                # Significantly reduce difficulty
+                self.topic_current_difficulty[topic] = max(
+                    self.topic_difficulty[topic]['base'],
+                    self.topic_current_difficulty[topic] * 0.7  # 30% reduction
+                )
+                logging.info(f"Topic {topic} entered cooldown. Difficulty reduced to {self.topic_current_difficulty[topic]:.2f}")
+        
+        # Check for recovery condition
+        if topic in self.topic_cooldown:
+            if performance_score >= self.performance_thresholds['good']:
+                self.topic_cooldown[topic]['count'] += 1
+                if self.topic_cooldown[topic]['count'] >= self.topic_cooldown[topic]['required_recovery']:
+                    # Gradually restore difficulty
+                    original_diff = self.topic_cooldown[topic]['original_difficulty']
+                    current_diff = self.topic_current_difficulty[topic]
+                    target_diff = min(original_diff, self.topic_difficulty[topic]['max'])
+                    self.topic_current_difficulty[topic] = current_diff + (target_diff - current_diff) * 0.3
+                    
+                    del self.topic_cooldown[topic]
+                    logging.info(f"Topic {topic} recovered from cooldown. New difficulty: {self.topic_current_difficulty[topic]:.2f}")
+
     def _get_state(self, topic):
-        """Get enhanced state representation."""
+        """Get enhanced state representation for better policy learning."""
         try:
+            # Normalize topic index
             topic_idx = float(self.topics.index(topic)) / float(len(self.topics) - 1)
-        except (ValueError, IndexError):
-            topic_idx = 0.0
-        
-        # Enhanced state features
-        state = np.array([
-            topic_idx,                                    # Current topic (normalized)
-            self.current_difficulty / 10.0,               # Current difficulty (normalized)
-            self.current_score,                           # Current performance
-            self.time_efficiency,                         # Time efficiency
-            self.current_streak / 10.0,                   # Performance streak
-            self.fatigue_manager.fatigue_factor / 2.0,    # Fatigue factor (normalized)
-            *[float(val) for val in list(self.question_history.values())[-3:]]  # Last 3 topics
-        ], dtype=np.float32)
-        
-        # Ensure correct dimension
-        if len(state) < self.state_dim:
-            state = np.pad(state, (0, self.state_dim - len(state)), 'constant')
-        elif len(state) > self.state_dim:
-            state = state[:self.state_dim]
             
-        return state
-    
+            # Get recent performance metrics
+            recent_scores = self.performances[-3:] if self.performances else [0.5]
+            avg_recent_score = np.mean(recent_scores)
+            
+            # Get topic-specific metrics
+            topic_scores = self.topic_performances.get(topic, [0.5])
+            topic_avg_score = np.mean(topic_scores) if topic_scores else 0.5
+            topic_progress = 0.0
+            if len(topic_scores) >= 2:
+                early_scores = topic_scores[:len(topic_scores)//2]
+                recent_scores = topic_scores[len(topic_scores)//2:]
+                topic_progress = np.mean(recent_scores) - np.mean(early_scores)
+            
+            # Get difficulty metrics
+            current_diff = self.topic_current_difficulty[topic]
+            normalized_diff = (current_diff - self.topic_difficulty[topic]['base']) / (self.topic_difficulty[topic]['max'] - self.topic_difficulty[topic]['base'])
+            
+            # Get time efficiency metrics
+            topic_times = self.topic_time_history.get(topic, [300])
+            avg_time = np.mean(topic_times) if topic_times else 300
+            time_efficiency = min(1.0, self.expected_time_per_topic / max(avg_time, 1))
+            
+            # Construct state vector
+            state = np.array([
+                topic_idx,                    # Topic index (normalized)
+                normalized_diff,              # Current difficulty (normalized)
+                avg_recent_score,             # Recent overall performance
+                topic_avg_score,              # Topic-specific performance
+                topic_progress,               # Topic learning progress
+                time_efficiency,              # Time efficiency
+                float(self.current_streak) / 5.0,  # Performance streak (normalized)
+                len(topic_scores) / 10.0,     # Topic exposure (normalized)
+                float(topic in self.topic_cooldown)  # Cooldown status
+            ], dtype=np.float32)
+            
+            return state
+            
+        except Exception as e:
+            logging.error(f"Error in _get_state: {e}")
+            return np.zeros(self.agent.state_dim, dtype=np.float32)  # Safe fallback
+
     def get_next_question(self, topic):
-        """Get next question with enhanced topic management and safety constraints."""
+        """Get next question with enhanced policy-based decision making."""
         try:
-            # Track topic transitions
-            if self.current_topic != topic:
-                self.consecutive_topic_changes += 1
-                if self.consecutive_topic_changes > 2:
-                    # Force staying on current topic if too many changes
-                    topic = self.current_topic or topic
-                    self.consecutive_topic_changes = 0
-            else:
-                self.consecutive_topic_changes = 0
+            # Check if topic is in cooldown
+            if topic in self.topic_cooldown:
+                available_topics = [t for t in self.topics if t not in self.topic_cooldown]
+                if available_topics:
+                    topic = self._select_alternative_topic(available_topics)
             
-            # Warmup phase handling with topic consideration
-            if self.warmup_phase:
-                if self.warmup_questions < 3:
-                    # Start with easier questions based on topic difficulty
-                    base_difficulty = 2.0 + self.topic_difficulty[topic]
-                    self.current_difficulty = min(4.0, base_difficulty)
-                    self.warmup_questions += 1
-                else:
-                    self.warmup_phase = False
-            
-            # Get state and select action
+            # Get enhanced state representation
             state = self._get_state(topic)
-            action_result = self.agent.select_action(state)
             
-            # Handle different return types from select_action
-            if isinstance(action_result, (tuple, list)):
-                action = float(action_result[0])  # First element is always the action
-                value = float(action_result[1]) if len(action_result) > 1 else 0.0
-                log_prob = float(action_result[2]) if len(action_result) > 2 else 0.0
-            elif isinstance(action_result, (np.ndarray, np.floating, float, int)):
-                action = float(action_result)
-                value = 0.0
-                log_prob = 0.0
-            else:
-                raise ValueError(f"Unexpected action type: {type(action_result)}")
+            # Get action from policy
+            action, value, log_prob = self.agent.select_action(state)
             
-            # Apply safety constraints based on performance history
-            if hasattr(self, 'current_score'):
-                # Get recent performance metrics
-                recent_scores = self.performances[-3:] if self.performances else []
-                avg_recent_score = np.mean(recent_scores) if recent_scores else 0.5
-                
-                # Count consecutive low scores
-                consecutive_low_scores = 0
-                for score in reversed(self.performances):
-                    if score < 0.3:
-                        consecutive_low_scores += 1
-                    else:
-                        break
-                
-                # Calculate maximum allowed difficulty change
-                if consecutive_low_scores >= 2:
-                    # Force difficulty reduction on multiple low scores
-                    max_difficulty = max(1.0, self.current_difficulty * 0.6)
-                    action = min(action, max_difficulty)
-                else:
-                    # Normal difficulty progression
-                    max_increase = min(2.0, avg_recent_score * 3)
-                    if action > self.current_difficulty:
-                        action = min(action, self.current_difficulty + max_increase)
-            
-            # Consider topic difficulty in final action
-            topic_factor = self.topic_difficulty[topic] / 3.0  # Normalize to 0-1
-            max_topic_difficulty = 7.0 + (topic_factor * 3.0)  # Max difficulty based on topic
-            action = min(action, max_topic_difficulty)
-            
-            # Ensure action is within valid range
-            action = np.clip(action, 1.0, 10.0)
-            
-            # Adjust difficulty based on time spent on topic
-            time_factor = self.topic_time_spent[topic] / self.expected_time_per_topic
-            if time_factor > 1.2:  # Spent too much time on topic
-                action = max(1.0, action * 0.9)  # Reduce difficulty
-            elif time_factor < 0.5:  # Not enough time spent
-                action = min(10.0, action * 1.1)  # Increase difficulty
-            
-            # Store current state
+            # Store PPO state
             self.current_state = state
             self.current_action = action
             self.current_value = value
             self.current_log_prob = log_prob
-            self.last_topic = self.current_topic
-            self.current_topic = topic
+            
+            # Get topic-specific difficulty bounds
+            base_diff = self.topic_difficulty[topic]['base']
+            max_diff = self.topic_difficulty_ceilings[topic]
+            
+            # Scale action to difficulty range
+            difficulty = float(action)  # Action is already in [1, 10] range
+            difficulty = max(base_diff, min(max_diff, difficulty))
+            
+            # Apply warmup phase adjustments
+            if self.warmup_phase:
+                if self.warmup_questions < 3:
+                    difficulty = min(3.5, self.topic_difficulty[topic]['base'] + 1.0)
+                    self.warmup_questions += 1
+                else:
+                    self.warmup_phase = False
             
             # Select appropriate subtopic
             subtopic = self.select_subtopic(topic)
             
-            return action, subtopic
+            # Update tracking
+            self.current_topic = topic
+            self.last_topic = topic
+            self.topic_current_difficulty[topic] = difficulty
+            
+            return difficulty, subtopic
             
         except Exception as e:
             logging.error(f"Error in get_next_question: {e}")
-            return 5.0, self.subtopics[topic][0]  # Safe fallback to medium difficulty
-    
-    def _normalize_subtopic(self, subtopic):
-        """Normalize subtopic name to match the standard names in self.subtopics."""
-        try:
-            # First try direct mapping
-            if subtopic in self.subtopic_mapping:
-                return self.subtopic_mapping[subtopic]
-            
-            # If not in mapping, check if it exists in any topic's subtopics
-            for topic_subtopics in self.subtopics.values():
-                if subtopic in topic_subtopics:
-                    return subtopic
-            
-            # If still not found, try to find a close match
-            for standard_subtopic in self.subtopic_mapping.values():
-                if subtopic.lower() in standard_subtopic.lower():
-                    return standard_subtopic
-            
-            # If no match found, return a default subtopic for the current topic
-            if self.current_topic and self.current_topic in self.subtopics:
-                return self.subtopics[self.current_topic][0]
-            
-            # Final fallback
-            return list(self.subtopics['ds'])[0]
-            
-        except Exception as e:
-            logging.error(f"Error normalizing subtopic {subtopic}: {e}")
-            return list(self.subtopics['ds'])[0]  # Safe fallback
+            return 3.0, self.subtopics[topic][0]  # Safe fallback
 
-    def select_subtopic(self, topic):
-        """Select a subtopic for the given topic based on performance history and current state."""
-        if topic not in self.subtopics:
-            return self.subtopics['ds'][0]  # Fallback to first DS subtopic
-            
-        available_subtopics = self.subtopics[topic]
-        
-        # Get performance history for each subtopic
-        subtopic_scores = {}
-        for subtopic in available_subtopics:
-            performances = self.subtopic_performances[topic][subtopic]
-            if not performances:
-                # No history - moderate score to balance exploration
-                subtopic_scores[subtopic] = 0.5
+    def _select_alternative_topic(self, available_topics):
+        """Select alternative topic based on performance history."""
+        topic_scores = {}
+        for topic in available_topics:
+            scores = self.topic_performances.get(topic, [])
+            if scores:
+                avg_score = sum(scores) / len(scores)
+                topic_scores[topic] = avg_score
             else:
-                # Use recent performance with some randomness
-                avg_perf = np.mean(performances[-3:]) if len(performances) >= 3 else np.mean(performances)
-                subtopic_scores[subtopic] = avg_perf
+                topic_scores[topic] = 0.5  # Default score for unexplored topics
         
-        # Check recent performance
-        recent_scores = self.performances[-3:] if self.performances else []
-        avg_recent_score = np.mean(recent_scores) if recent_scores else 0.5
-        
-        # Adjust exploration rate based on performance
-        if avg_recent_score < 0.3:  # Poor performance
-            # Stay with familiar subtopics
-            explored_subtopics = [s for s, scores in self.subtopic_performances[topic].items() if scores]
-            if explored_subtopics:
-                # Select from previously explored subtopics with decent performance
-                good_subtopics = [s for s in explored_subtopics 
-                                if np.mean(self.subtopic_performances[topic][s]) > 0.4]
-                if good_subtopics:
-                    return np.random.choice(good_subtopics)
-                return np.random.choice(explored_subtopics)
-        elif avg_recent_score < 0.6:  # Moderate performance
-            # Reduce exploration probability
-            if np.random.random() < 0.1:  # 10% chance of exploration
-                unexplored = [s for s, scores in subtopic_scores.items() if scores == 0.5]
-                if unexplored:
-                    return np.random.choice(unexplored)
-        else:  # Good performance
-            # Normal exploration rate
-            if np.random.random() < 0.2:  # 20% chance of exploration
-                unexplored = [s for s, scores in subtopic_scores.items() if scores == 0.5]
-                if unexplored:
-                    return np.random.choice(unexplored)
-        
-        # Convert scores to selection probabilities with performance weighting
-        total_score = sum(subtopic_scores.values())
-        if total_score == 0:
-            # If no scores, use uniform distribution
-            return np.random.choice(available_subtopics)
-            
-        probs = [score/total_score for score in subtopic_scores.values()]
-        
-        # Select subtopic based on probabilities
-        return np.random.choice(available_subtopics, p=probs)
+        # Select topic with best potential for learning
+        return max(topic_scores.items(), key=lambda x: x[1])[0]
 
     def update_performance(self, topic, subtopic, performance_score, time_taken):
-        """Update performance metrics with enhanced time management."""
+        """Update agent's performance metrics and train if possible."""
         try:
-            # Normalize subtopic
-            normalized_subtopic = self._normalize_subtopic(subtopic)
+            # Calculate reward
+            reward = self._calculate_reward(
+                topic, subtopic, performance_score, time_taken
+            )
             
-            # Ensure topic exists
-            if topic not in self.topics:
-                topic = 'ds'  # Fallback to data structures
+            logging.info(f"Performance update - Topic: {topic}, Score: {performance_score:.2f}, Reward: {reward:.2f}")
             
-            # Update time tracking
-            self.topic_time_spent[topic] += time_taken
-            self.time_efficiency = min(300 / max(time_taken, 1), 2.0)  # Cap at 2x efficiency
-            self.time_efficiency_history.append(self.time_efficiency)
+            training_metrics = None
             
-            # Update performance metrics
-            self.current_score = performance_score
-            if performance_score >= 0.7:  # Good performance threshold
+            # Update PPO agent
+            if hasattr(self, 'current_state'):
+                # Store transition in PPO memory
+                self.agent.store_transition(reward, False)  # done=False as interview continues
+                
+                # Log buffer status
+                buffer_size = len(self.agent.replay_buffer['states']) if hasattr(self.agent, 'replay_buffer') else 0
+                batch_size = self.agent.batch_size if hasattr(self.agent, 'batch_size') else 0
+                logging.info(f"Replay buffer status - Current size: {buffer_size}, Batch size required: {batch_size}")
+                
+                # Train if enough steps
+                if buffer_size >= batch_size:
+                    logging.info("Starting PPO training update")
+                    metrics = self.agent.train()
+                    if metrics:
+                        training_metrics = {
+                            'policy_loss': float(metrics.get('policy_loss', 0.0)),
+                            'value_loss': float(metrics.get('value_loss', 0.0)),
+                            'entropy_loss': float(metrics.get('entropy_loss', 0.0))
+                        }
+                        logging.info(f"Training metrics updated: {training_metrics}")
+                    else:
+                        logging.warning("Training completed but no metrics returned")
+                else:
+                    logging.info("Skipping training - insufficient samples")
+            
+            # Update difficulty and cooldown
+            self._adjust_difficulty_for_topic(topic, performance_score, time_taken, self.expected_time_per_topic)
+            self._update_topic_cooldown(topic, performance_score)
+            
+            # Update streak
+            if performance_score >= self.performance_thresholds['good']:
                 self.current_streak += 1
             else:
                 self.current_streak = 0
             
-            # Update topic and subtopic performances
-            self.performances.append(performance_score)
+            # Update time efficiency
+            time_efficiency = self.expected_time_per_topic / max(time_taken, 1)
+            self.time_efficiency = time_efficiency
+            self.time_efficiency_history.append(time_efficiency)
             
-            # Ensure topic exists in performances
-            if topic not in self.topic_performances:
-                self.topic_performances[topic] = []
-            self.topic_performances[topic].append(performance_score)
+            # Update topic time tracking
+            self.topic_time_spent[topic] += time_taken
             
-            # Ensure topic and subtopic exist in subtopic_performances
-            if topic not in self.subtopic_performances:
-                self.subtopic_performances[topic] = {s: [] for s in self.subtopics[topic]}
-            if normalized_subtopic not in self.subtopic_performances[topic]:
-                self.subtopic_performances[topic][normalized_subtopic] = []
-            self.subtopic_performances[topic][normalized_subtopic].append(performance_score)
+            # Update question history
+            self.question_history[topic] += 1
             
-            # Calculate time-weighted performance
-            time_penalty = max(0, (time_taken - 300) / 300)  # Penalty for taking too long
-            adjusted_score = performance_score * (1.0 - time_penalty)
-            
-            # Update question history with time-weighted scores
-            self.question_history[topic] = (
-                self.question_history[topic] * 0.7 +  # Historical weight
-                adjusted_score * 0.3  # Current performance weight
-            )
-            
-            # Calculate reward with time consideration
-            reward = self._calculate_reward(topic, adjusted_score, self.time_efficiency)
-            
-            # Update agent
-            self.agent.store_transition(reward, False)
-            
-            # Train if enough samples
-            if len(self.agent.states) >= 32:  # Minimum batch size
-                metrics = self.agent.train()  # Train on all available data
-                if metrics and isinstance(metrics, dict):
-                    self.current_step += 1  # Increment step counter after successful training
-                    
-                    # Log training metrics
-                    logging.info(f"Training step {self.current_step} - "
-                               f"Actor Loss: {metrics.get('actor_loss', 0.0):.3f}, "
-                               f"Value Loss: {metrics.get('value_loss', 0.0):.3f}, "
-                               f"Entropy Loss: {metrics.get('entropy_loss', 0.0):.3f}, "
-                               f"Mean Reward: {metrics.get('mean_reward', 0.0):.3f}")
-                    
-                    return metrics  # Return metrics for monitoring
-            
-            return None  # Return None if no training occurred
+            # Return training metrics if available
+            return training_metrics
             
         except Exception as e:
             logging.error(f"Error in update_performance: {e}")
-            return None  # Return None on error
-    
-    def _calculate_reward(self, topic, performance_score, time_efficiency):
-        """Calculate enhanced reward with multiple components and safety constraints."""
-        # Base performance reward with difficulty consideration
-        difficulty_factor = self.current_difficulty / 10.0
-        topic_difficulty_factor = self.topic_difficulty[topic] / 3.0  # Normalize to 0-1
-        
-        # Penalize aggressive difficulty increases when performance is poor
-        difficulty_change = self.current_difficulty - self.previous_difficulty if hasattr(self, 'previous_difficulty') else 0
-        difficulty_penalty = max(0, difficulty_change/5.0) if performance_score < 0.3 else 0
-        
-        # Base reward considering difficulty appropriateness
-        base_reward = performance_score * (1 - abs(difficulty_factor - performance_score))
-        
-        # Streak consideration
-        streak_bonus = 0.2 * min(self.current_streak, 3)  # Cap streak bonus
-        
-        # Topic appropriateness reward
-        topic_appropriateness = 1.0 - abs(topic_difficulty_factor - difficulty_factor)
-        topic_reward = 0.3 * topic_appropriateness
-        
-        # Time efficiency bonus (reduced impact)
-        time_bonus = 0.1 if time_efficiency > 0.8 else 0.05 if time_efficiency > 0.6 else 0
-        
-        # Topic coverage bonus (reduced impact)
-        covered_topics = len([t for t in self.topics if self.question_history[t] > 0])
-        coverage_bonus = 0.1 * (covered_topics / len(self.topics))
-        
-        # Exploration bonus for trying new topics (with difficulty consideration)
-        exploration_bonus = 0.2 if len(self.topic_performances[topic]) <= 1 and difficulty_factor <= topic_difficulty_factor else 0
-        
-        # Combine all components
-        total_reward = (base_reward 
-                       + streak_bonus 
-                       + topic_reward
-                       + time_bonus 
-                       + coverage_bonus 
-                       + exploration_bonus 
-                       - difficulty_penalty)  # Subtract the difficulty penalty
-        
-        # Store current difficulty for next calculation
-        self.previous_difficulty = self.current_difficulty
-        
-        return np.clip(total_reward, -1.0, 2.0)  # Clip reward to reasonable range
-    
+            return None
+
     def get_interview_stats(self):
         """Get enhanced interview statistics."""
-        # Calculate topic coverage
-        covered_topics = len([t for t in self.topics if self.topic_performances[t]])
-        topic_coverage = covered_topics / len(self.topics)
-        
-        # Calculate average scores per topic
-        topic_averages = {}
-        for topic in self.topics:
-            scores = self.topic_performances[topic]
-            topic_averages[topic] = float(np.mean(scores)) if scores else 0.0
-        
-        # Calculate overall statistics
-        return {
-            'average_score': float(np.mean(self.performances)) if self.performances else 0.0,
-            'time_efficiency': float(np.mean(self.time_efficiency_history)) if self.time_efficiency_history else 1.0,
-            'topic_performances': topic_averages,
-            'current_streak': int(self.current_streak),
-            'difficulty_level': float(self.current_difficulty),
-            'fatigue_level': float(self.fatigue_manager.fatigue_factor),
-            'topic_coverage': float(topic_coverage),
-            'total_questions': len(self.performances)
-        }
+        try:
+            # Calculate topic coverage
+            covered_topics = len([t for t in self.topics if self.topic_performances[t]])
+            topic_coverage = covered_topics / len(self.topics)
+            
+            # Calculate average scores per topic
+            topic_averages = {}
+            topic_difficulties = {}
+            for topic in self.topics:
+                scores = self.topic_performances[topic]
+                difficulties = self.topic_difficulty_history[topic]
+                topic_averages[topic] = float(np.mean(scores)) if scores else 0.0
+                topic_difficulties[topic] = float(np.mean(difficulties)) if difficulties else self.topic_difficulty[topic]['base']
+            
+            # Calculate learning progress
+            learning_progress = {}
+            for topic in self.topics:
+                scores = self.topic_performances[topic]
+                if len(scores) >= 2:
+                    early_avg = np.mean(scores[:len(scores)//2])
+                    recent_avg = np.mean(scores[len(scores)//2:])
+                    learning_progress[topic] = float(recent_avg - early_avg)
+                else:
+                    learning_progress[topic] = 0.0
+            
+            return {
+                'average_score': float(np.mean(self.performances)) if self.performances else 0.0,
+                'time_efficiency': float(np.mean(self.time_efficiency_history)) if self.time_efficiency_history else 1.0,
+                'topic_performances': topic_averages,
+                'topic_difficulties': topic_difficulties,
+                'learning_progress': learning_progress,
+                'current_streak': int(self.current_streak),
+                'difficulty_level': float(self.current_difficulty),
+                'topic_coverage': float(topic_coverage),
+                'total_questions': len(self.performances),
+                'cooldown_topics': list(self.topic_cooldown.keys())
+            }
+            
+        except Exception as e:
+            logging.error(f"Error in get_interview_stats: {str(e)}")
+            return {
+                'average_score': 0.0,
+                'time_efficiency': 1.0,
+                'topic_performances': {},
+                'current_streak': 0,
+                'difficulty_level': self.current_difficulty,
+                'topic_coverage': 0.0,
+                'total_questions': 0
+            }
     
     def train(self):
         """Train the agent on collected experience."""
@@ -612,23 +542,30 @@ class InterviewAgent:
     def load_model(self, version):
         """Load a specific model version."""
         try:
-            # Try direct path first
-            if os.path.exists(version):
-                model_path = version
-            else:
-                # Try in versions directory
-                versions_dir = os.path.join(self.models_dir, 'versions')
-                model_path = os.path.join(versions_dir, f"{version}.npy")
-                if not os.path.exists(model_path):
-                    # Try in main models directory
-                    model_path = os.path.join(self.models_dir, f"{version}.npy")
-            
-            if not os.path.exists(model_path):
-                raise ValueError(f"Model version {version} not found at {model_path}")
-            
-            self.agent.load_model(model_path)
-            logging.info(f"Model loaded from: {model_path}")
-            
+            self.model_handler.load_model(self.agent.policy, self.agent.value_net, version)
+            logging.info(f"Successfully loaded model version: {version}")
         except Exception as e:
-            logging.error(f"Error loading model: {e}")
-            raise 
+            logging.error(f"Error loading model version {version}: {e}")
+            raise
+        
+    def select_subtopic(self, topic):
+        """Select a subtopic based on current difficulty and performance history."""
+        available_subtopics = self.subtopics[topic]
+        current_difficulty = self.topic_current_difficulty[topic]
+        
+        # Map difficulty levels to subtopic indices
+        # Lower difficulty -> earlier subtopics, higher difficulty -> later subtopics
+        difficulty_index = int((current_difficulty / self.topic_difficulty[topic]['max']) * len(available_subtopics))
+        difficulty_index = max(0, min(difficulty_index, len(available_subtopics) - 1))
+        
+        # Create a window of subtopics around the difficulty index
+        window_size = 3  # Number of subtopics before and after the current difficulty
+        start_idx = max(0, difficulty_index - window_size)
+        end_idx = min(len(available_subtopics), difficulty_index + window_size + 1)
+        candidate_subtopics = available_subtopics[start_idx:end_idx]
+        
+        # Add some randomness to prevent predictability
+        if random.random() < 0.2:  # 20% chance to pick a random subtopic
+            return random.choice(available_subtopics)
+        
+        return random.choice(candidate_subtopics)  # Pick from the difficulty-appropriate window 

@@ -1,0 +1,69 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:35:44.584612",
+  "total_questions": 3,
+  "total_score": 0.1,
+  "current_interaction": {
+    "question": {
+      "id": "ea267c1d-8231-47cc-83a9-4b248bf9b728",
+      "topic": "ds",
+      "subtopic": "Heaps",
+      "difficulty": 2.0,
+      "content": "Explain the basic concept of a Min-Heap.  What is the defining property of a Min-Heap, and how does it ensure that the smallest element can be quickly accessed?",
+      "follow_up_questions": [
+        "Can you give a simple example of a Min-Heap represented as an array?",
+        "What is the difference between a Min-Heap and a Max-Heap?"
+      ],
+      "evaluation_points": [
+        "Root node is the smallest element",
+        "Parent node's value is less than or equal to its children's values"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "cascua",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The answer 'cascua' demonstrates a complete lack of understanding of the Min-Heap concept. It provides no relevant information or any attempt to explain the structure or its properties. The response fails to address any aspect of the question, indicating a significant knowledge gap.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the basic concept of a Min-Heap data structure.",
+        "Learning the defining property of a Min-Heap (parent node's value <= child nodes' values).",
+        "Explaining how the Min-Heap property allows quick access to the minimum element (root node).",
+        "Being able to articulate technical concepts clearly and concisely."
+      ],
+      "follow_up_suggestions": [
+        "Study the definition and properties of a Min-Heap from reliable sources (textbooks, online courses).",
+        "Practice drawing Min-Heap structures and inserting/deleting elements to understand how the heap property is maintained.",
+        "Review the time complexity of common Min-Heap operations (insertion, deletion, finding minimum).",
+        "Compare and contrast Min-Heaps with other heap-based structures like Max-Heaps."
+      ]
+    },
+    "time_taken": 26.636
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.020999999999999998,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [
+        0.1,
+        0.0
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 3.0
+  }
+}

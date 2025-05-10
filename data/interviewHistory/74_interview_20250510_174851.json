@@ -1,0 +1,73 @@
+{
+  "interview_id": "547a7fb3-2d94-40fb-bfac-c03ecc41a8f5",
+  "timestamp": "2025-05-10T17:48:51.726796",
+  "total_questions": 3,
+  "total_score": 1.6,
+  "current_interaction": {
+    "question": {
+      "id": "03c47c6a-b1cd-4d75-8a8d-961ffc5ce92e",
+      "topic": "oops",
+      "subtopic": "Design Patterns",
+      "difficulty": 5.0,
+      "content": "Imagine you are building a notification system for an e-commerce application. This system needs to support sending notifications via email, SMS, and push notifications. Initially, the system only supported email notifications, and the code is tightly coupled with the email service. Now, you need to add SMS and push notification support without modifying the existing email notification code. How would you refactor the notification system to accommodate these new notification channels using the Strategy design pattern?",
+      "follow_up_questions": [
+        "What are the advantages of using the Strategy pattern in this scenario?",
+        "How would you handle configuration and dynamic selection of the notification channel at runtime?"
+      ],
+      "evaluation_points": [
+        "Identification of the Strategy pattern as appropriate",
+        "Correct application of the Strategy pattern (defining interfaces/abstract classes for notification strategies and concrete classes for each channel)",
+        "Loose coupling between the notification system and the specific notification channels",
+        "Demonstration of how to add new channels without modifying existing code"
+      ],
+      "expected_time_minutes": 20
+    },
+    "answer": "To implement the **Strategy design pattern** for a notification system:\n\n1. **Create a `NotificationStrategy` interface** with a method `send_notification`:\n\n   ```python\n   class NotificationStrategy(ABC):\n       @abstractmethod\n       def send_notification(self, message: str, recipient: str):\n           pass\n   ```\n\n2. **Implement concrete strategies** (Email, SMS, Push):\n\n   ```python\n   class EmailNotification(NotificationStrategy):\n       def send_notification(self, message: str, recipient: str):\n           print(f\"Sending email to {recipient}: {message}\")\n\n   class SMSNotification(NotificationStrategy):\n       def send_notification(self, message: str, recipient: str):\n           print(f\"Sending SMS to {recipient}: {message}\")\n\n   class PushNotification(NotificationStrategy):\n       def send_notification(self, message: str, recipient: str):\n           print(f\"Sending push notification to {recipient}: {message}\")\n   ```\n\n3. **Create a `NotificationContext` class** that uses the strategy:\n\n   ```python\n   class NotificationContext:\n       def __init__(self, strategy: NotificationStrategy):\n           self._strategy = strategy\n       def set_strategy(self, strategy: NotificationStrategy):\n           self._strategy = strategy\n       def send(self, message: str, recipient: str):\n           self._strategy.send_notification(message, recipient)\n   ```\n\n4. **Usage**: Switch notification methods easily without modifying the code:\n\n   ```python\n   notification_system = NotificationContext(EmailNotification())\n   notification_system.send(\"Your order has been shipped!\", \"customer@example.com\")\n\n   notification_system.set_strategy(SMSNotification())\n   notification_system.send(\"Your order has been shipped!\", \"123-456-7890\")\n   ```\n\nThis pattern keeps the system flexible, maintainable, and adheres to the open/closed principle.\n",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer provides a clear and accurate implementation of the Strategy pattern for the notification system. The code examples are well-structured and demonstrate how to create a `NotificationStrategy` interface, concrete strategy implementations (Email, SMS, Push), and a `NotificationContext` class. The explanation effectively highlights the flexibility and maintainability benefits of using this pattern and its adherence to the open/closed principle. The usage example clearly shows how to switch between different notification methods without modifying the core code. A minor point to consider is the lack of error handling, but given the scope of the question, the response is excellent.",
+      "strengths": [
+        "Correct identification and application of the Strategy pattern.",
+        "Clear and concise code examples that are easy to understand.",
+        "Effective explanation of the benefits of using the Strategy pattern, especially related to the open/closed principle and loose coupling."
+      ],
+      "areas_for_improvement": [
+        "The code lacks error handling (e.g., what happens if the SMS service is unavailable?). While not strictly required by the question, it's a valuable consideration in real-world implementations.",
+        "Could briefly mention dependency injection as a way to provide the strategy to the context."
+      ],
+      "follow_up_suggestions": [
+        "How would you handle different configurations for each notification channel (e.g., API keys, templates)?",
+        "How would you implement logging or metrics for each notification channel?",
+        "Explore the use of dependency injection to inject the strategy into the context instead of using `set_strategy`."
+      ]
+    },
+    "time_taken": 326.653
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 1.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.8
+      ],
+      "algo": [],
+      "oops": [],
+      "dbms": [
+        0.0
+      ],
+      "os": [],
+      "cn": [],
+      "system_design": [
+        0.8
+      ]
+    },
+    "current_difficulty": 4.0
+  }
+}

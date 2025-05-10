@@ -1,0 +1,27 @@
+{
+  "interviewId": "c5a4fee6-8e10-4002-9c67-8e471cc23576",
+  "startTime": "2025-05-10T16:03:20.931Z",
+  "questions": [
+    {
+      "questionNumber": 1,
+      "difficulty": 3.5,
+      "score": 0,
+      "topic": "system_design",
+      "timeTaken": 90.585,
+      "timestamp": "2025-05-10T16:03:20.931Z"
+    },
+    {
+      "questionNumber": 2,
+      "difficulty": 3,
+      "score": 0,
+      "topic": "dbms",
+      "timeTaken": 105.114,
+      "timestamp": "2025-05-10T16:03:34.902Z"
+    }
+  ],
+  "totalQuestions": 2,
+  "averageScore": 0.0,
+  "averageDifficulty": 3.25,
+  "totalTime": 195.699,
+  "lastUpdated": "2025-05-10T16:03:34.902Z"
+}

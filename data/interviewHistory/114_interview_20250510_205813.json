@@ -1,0 +1,69 @@
+{
+  "interview_id": "b3880bab-779d-4bb8-ae88-a645e99a443b",
+  "timestamp": "2025-05-10T20:58:13.472036",
+  "total_questions": 1,
+  "total_score": 1.0,
+  "current_interaction": {
+    "question": {
+      "id": "3648672e-f72b-4556-8088-95461e588a4c",
+      "topic": "system_design",
+      "subtopic": "Database Design",
+      "difficulty": 3.5,
+      "content": "You are designing a database for a simple online bookstore. The bookstore needs to store information about books (title, author, ISBN, price), customers (name, address, email), and orders (order date, customer ID, total amount). Design a basic relational database schema with appropriate tables and columns. Consider data types and primary/foreign key relationships. How would you structure the tables and relationships to efficiently query for all orders placed by a specific customer?",
+      "follow_up_questions": [
+        "What data types would you choose for each of the columns in your tables and why?",
+        "How would you modify your schema if you needed to store multiple addresses for each customer (e.g., billing and shipping address)?"
+      ],
+      "evaluation_points": [
+        "Identifies Book, Customer, and Order tables.",
+        "Defines appropriate columns for each table (title, author, ISBN, price, name, address, email, order date, customer ID, total amount).",
+        "Chooses reasonable data types (VARCHAR, INT, DECIMAL, DATE).",
+        "Establishes primary and foreign key relationships between tables (e.g., CustomerID in Order table as a foreign key referencing Customer table).",
+        "Demonstrates understanding of how to query for orders by customer using JOIN operations (SELECT * FROM Orders WHERE CustomerID = <customer_id>)."
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "Here is a simple relational database schema for an online bookstore:\n\n### Tables:\n\n1. **Books**:\n   - `BookID` (Primary Key, INT)\n   - `Title` (VARCHAR)\n   - `Author` (VARCHAR)\n   - `ISBN` (VARCHAR, Unique)\n   - `Price` (DECIMAL)\n\n2. **Customers**:\n   - `CustomerID` (Primary Key, INT)\n   - `Name` (VARCHAR)\n   - `Address` (VARCHAR)\n   - `Email` (VARCHAR, Unique)\n\n3. **Orders**:\n   - `OrderID` (Primary Key, INT)\n   - `OrderDate` (DATE)\n   - `CustomerID` (Foreign Key referencing `Customers.CustomerID`)\n   - `TotalAmount` (DECIMAL)\n\n4. **OrderItems** (to handle the many-to-many relationship between orders and books):\n   - `OrderItemID` (Primary Key, INT)\n   - `OrderID` (Foreign Key referencing `Orders.OrderID`)\n   - `BookID` (Foreign Key referencing `Books.BookID`)\n   - `Quantity` (INT)\n   - `Price` (DECIMAL)\n\n### Relationships:\n- **Books** to **OrderItems**: One book can appear in many orders (many-to-many via `OrderItems`).\n- **Customers** to **Orders**: One customer can place multiple orders (one-to-many).\n- **Orders** to **OrderItems**: One order can contain multiple books (one-to-many).\n\n### Query Example:\nTo retrieve all orders placed by a specific customer, you would join the `Orders` and `OrderItems` tables based on `CustomerID`:\n\n```sql\nSELECT Orders.OrderID, Orders.OrderDate, Orders.TotalAmount, OrderItems.BookID, OrderItems.Quantity\nFROM Orders\nJOIN OrderItems ON Orders.OrderID = OrderItems.OrderID\nWHERE Orders.CustomerID = ?\n```\n\n### Design Considerations:\n- **Primary Keys** ensure uniqueness.\n- **Foreign Keys** maintain referential integrity.\n- **Indexes** on `CustomerID` in the `Orders` table and `OrderID` in the `OrderItems` table can improve query performance.\n\nThis design ensures efficient queries for retrieving a customer's order history and supports scaling the database as the bookstore grows.",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer is excellent. The candidate correctly identified the core tables (Books, Customers, Orders) and crucial relationships. The inclusion of the `OrderItems` table to handle the many-to-many relationship between Orders and Books demonstrates a strong understanding of database design principles and normalization. The data types are appropriate, and the explanation of primary and foreign keys is clear. The query example is mostly correct but could be slightly more focused on just the orders themselves rather than including order items when the request was 'all orders'. The 'Design Considerations' section enhances the answer by touching on indexes and scalability.",
+      "strengths": [
+        "Correctly identifies and defines all necessary tables (Books, Customers, Orders, OrderItems).",
+        "Demonstrates understanding of primary and foreign key relationships and referential integrity.",
+        "Chooses appropriate data types for each column.",
+        "Provides a mostly correct SQL query to retrieve orders by customer.",
+        "Discusses important design considerations like indexes and scalability."
+      ],
+      "areas_for_improvement": [
+        "The provided SQL query includes `OrderItems` information, which is not strictly necessary for answering the question (retrieving *all orders*). The query could be simplified.",
+        "Could have explicitly stated what the '?' represents in the query, even though it's implied. Clarifying it represents the CustomerID would remove any ambiguity."
+      ],
+      "follow_up_suggestions": [
+        "Ask the candidate to rewrite the SQL query to return only order-related information (OrderID, OrderDate, TotalAmount) for a specific customer.",
+        "Ask the candidate to explain how they would handle discounts or promotions in this database schema."
+      ]
+    },
+    "time_taken": 62.42
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

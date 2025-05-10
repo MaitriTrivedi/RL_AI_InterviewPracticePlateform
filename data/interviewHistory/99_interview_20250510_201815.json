@@ -1,0 +1,73 @@
+{
+  "interview_id": "3c57f49a-9d3b-42e6-bc89-c7b0b9fccfd9",
+  "timestamp": "2025-05-10T20:18:15.506709",
+  "total_questions": 8,
+  "total_score": 5.0,
+  "current_interaction": {
+    "question": {
+      "id": "85a632cb-c5fb-4c89-84c9-e11446e2d7a1",
+      "topic": "system_design",
+      "subtopic": "Rate Limiting",
+      "difficulty": 8.819548322417115,
+      "content": "Imagine you are designing a rate limiting service for a globally distributed social media platform where users frequently upload high-resolution images and videos. You need to rate limit users to prevent abuse and ensure fair resource allocation. The service must handle millions of requests per second, with different rate limits applied based on user tier (free, premium, enterprise). Given the platform's global nature, latency is a critical concern. Design a highly scalable, reliable, and geographically distributed rate limiting system that can dynamically adjust rate limits based on real-time system load and prioritize legitimate user traffic while effectively mitigating potential DDoS attacks. Your design should consider: data consistency across regions, fault tolerance, efficient storage, and the ability to adapt to sudden traffic spikes. Furthermore, explain how you would handle a scenario where a regional data center experiences temporary network instability, potentially leading to inconsistent rate limit enforcement across different regions. How would you minimize the impact on users and maintain overall system stability?",
+      "follow_up_questions": [
+        "Describe the specific data structures you would use for storing rate limit counters and why you chose them. How would you handle counter expiration and garbage collection efficiently?",
+        "How would you implement dynamic rate limit adjustments based on real-time system load? What metrics would you monitor, and what algorithms would you use to determine the optimal rate limits?",
+        "Explain your approach to handling edge cases such as users rapidly switching between different IP addresses or using multiple devices simultaneously. How would you prevent rate limit circumvention and ensure accurate tracking of user activity?"
+      ],
+      "evaluation_points": [
+        "Global distribution and consistency (strong vs. eventual consistency tradeoffs)",
+        "Scalability and high availability (load balancing, redundancy)",
+        "Data structures and storage (Redis, consistent hashing, tiered storage)",
+        "Dynamic rate limit adjustment (adaptive algorithms, feedback loops)",
+        "Fault tolerance and disaster recovery (handling regional failures)",
+        "Attack mitigation (DDoS protection, bot detection)",
+        "Cost optimization (storage, network, computation)",
+        "Monitoring and alerting (real-time insights, proactive response)"
+      ],
+      "expected_time_minutes": 60
+    },
+    "answer": "i dont know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer \"I don't know\" demonstrates no understanding of the problem or relevant technologies. It fails to address any aspect of the design challenge, including global distribution, scalability, data consistency, fault tolerance, or attack mitigation strategies. No potential solutions, data structures, or algorithmic approaches were offered. The response provides no basis for evaluating technical accuracy, completeness, clarity, or practical application.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of rate limiting concepts.",
+        "Knowledge of distributed systems and consistency models.",
+        "Familiarity with relevant technologies like Redis, load balancing, and caching.",
+        "Ability to design for scalability, fault tolerance, and security.",
+        "Capacity to articulate technical solutions clearly."
+      ],
+      "follow_up_suggestions": [
+        "Research common rate limiting algorithms (e.g., token bucket, leaky bucket, fixed window, sliding window).",
+        "Study distributed caching solutions like Redis and Memcached and their consistency tradeoffs.",
+        "Explore load balancing strategies for high availability and geographical distribution.",
+        "Learn about DDoS mitigation techniques and bot detection methods.",
+        "Review best practices for designing fault-tolerant and scalable systems."
+      ]
+    },
+    "time_taken": 574.486
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

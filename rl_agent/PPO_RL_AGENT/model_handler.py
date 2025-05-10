@@ -25,7 +25,7 @@ class ModelHandler:
         for directory in [self.checkpoints_dir, self.history_dir, self.versions_dir]:
             if not os.path.exists(directory):
                 os.makedirs(directory)
-                
+    
     def save_checkpoint(self, model, metadata):
         """Save a training checkpoint."""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
@@ -66,9 +66,9 @@ class ModelHandler:
         )
         with open(metadata_path, 'w') as f:
             json.dump(metadata, f, indent=2)
-            
-        return checkpoint_path
         
+        return checkpoint_path
+    
     def save_model(self, policy_net, value_net, metrics, path=None):
         """Save model with weights and metrics."""
         try:
@@ -126,7 +126,7 @@ class ModelHandler:
         except Exception as e:
             logging.error(f"Error in save_model: {e}")
             raise
-        
+    
     def load_model(self, policy_net, value_net, version):
         """Load a specific model version."""
         try:

@@ -1,0 +1,77 @@
+{
+  "interview_id": "dcfb17f5-1796-450f-9977-f0d7f69ba3c8",
+  "timestamp": "2025-05-10T15:35:09.785340",
+  "total_questions": 9,
+  "total_score": 6.200000000000001,
+  "current_interaction": {
+    "question": {
+      "id": "1cbb6ac9-1515-4b45-8795-2ef2545d1a38",
+      "topic": "system_design",
+      "subtopic": "Rate Limiting",
+      "difficulty": 2.0,
+      "content": "Explain what Rate Limiting is and give a simple example of why it might be useful in a web application.",
+      "follow_up_questions": [
+        "What's the most basic information you would need to track to implement a simple rate limiter?",
+        "Can you name one potential problem that could arise if you didn't implement rate limiting?"
+      ],
+      "evaluation_points": [
+        "Definition of Rate Limiting: limiting the number of requests a user/client can make in a given time period.",
+        "Example of usefulness: Preventing abuse, protecting server resources, ensuring fair access."
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "dKD",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer 'dKD' provides no information or demonstration of understanding regarding rate limiting or its application. It fails to address any aspect of the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the concept of rate limiting.",
+        "Explaining the purpose and benefits of rate limiting in web applications.",
+        "Providing practical examples of rate limiting usage.",
+        "Articulating technical concepts clearly and concisely."
+      ],
+      "follow_up_suggestions": [
+        "Research rate limiting algorithms like token bucket, leaky bucket, and fixed window counters.",
+        "Study common use cases for rate limiting, such as preventing DDoS attacks, limiting API usage, and protecting against brute-force attacks.",
+        "Practice explaining the concept to someone unfamiliar with it."
+      ]
+    },
+    "time_taken": 315.818
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.5815376999999999,
+      "algo": 0.03,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.27,
+      "cn": 0.21,
+      "system_design": 0.459
+    },
+    "topic_performances": {
+      "ds": [
+        0.1,
+        0.8,
+        0.9,
+        0.9
+      ],
+      "algo": [
+        0.1
+      ],
+      "oops": [],
+      "dbms": [],
+      "os": [
+        0.9
+      ],
+      "cn": [
+        0.7
+      ],
+      "system_design": [
+        0.9,
+        0.9
+      ]
+    },
+    "current_difficulty": 3.0
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "interview_id": "547a7fb3-2d94-40fb-bfac-c03ecc41a8f5",
+  "timestamp": "2025-05-10T17:49:29.062009",
+  "total_questions": 5,
+  "total_score": 2.5,
+  "current_interaction": {
+    "question": {
+      "id": "b8711691-98e9-4e1d-9bfc-e4aca0f689e6",
+      "topic": "oops",
+      "subtopic": "Message Queues",
+      "difficulty": 4.76,
+      "content": "Imagine you are designing a system for processing user-uploaded images. The system needs to resize images into multiple sizes for different display purposes (thumbnail, medium, large). Each image resize operation takes a variable amount of time depending on the image size and complexity. Without message queues, you might resize the images serially, making the user wait longer. Explain how you could use a message queue to improve the user experience and system performance in this scenario. Specifically, describe:\n\n1.  The components of your system (e.g., upload service, image processor).\n2.  How the message queue integrates with these components.\n3.  The data structure of a typical message you would enqueue.\n4.  What considerations would you have when choosing a message queue technology (e.g., RabbitMQ, Kafka, SQS)?",
+      "follow_up_questions": [
+        "What happens if an image processing worker fails to process an image? How would you handle this scenario to ensure no images are lost?",
+        "How would you monitor the performance of your image processing system, including queue length and worker processing time?"
+      ],
+      "evaluation_points": [
+        "Producer/Consumer Pattern",
+        "Asynchronous Processing",
+        "Queue selection considerations (scalability, durability, delivery guarantees)",
+        "Message structure (image ID, desired sizes)",
+        "Error Handling/Retry mechanisms"
+      ],
+      "expected_time_minutes": 20
+    },
+    "answer": "I dont know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated \"I don't know,\" indicating a complete lack of understanding of the concepts required to answer the question. The question probes understanding of message queues, asynchronous processing, and system design. The response fails to demonstrate any knowledge in these areas.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of message queue concepts (e.g., producer/consumer pattern).",
+        "Understanding of asynchronous processing and its benefits.",
+        "Ability to design a system incorporating message queues.",
+        "Knowledge of common message queue technologies (e.g., RabbitMQ, Kafka, SQS) and their characteristics.",
+        "Understanding of message structures and data serialization.",
+        "Knowledge of error handling and retry mechanisms in distributed systems."
+      ],
+      "follow_up_suggestions": [
+        "Study the producer/consumer pattern and its applications.",
+        "Research different message queue technologies like RabbitMQ, Kafka, and SQS, focusing on their strengths and weaknesses.",
+        "Practice designing systems that utilize message queues for asynchronous processing.",
+        "Learn about message serialization formats like JSON or Protocol Buffers."
+      ]
+    },
+    "time_taken": 364.562
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 0.0,
+      "oops": 1.0,
+      "dbms": 1.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 2.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.8
+      ],
+      "algo": [],
+      "oops": [
+        0.9
+      ],
+      "dbms": [
+        0.0
+      ],
+      "os": [],
+      "cn": [],
+      "system_design": [
+        0.8,
+        0.0
+      ]
+    },
+    "current_difficulty": 5.0
+  }
+}

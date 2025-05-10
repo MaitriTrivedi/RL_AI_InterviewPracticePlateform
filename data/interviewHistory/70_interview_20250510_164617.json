@@ -1,0 +1,93 @@
+{
+  "interview_id": "cdb632b7-4bd7-4e2a-aff1-f5ba016c68ae",
+  "timestamp": "2025-05-10T16:46:17.806236",
+  "total_questions": 9,
+  "total_score": 6.0,
+  "current_interaction": {
+    "question": {
+      "id": "33935186-8d52-4677-8f64-668446efea6b",
+      "topic": "oops",
+      "subtopic": "Caching",
+      "difficulty": 8.5,
+      "content": "You are designing a real-time news aggregation service that collects articles from thousands of different news sources worldwide. Each article is represented as a JSON object with properties like `title`, `content`, `author`, `publication_date`, and a unique `article_id`. Users can subscribe to specific news topics (e.g., \"Technology\", \"Politics\", \"Sports\") and receive personalized feeds. Due to high demand, latency is critical: users expect near-instantaneous updates. News sources frequently update their articles, and consistency is paramount \u2013 users should always see the latest version of an article, even if it means slightly delaying an update. Design a multi-layered caching strategy that addresses these constraints, focusing on minimizing read latency, maintaining eventual consistency (with strong preference towards immediacy), and minimizing the load on the backend database. Your design should incorporate at least two distinct caching layers (e.g., in-memory, distributed) and explain the rationale behind each layer's selection, eviction policies, data invalidation strategies, and handling of cache misses. Specifically address how you would manage updates to articles originating from different news sources and propagate these changes through your cache layers while ensuring data integrity and minimizing staleness. Furthermore, discuss how you would handle scenarios where a specific news source experiences a sudden spike in article updates, potentially overloading the system.",
+      "follow_up_questions": [
+        "How would you monitor and measure the effectiveness of your caching strategy, including metrics like cache hit ratio, latency, and data staleness?",
+        "Describe the trade-offs between cache consistency and performance in your design, and how you would adjust your strategy based on user feedback and observed system behavior.",
+        "How would you handle situations where the cache becomes corrupted or unavailable? What fallback mechanisms would you implement to ensure service availability?"
+      ],
+      "evaluation_points": [
+        "Multi-layered caching (e.g., local in-memory cache + distributed cache)",
+        "Cache eviction policies (LRU, LFU, TTL) and their impact",
+        "Data invalidation strategies (e.g., write-through, write-back, cache stampede prevention)",
+        "Concurrency control and handling race conditions during cache updates",
+        "Eventual consistency with strategies to minimize staleness (e.g., optimistic locking with versioning)",
+        "Handling hot spots (e.g., sharding, local caching, rate limiting)",
+        "Monitoring and metrics for cache performance",
+        "Fallback mechanisms in case of cache failure"
+      ],
+      "expected_time_minutes": 60
+    },
+    "answer": "maitri",
+    "evaluation": {
+      "score": 2,
+      "feedback": "The answer is missing. There is no design provided for a multi-layered caching strategy. Without a design, it's impossible to assess the technical accuracy, completeness, clarity, or practical application of the solution. The answer needs to include specific details about the caching layers used, eviction policies, invalidation strategies, concurrency control mechanisms, and strategies for handling hotspots and cache failures.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Develop a multi-layered caching architecture.",
+        "Define specific caching layers (e.g., in-memory, distributed) and justify their selection.",
+        "Specify eviction policies for each cache layer (e.g., LRU, LFU, TTL) and explain their impact.",
+        "Describe data invalidation strategies (e.g., write-through, write-back) and how they ensure consistency.",
+        "Address concurrency control and race conditions during cache updates.",
+        "Explain how eventual consistency is achieved while minimizing staleness.",
+        "Outline strategies for handling hotspots (e.g., sharding, local caching, rate limiting).",
+        "Discuss monitoring and metrics for cache performance.",
+        "Describe fallback mechanisms in case of cache failure."
+      ],
+      "follow_up_suggestions": [
+        "Research common caching patterns and technologies (e.g., Redis, Memcached, CDN).",
+        "Study different cache eviction policies and their trade-offs.",
+        "Investigate various data invalidation strategies and their impact on consistency and performance.",
+        "Consider how to use versioning or optimistic locking to manage concurrent updates.",
+        "Explore techniques for sharding and rate limiting to handle hotspots."
+      ]
+    },
+    "time_taken": 871.301
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 1.0,
+      "oops": 2.0,
+      "dbms": 1.0,
+      "os": 2.0,
+      "cn": 1.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.9
+      ],
+      "algo": [
+        0.9
+      ],
+      "oops": [
+        0.9,
+        0.8
+      ],
+      "dbms": [
+        0.0
+      ],
+      "os": [
+        0.8,
+        0.8
+      ],
+      "cn": [
+        0.8
+      ],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 8.5
+  }
+}

@@ -2,6 +2,7 @@ import numpy as np
 from collections import defaultdict
 from datetime import datetime
 import os
+import logging
 
 class TrainingHistory:
     def __init__(self):
@@ -40,9 +41,34 @@ class TrainingHistory:
     
     def add_training_metrics(self, policy_loss, value_loss, entropy_loss):
         """Add training metrics from an update step."""
-        self.policy_losses.append(policy_loss)
-        self.value_losses.append(value_loss)
-        self.entropy_losses.append(entropy_loss)
+        try:
+            # Validate and convert metrics to float
+            if policy_loss is not None and not np.isnan(policy_loss):
+                self.policy_losses.append(float(policy_loss))
+                logging.debug(f"Added policy loss: {policy_loss:.4f}")
+            
+            if value_loss is not None and not np.isnan(value_loss):
+                self.value_losses.append(float(value_loss))
+                logging.debug(f"Added value loss: {value_loss:.4f}")
+            
+            if entropy_loss is not None and not np.isnan(entropy_loss):
+                self.entropy_losses.append(float(entropy_loss))
+                logging.debug(f"Added entropy loss: {entropy_loss:.4f}")
+            
+            # Log current metrics state
+            logging.info(f"Training metrics state - "
+                        f"Policy losses: {len(self.policy_losses)}, "
+                        f"Value losses: {len(self.value_losses)}, "
+                        f"Entropy losses: {len(self.entropy_losses)}")
+            
+            if self.policy_losses:
+                logging.info(f"Latest metrics - "
+                            f"Policy loss: {self.policy_losses[-1]:.4f}, "
+                            f"Value loss: {self.value_losses[-1] if self.value_losses else 0:.4f}, "
+                            f"Entropy loss: {self.entropy_losses[-1] if self.entropy_losses else 0:.4f}")
+        
+        except Exception as e:
+            logging.error(f"Error adding training metrics: {e}")
     
     def create_snapshot(self):
         """Create a snapshot of current performance metrics."""

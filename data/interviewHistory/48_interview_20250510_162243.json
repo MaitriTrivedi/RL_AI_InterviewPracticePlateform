@@ -1,0 +1,75 @@
+{
+  "interview_id": "6dbe62f8-84c0-4db7-8580-4f5e708c2461",
+  "timestamp": "2025-05-10T16:22:43.999093",
+  "total_questions": 7,
+  "total_score": 0.1,
+  "current_interaction": {
+    "question": {
+      "id": "9716482c-84e2-430d-8ed8-4bc523c1fbfd",
+      "topic": "cn",
+      "subtopic": "Routing",
+      "difficulty": 2.0,
+      "content": "Imagine you have a computer at home that wants to send data to a server on the internet. In simple terms, what is 'routing' and why is it necessary for this data to reach its destination?",
+      "follow_up_questions": [
+        "Can you name a device that performs routing?",
+        "What happens if routing wasn't in place?"
+      ],
+      "evaluation_points": [
+        "Routing is the process of finding a path for data to travel.",
+        "Without routing, data wouldn't know where to go and wouldn't reach its destination.",
+        "Router"
+      ],
+      "expected_time_minutes": 3
+    },
+    "answer": "do not  know",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate indicated they did not know the answer. The response demonstrates a complete lack of understanding of routing concepts, which is fundamental to networking.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of fundamental networking concepts like routing.",
+        "Ability to articulate the necessity of routing in data transmission.",
+        "Familiarity with the role of routers in network communication."
+      ],
+      "follow_up_suggestions": [
+        "Research and understand the basics of network routing, including the role of routers and IP addresses.",
+        "Study simple network diagrams and trace the path of data packets from source to destination.",
+        "Explore online resources and tutorials on networking fundamentals (e.g., Khan Academy, Cisco Networking Academy)."
+      ]
+    },
+    "time_taken": 98.499
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 2.0,
+      "algo": 1.0,
+      "oops": 1.0,
+      "dbms": 2.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.0,
+        0.0
+      ],
+      "algo": [
+        0.0
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [
+        0.0,
+        0.0
+      ],
+      "os": [],
+      "cn": [],
+      "system_design": [
+        0.1
+      ]
+    },
+    "current_difficulty": 1.0
+  }
+}

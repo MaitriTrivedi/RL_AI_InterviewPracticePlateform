@@ -1,0 +1,68 @@
+{
+  "interview_id": "7f1ba7f4-c2b6-4a07-92a1-845b04fe8cd7",
+  "timestamp": "2025-05-10T20:27:43.217746",
+  "total_questions": 2,
+  "total_score": 1.8,
+  "current_interaction": {
+    "question": {
+      "id": "e3c99fbe-e32d-44dc-9405-b1a00464f63c",
+      "topic": "system_design",
+      "subtopic": "Database Design",
+      "difficulty": 3.5,
+      "content": "You're designing a database for a simple online bookstore. The bookstore needs to store information about books (title, author, ISBN, price) and customers (name, address, email). Customers can place orders, and each order contains multiple books with quantities. Design a simple database schema with tables and relationships. Specifically address how you would represent the many-to-many relationship between orders and books, and what indexes would you consider to improve query performance for retrieving a customer's order history.",
+      "follow_up_questions": [
+        "What data types would you choose for each column in your tables and why?",
+        "How would you handle a scenario where a book has multiple authors?"
+      ],
+      "evaluation_points": [
+        "Properly defines tables: Books, Customers, Orders, and an Order_Book junction table.",
+        "Correctly establishes relationships (one-to-many between Customers and Orders, many-to-many between Orders and Books).",
+        "Identifies appropriate indexes for improving query performance (e.g., index on CustomerID in the Orders table for retrieving order history).",
+        "Demonstrates understanding of primary and foreign keys."
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "### Database Schema Design:\n\n1. **Books Table**\n   Stores details about each book.\n\n   ```sql\n   CREATE TABLE Books (\n       BookID INT PRIMARY KEY,\n       Title VARCHAR(255),\n       Author VARCHAR(255),\n       ISBN VARCHAR(13) UNIQUE,\n       Price DECIMAL(10, 2)\n   );\n   ```\n\n2. **Customers Table**\n   Stores customer information.\n\n   ```sql\n   CREATE TABLE Customers (\n       CustomerID INT PRIMARY KEY,\n       Name VARCHAR(255),\n       Address VARCHAR(255),\n       Email VARCHAR(255) UNIQUE\n   );\n   ```\n\n3. **Orders Table**\n   Stores order information, with a foreign key linking to the customer.\n\n   ```sql\n   CREATE TABLE Orders (\n       OrderID INT PRIMARY KEY,\n       CustomerID INT,\n       OrderDate DATETIME,\n       FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)\n   );\n   ```\n\n4. **OrderBooks Table**\n   A junction table representing the many-to-many relationship between orders and books, including the quantity of each book ordered.\n\n   ```sql\n   CREATE TABLE OrderBooks (\n       OrderID INT,\n       BookID INT,\n       Quantity INT,\n       PRIMARY KEY (OrderID, BookID),\n       FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),\n       FOREIGN KEY (BookID) REFERENCES Books(BookID)\n   );\n   ```\n\n### Indexing for Query Performance:\n\n* **Indexes for `OrderBooks` table**:\n  To quickly retrieve books in an order, create a composite index on `OrderID` and `BookID`.\n\n  ```sql\n  CREATE INDEX idx_order_books ON OrderBooks(OrderID, BookID);\n  ```\n\n* **Indexes for `Orders` table**:\n  Create an index on `CustomerID` for fast lookups of orders by a customer.\n\n  ```sql\n  CREATE INDEX idx_customer_orders ON Orders(CustomerID);\n  ```\n\n* **Indexes for `Books` table**:\n  If you frequently search by ISBN or title, create indexes on these fields.\n\n  ```sql\n  CREATE INDEX idx_isbn ON Books(ISBN);\n  CREATE INDEX idx_title ON Books(Title);\n  ```\n\n### Conclusion:\n\n* The **many-to-many relationship** between orders and books is handled by the `OrderBooks` junction table.\n* Indexes on `OrderID`, `CustomerID`, and `BookID` ensure fast query performance for retrieving a customer's order history and other frequently accessed fields.\n",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer is excellent and demonstrates a strong understanding of database design principles. The schema is well-defined, including the crucial junction table to handle the many-to-many relationship. The identification and justification of indexes are also well done. The code snippets are clear and concise. However, there's a minor area for improvement regarding the necessity of a separate index on (OrderID, BookID) on the OrderBooks table, given that they're already part of the primary key, which is indexed by default.",
+      "strengths": [
+        "Correctly identifies and implements the required tables and relationships.",
+        "Clearly explains the purpose of each table and relationship.",
+        "Provides relevant SQL code for table creation and index creation.",
+        "Properly addresses the many-to-many relationship with a junction table.",
+        "Identifies appropriate indexes for performance optimization."
+      ],
+      "areas_for_improvement": [
+        "The CREATE INDEX idx_order_books ON OrderBooks(OrderID, BookID); statement is redundant as the primary key already creates an index on these fields. While not technically wrong, it shows a minor oversight."
+      ],
+      "follow_up_suggestions": [
+        "Explain the potential impact of data types chosen (e.g., VARCHAR length considerations).",
+        "Discuss other indexing strategies or alternative database designs, such as using a NoSQL database if the requirements shifted significantly.",
+        "Explore the impact of different database systems (e.g., MySQL, PostgreSQL) on the schema and indexing strategies."
+      ]
+    },
+    "time_taken": 102.174
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

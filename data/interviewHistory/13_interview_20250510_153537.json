@@ -1,0 +1,71 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:35:37.459471",
+  "total_questions": 2,
+  "total_score": 0.1,
+  "current_interaction": {
+    "question": {
+      "id": "42d67958-3159-477a-b1d5-df2b5e77cdb7",
+      "topic": "algo",
+      "subtopic": "Graph Algorithms",
+      "difficulty": 2.6833333333333327,
+      "content": "Imagine a social network where users are represented as nodes and friendships as edges. Explain how Breadth-First Search (BFS) could be used to find all the users who are within two degrees of friendship from a given starting user.  Give a step-by-step explanation using a simple example with 5-6 users and connections you create.",
+      "follow_up_questions": [
+        "What data structure is commonly used to implement BFS?",
+        "What is the primary difference in the order nodes are visited between BFS and Depth-First Search (DFS)?"
+      ],
+      "evaluation_points": [
+        "Understanding of BFS algorithm",
+        "Ability to trace BFS execution",
+        "Concept of 'degrees of separation' in a graph",
+        "Knowing that BFS uses a queue"
+      ],
+      "expected_time_minutes": 8
+    },
+    "answer": "zcxcbkac",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The answer 'zcxcbkac' is completely nonsensical and demonstrates no understanding of Breadth-First Search (BFS), graph theory, or the concept of degrees of separation. It doesn't even attempt to address the question. The response lacks any technical accuracy, completeness, or clarity. There is no practical application demonstrated.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of graph theory fundamentals.",
+        "Understanding and implementation of the Breadth-First Search (BFS) algorithm.",
+        "Ability to explain technical concepts clearly and concisely.",
+        "Ability to apply algorithmic knowledge to practical problems.",
+        "Formulating coherent and relevant answers."
+      ],
+      "follow_up_suggestions": [
+        "Study graph theory basics, including nodes, edges, and types of graphs.",
+        "Learn the BFS algorithm and practice tracing its execution on various graph examples.",
+        "Work through online coding exercises focused on graph traversal.",
+        "Review explanations and examples of degrees of separation in social networks."
+      ]
+    },
+    "time_taken": 19.567
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.03,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [
+        0.1
+      ],
+      "oops": [
+        0.0
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 3.0
+  }
+}

@@ -4,7 +4,7 @@
 INTERVIEW_CONFIG = {
     # Model settings
     'model': {
-        'version': 'model_v1_20250507_182838_reward_0.629',  # Current best model
+        'version': 'model_v1_20250510_191629_reward_0.000',  # Current best model
         'state_dim': 9,
         'action_dim': 1,
         'hidden_dim': 64,

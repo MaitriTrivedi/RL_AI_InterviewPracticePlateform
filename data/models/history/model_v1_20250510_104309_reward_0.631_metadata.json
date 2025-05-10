@@ -1,0 +1,18 @@
+{
+  "version": "model_v1_20250510_104309_reward_0.631",
+  "metrics": {
+    "actor_loss": NaN,
+    "value_loss": 179.24179937383104,
+    "entropy_loss": NaN,
+    "total_loss": 0.0,
+    "mean_reward": 0.6313502089248856,
+    "clip_fraction": NaN,
+    "approx_kl": 0.08421159011604847,
+    "difficulty_accuracy": 0.0,
+    "topic_diversity": 0.0,
+    "learning_rate": 0.0,
+    "policy_std": 2.18737457165544,
+    "exploration_factor": 0.99488
+  },
+  "timestamp": "20250510_104309"
+}

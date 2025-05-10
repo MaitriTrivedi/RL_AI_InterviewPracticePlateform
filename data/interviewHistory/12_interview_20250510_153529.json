@@ -1,0 +1,69 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:35:29.334512",
+  "total_questions": 1,
+  "total_score": 0.0,
+  "current_interaction": {
+    "question": {
+      "id": "ba1b68aa-c949-48fc-8b79-ff50ced91bf1",
+      "topic": "algo",
+      "subtopic": "Graph Algorithms",
+      "difficulty": 2.875,
+      "content": "Imagine you have a social network where users are represented as nodes and friendships are represented as edges.  Explain how Breadth-First Search (BFS) could be used to find all users who are within two degrees of separation (friends of friends) from a given user.  Specifically, describe the steps involved in performing BFS starting from the given user, and how you would track the 'degree of separation'.",
+      "follow_up_questions": [
+        "What data structure would you use to implement the queue for BFS and why?",
+        "What is the worst-case time complexity of this BFS operation in terms of the number of users and friendships?"
+      ],
+      "evaluation_points": [
+        "Understanding of BFS algorithm",
+        "Ability to describe the steps of BFS: Enqueue starting node, dequeue, visit neighbors, enqueue unvisited neighbors",
+        "Concept of a queue and its use in BFS",
+        "Tracking the degree of separation (e.g., using a level counter or marking visited nodes with their distance from the starting node)."
+      ],
+      "expected_time_minutes": 10
+    },
+    "answer": "avfaxaxas",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The provided answer 'avfaxaxas' demonstrates no understanding of the Breadth-First Search (BFS) algorithm or its application in finding users within a certain degree of separation in a social network. The answer is nonsensical and provides no relevant information about the steps involved in BFS, the use of a queue, or how to track the degree of separation. It completely fails to address the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of Breadth-First Search (BFS) algorithm.",
+        "Ability to describe the steps of BFS (enqueue, dequeue, visit neighbors, enqueue unvisited neighbors).",
+        "Understanding of the concept of a queue and its role in BFS.",
+        "Ability to explain how to track the degree of separation during BFS.",
+        "General knowledge of graph traversal algorithms."
+      ],
+      "follow_up_suggestions": [
+        "Study the Breadth-First Search (BFS) algorithm in detail, including its pseudocode and implementation.",
+        "Practice applying BFS to different graph problems, such as finding the shortest path between two nodes or identifying connected components.",
+        "Focus on understanding the role of the queue in BFS and how it ensures that nodes are visited in the correct order.",
+        "Work through examples of using BFS to find nodes within a specific distance from a starting node in a graph."
+      ]
+    },
+    "time_taken": 11.433
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [
+        0.0
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 3.0
+  }
+}

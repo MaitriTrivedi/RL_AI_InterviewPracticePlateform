@@ -1,0 +1,87 @@
+{
+  "interview_id": "864ba015-03e3-4a8d-b22f-a806b982cc41",
+  "timestamp": "2025-05-10T16:31:23.934621",
+  "total_questions": 9,
+  "total_score": 6.6,
+  "current_interaction": {
+    "question": {
+      "id": "5f3e3b4b-b48c-445b-82ec-999f7ed1daaa",
+      "topic": "ds",
+      "subtopic": "Heaps",
+      "difficulty": 7.5,
+      "content": "You are building a real-time anomaly detection system that processes streaming data. One component involves continuously tracking the median of the last 'N' data points (a sliding window). Implement a solution that efficiently calculates the median of this sliding window using two heaps: a max-heap to store the smaller half of the numbers and a min-heap to store the larger half. Assume that the 'N' data points are continuously updating. Consider the following requirements:\n\n1.  The solution must be efficient, maintaining a time complexity of O(log N) for each update (addition/removal of data points) to the sliding window.\n2.  The solution needs to handle the edge case where 'N' is very large (e.g., 1 billion) and memory usage becomes a constraint. Describe how you would optimize the heap data structures to minimize memory footprint without significantly impacting performance.\n3. When a new data point arrives and the sliding window is full, the oldest data point needs to be removed. Efficiently handling duplicate values within the sliding window is crucial to ensure the correct median calculation. Design a robust mechanism to handle duplicate values correctly without resorting to linear search within the heaps to remove the old data point.\n",
+      "follow_up_questions": [
+        "How would you handle the scenario where the incoming data stream is temporarily paused or stalled? How does your solution ensure the median calculation remains accurate when the stream resumes?",
+        "What are the trade-offs between memory usage and performance when choosing different heap implementations (e.g., binary heap, binomial heap, Fibonacci heap) in this scenario? Which implementation would be most suitable, and why?",
+        "How would you adapt your solution to calculate other percentiles (e.g., 25th, 75th) of the sliding window in addition to the median?"
+      ],
+      "evaluation_points": [
+        "Correct heap balancing (maintaining the size difference between the heaps <= 1).",
+        "O(log N) complexity for add and remove operations.",
+        "Efficiently handling removal of the oldest element from the heaps, particularly in the presence of duplicates without scanning the whole heap.",
+        "Memory optimization techniques for large N (e.g., custom memory allocators, alternative heap implementations).",
+        "Robustness to handle stream pauses and resumptions."
+      ],
+      "expected_time_minutes": 45
+    },
+    "answer": "do not know",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The candidate responded with \"do not know\", indicating a lack of understanding of the problem and inability to provide a solution or even a partial approach. There is no demonstration of knowledge about heaps, sliding windows, or anomaly detection. The response completely fails to address any of the requirements outlined in the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of data structures, specifically heaps (min-heap and max-heap).",
+        "Knowledge of algorithms for maintaining the median of a data stream.",
+        "Ability to apply heap data structures to solve real-time problems like anomaly detection.",
+        "Understanding of sliding window techniques.",
+        "Knowledge of memory optimization techniques for large datasets.",
+        "Ability to handle duplicate values efficiently in data streams."
+      ],
+      "follow_up_suggestions": [
+        "Study heap data structures and their properties.",
+        "Practice implementing min-heap and max-heap data structures from scratch.",
+        "Research algorithms for finding the median of a stream of numbers using heaps.",
+        "Explore techniques for managing large datasets in memory, such as custom memory allocators or data structures that optimize space usage.",
+        "Practice solving similar problems on platforms like LeetCode or HackerRank to improve problem-solving skills and coding abilities."
+      ]
+    },
+    "time_taken": 457.549
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 1.0,
+      "algo": 1.0,
+      "oops": 1.0,
+      "dbms": 2.0,
+      "os": 2.0,
+      "cn": 1.0,
+      "system_design": 1.0
+    },
+    "topic_performances": {
+      "ds": [
+        0.8
+      ],
+      "algo": [
+        0.9
+      ],
+      "oops": [
+        0.9
+      ],
+      "dbms": [
+        0.8,
+        0.0
+      ],
+      "os": [
+        0.8,
+        0.8
+      ],
+      "cn": [
+        0.8
+      ],
+      "system_design": [
+        0.8
+      ]
+    },
+    "current_difficulty": 8.5
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "interview_id": "b958a94e-0792-401d-a995-2c5687a2edf8",
+  "timestamp": "2025-05-10T15:36:41.947542",
+  "total_questions": 9,
+  "total_score": 0.5,
+  "current_interaction": {
+    "question": {
+      "id": "44723260-b81a-476f-9956-5b447f9246f9",
+      "topic": "oops",
+      "subtopic": "Abstraction",
+      "difficulty": 2.0,
+      "content": "Explain the concept of Abstraction in object-oriented programming. Give a simple, real-world example of how abstraction is used in everyday life. For instance, think about driving a car; what details are hidden from the driver and why is that useful?",
+      "follow_up_questions": [
+        "What are the benefits of using abstraction in software development?",
+        "Can you name another example of abstraction, perhaps related to using a television or a smartphone?"
+      ],
+      "evaluation_points": [
+        "Hiding complex implementation details",
+        "Presenting only essential information",
+        "Simplifying interaction with a system",
+        "Example demonstrating the concealment of engine mechanics/internal workings of car from driver"
+      ],
+      "expected_time_minutes": 5
+    },
+    "answer": "csv",
+    "evaluation": {
+      "score": 1,
+      "feedback": "The answer \"csv\" provides no information about the concept of abstraction or a real-world example. It demonstrates a complete lack of understanding of the question.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding the concept of Abstraction in OOP",
+        "Providing a definition of Abstraction",
+        "Explaining the purpose of Abstraction",
+        "Giving a clear, real-world example",
+        "Relating the example back to hiding implementation details"
+      ],
+      "follow_up_suggestions": [
+        "Research the definition of Abstraction in Object-Oriented Programming.",
+        "Study examples of Abstraction, particularly in relation to real-world objects.",
+        "Practice explaining the concept to someone unfamiliar with programming."
+      ]
+    },
+    "time_taken": 84.477
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.03,
+      "algo": 0.020999999999999998,
+      "oops": 0.03,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.051
+    },
+    "topic_performances": {
+      "ds": [
+        0.1
+      ],
+      "algo": [
+        0.1,
+        0.0
+      ],
+      "oops": [
+        0.0,
+        0.0,
+        0.1
+      ],
+      "dbms": [],
+      "os": [],
+      "cn": [
+        0.0
+      ],
+      "system_design": [
+        0.1,
+        0.1
+      ]
+    },
+    "current_difficulty": 3.0
+  }
+}

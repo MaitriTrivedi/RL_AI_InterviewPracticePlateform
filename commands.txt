@@ -23,3 +23,10 @@ Later to continue Training on the same model :
 python -m PPO_RL_AGENT.train_ppo_with_dataset --episodes 10 --model-version latest
 
 python -m PPO_RL_AGENT.train_with_data --training-data /home/maitri/Study/RLproject/RL_AI_InterviewPracticePlateform/PPO_RL_AGENT/training_data_20250503_210511.json --epochs 5 --save-dir training_results --checkpoint-freq 10 --eval-freq 5
+python -m rl_agent.PPO_RL_AGENT.train_with_data --training-data rl_agent/PPO_RL_AGENT/training_data_20250503_210511.json --epochs 5 --save-dir data/training_results --checkpoint-freq 10 --eval-freq 5
+
+python -m PPO_RL_AGENT.train_with_data --training-data <BASE_PATH>/RL_AI_InterviewPracticePlateform/PPO_RL_AGENT/training_data_20250503_210511.json --epochs 5 --save-dir training_results --checkpoint-freq 10 --eval-freq 5
+
+
+
+python -m PPO_RL_AGENT.train_with_data --training-data /home/maitri/Study/RLproject/RL_AI_InterviewPracticePlateform/rl_agent/PPO_RL_AGENT/training_data_20250503_210511.json --epochs 5 --save-dir training_results --checkpoint-freq 10 --eval-freq 5

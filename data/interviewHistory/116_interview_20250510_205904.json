@@ -1,0 +1,71 @@
+{
+  "interview_id": "b3880bab-779d-4bb8-ae88-a645e99a443b",
+  "timestamp": "2025-05-10T20:59:04.674121",
+  "total_questions": 3,
+  "total_score": 2.8,
+  "current_interaction": {
+    "question": {
+      "id": "02164e34-3cd2-4a90-bb78-93cf233ccd43",
+      "topic": "ds",
+      "subtopic": "Stacks and Queues",
+      "difficulty": 8,
+      "content": "Design a highly scalable system for processing stock market orders using a combination of Stacks and Queues. Orders arrive at a high rate (millions per second) and need to be processed efficiently. The system must prioritize older orders and also handle cancellations. Specifically:\n\n1.  Orders arrive and are initially placed into a priority queue where priority is determined by arrival time (oldest first). We will call this the `IncomingOrderQueue`. \n2.  From the `IncomingOrderQueue`, orders are moved to a stack-based system for processing. This system attempts to match incoming buy and sell orders. The stack structure, which we will call the `OrderMatchingStack`, represents the current pool of unmatched orders for a particular stock. For simplicity, assume we're dealing with only one stock.\n3.  New orders are pushed onto the `OrderMatchingStack`. If a matching order (e.g., a buy order matching a sell order at the same price) is found at the top of the stack, both orders are removed, and the trade is executed (assume an external execution system). If no match is found, the order remains on the stack.\n4.  Implement a cancellation mechanism. A cancellation request includes the order ID. When a cancellation request arrives, the system needs to efficiently find and remove the corresponding order from either the `IncomingOrderQueue` or the `OrderMatchingStack`. Optimizing cancellation is crucial since numerous cancellations are expected.\n\nAddress the following:\n\n*   What data structures would you use for `IncomingOrderQueue` and `OrderMatchingStack`? Justify your choices, especially considering scalability and thread safety.\n*   How would you implement the cancellation mechanism to ensure efficiency and thread safety? Consider scenarios where the order might be in the queue or the stack.\n*   How would you handle concurrency to allow multiple orders and cancellation requests to be processed simultaneously without data corruption or race conditions?\n*   Describe any optimizations you could apply to improve the performance of the system under extremely high load.",
+      "follow_up_questions": [
+        "What are the trade-offs between different locking mechanisms for concurrent access to the data structures?",
+        "How would your design change if the order matching rules were more complex (e.g., requiring partial fills or different priority rules)?",
+        "How would you monitor the performance of the system (e.g., queue lengths, processing times) to detect bottlenecks?"
+      ],
+      "evaluation_points": [
+        "Selection and justification of appropriate data structures for high throughput, considering thread safety.",
+        "Efficient and thread-safe cancellation mechanism using techniques like concurrent data structures, indexing or hash maps.",
+        "Concurrency handling using locks (e.g., ReadWriteLock), atomic operations, or lock-free data structures.",
+        "Scalability considerations, including partitioning/sharding the data structures across multiple machines.",
+        "Understanding the trade-offs between different data structures and concurrency control mechanisms.",
+        "Optimizations for high load, such as batch processing, asynchronous operations, and caching."
+      ],
+      "expected_time_minutes": 60
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they don't know the answer. Therefore, the response demonstrates no understanding of the required concepts including data structures, concurrency, and scalability for high-throughput order processing systems. There is no evidence of technical accuracy, completeness, clarity, or practical application.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of data structures suitable for concurrent access (e.g., ConcurrentLinkedQueue, ConcurrentSkipListMap, ConcurrentHashMap).",
+        "Knowledge of concurrency control mechanisms like locks (e.g., ReentrantReadWriteLock) and atomic operations.",
+        "Ability to design a thread-safe cancellation mechanism using appropriate data structures and synchronization primitives.",
+        "Understanding of system design principles for scalability, including partitioning/sharding and asynchronous processing.",
+        "Familiarity with optimization techniques for high-load systems, such as batch processing and caching."
+      ],
+      "follow_up_suggestions": [
+        "Study concurrent data structures and their performance characteristics.",
+        "Learn about different locking mechanisms and their trade-offs in concurrent programming.",
+        "Practice designing scalable systems for high-throughput applications, focusing on order processing or similar domains.",
+        "Explore techniques for optimizing performance in high-load scenarios, such as batch processing, caching, and asynchronous operations.",
+        "Research existing order processing systems and their architectures to gain practical insights."
+      ]
+    },
+    "time_taken": 113.899
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

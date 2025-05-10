@@ -1,0 +1,71 @@
+{
+  "interview_id": "c8db62fe-81c6-415b-b38d-19adff62da58",
+  "timestamp": "2025-05-10T19:22:29.445913",
+  "total_questions": 2,
+  "total_score": 1.6,
+  "current_interaction": {
+    "question": {
+      "id": "5905f5e8-4331-49d9-94e2-2a3f16b6375f",
+      "topic": "system_design",
+      "subtopic": "Database Design",
+      "difficulty": 3.5,
+      "content": "You're designing a database for a simple online bookstore. The database needs to store information about books (title, author, ISBN, price) and customers (name, email, address). Customers can place orders, and each order contains multiple books. Design a basic database schema (tables and relationships) to represent this data. Focus on clarity and simplicity. Assume relatively low traffic initially.",
+      "follow_up_questions": [
+        "What data types would you choose for each column in your tables?",
+        "How would you ensure that an order only contains books that are in the `books` table?"
+      ],
+      "evaluation_points": [
+        "Identification of at least three tables: `books`, `customers`, and `orders` (or a table linking orders and books).",
+        "Clear definition of primary keys for each table.",
+        "Foreign key relationships to link the tables correctly.  For example, the `orders` table or the order_book linking table should have foreign keys referencing the `customers` and `books` tables.",
+        "Basic understanding of data types suitable for each attribute (e.g., VARCHAR for names, INT for IDs, DECIMAL for prices)."
+      ],
+      "expected_time_minutes": 15
+    },
+    "answer": "Here's a simple database schema for the online bookstore:\n\n### Tables:\n\n1. **Books**\n\n   ```sql\n   CREATE TABLE Books (\n       ISBN VARCHAR(13) PRIMARY KEY,\n       Title VARCHAR(255) NOT NULL,\n       Author VARCHAR(255) NOT NULL,\n       Price DECIMAL(10, 2) NOT NULL\n   );\n   ```\n\n2. **Customers**\n\n   ```sql\n   CREATE TABLE Customers (\n       CustomerID INT PRIMARY KEY AUTO_INCREMENT,\n       Name VARCHAR(255) NOT NULL,\n       Email VARCHAR(255) UNIQUE NOT NULL,\n       Address TEXT\n   );\n   ```\n\n3. **Orders**\n\n   ```sql\n   CREATE TABLE Orders (\n       OrderID INT PRIMARY KEY AUTO_INCREMENT,\n       CustomerID INT,\n       OrderDate DATETIME NOT NULL,\n       FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)\n   );\n   ```\n\n4. **OrderItems** (to handle many-to-many relationship between Orders and Books)\n\n   ```sql\n   CREATE TABLE OrderItems (\n       OrderID INT,\n       ISBN VARCHAR(13),\n       Quantity INT NOT NULL,\n       PRIMARY KEY (OrderID, ISBN),\n       FOREIGN KEY (OrderID) REFERENCES Orders(OrderID),\n       FOREIGN KEY (ISBN) REFERENCES Books(ISBN)\n   );\n   ```\n\n### Relationships:\n\n* **Books** and **Orders** are related through the **OrderItems** table (many-to-many).\n* **Customers** and **Orders** are related (one-to-many).\n\nThis schema supports storing information about books, customers, and orders, while keeping things simple and flexible.\n",
+    "evaluation": {
+      "score": 9,
+      "feedback": "The answer is excellent and demonstrates a strong understanding of database design principles. The student correctly identifies the core tables (Books, Customers, Orders, and OrderItems), defines appropriate primary and foreign keys, and chooses suitable data types. The inclusion of the `OrderItems` table to handle the many-to-many relationship between orders and books is particularly commendable. The use of `AUTO_INCREMENT` for `CustomerID` and `OrderID` is also a good choice. The relationships are clearly explained. The answer could be slightly improved by considering indexing strategies for performance, even in a low-traffic scenario, and discussing potential constraints beyond NOT NULL.",
+      "strengths": [
+        "Correctly identifies and defines all necessary tables: Books, Customers, Orders, and OrderItems.",
+        "Appropriately defines primary keys for each table.",
+        "Establishes correct foreign key relationships to link tables.",
+        "Chooses appropriate data types for attributes (VARCHAR, INT, DECIMAL, DATETIME, TEXT).",
+        "Clear and concise explanation of the database schema and relationships.",
+        "Recognizes and implements the many-to-many relationship between Books and Orders using the OrderItems table."
+      ],
+      "areas_for_improvement": [
+        "Could briefly mention indexing strategies for common queries (e.g., indexing CustomerID in the Orders table).",
+        "Could consider adding other constraints, such as unique constraints (beyond the unique email) or check constraints (e.g., price > 0)."
+      ],
+      "follow_up_suggestions": [
+        "Discuss how to handle scenarios where a book's ISBN changes (e.g., new edition). What are the implications for existing orders?",
+        "Explore different indexing strategies to optimize query performance for common operations like retrieving all orders for a given customer or all books in a specific order.",
+        "How would you handle discounts applied to individual orders or specific books? Where would this information be stored?",
+        "Consider data validation and sanitization techniques to protect against SQL injection and other security vulnerabilities."
+      ]
+    },
+    "time_taken": 131.777
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

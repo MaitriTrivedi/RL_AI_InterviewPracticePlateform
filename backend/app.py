@@ -330,11 +330,24 @@ def allowed_file(filename):
 
 def create_agent():
     """Create a new interview agent instance with the trained model."""
-    return InterviewAgent(
-        state_dim=9,
-        model_version=INTERVIEW_CONFIG['model']['version'],  # Using our best trained model
-        models_dir=MODELS_DIR
-    )
+    try:
+        model_version = INTERVIEW_CONFIG['model']['version']
+        if not model_version:
+            logger.warning("No model version specified in config, using default initialization")
+            return InterviewAgent(state_dim=9)
+            
+        logger.info(f"Creating interview agent with model version: {model_version}")
+        agent = InterviewAgent(
+            state_dim=9,
+            model_version=model_version,
+            models_dir=MODELS_DIR
+        )
+        return agent
+        
+    except Exception as e:
+        logger.error(f"Error creating interview agent: {e}")
+        # Return a new agent without loading a model as fallback
+        return InterviewAgent(state_dim=9)
 
 def create_fallback_question(subtopic: str, difficulty: float) -> dict:
     """Create a fallback question when Gemini fails."""
@@ -461,10 +474,10 @@ def create_fallback_evaluation(answer: str) -> dict:
 def generate_question(subtopic: str, difficulty: float, topic: str = None) -> dict:
     """Generate a question using Gemini based on subtopic and difficulty."""
     try:
-        # Determine difficulty level category
-        if difficulty <= 3:
+        # Determine difficulty level category with more granular boundaries
+        if difficulty <= 2.5:
             difficulty_category = "easy"
-        elif difficulty <= 7:
+        elif difficulty <= 6.5:
             difficulty_category = "medium"
         else:
             difficulty_category = "hard"
@@ -475,7 +488,7 @@ def generate_question(subtopic: str, difficulty: float, topic: str = None) -> di
             for t, subtopics in sde_topics.items():
                 if subtopic in subtopics:
                     topic_category = t
-                    break
+                break
         
         # Get relevant templates
         templates = []
@@ -484,6 +497,13 @@ def generate_question(subtopic: str, difficulty: float, topic: str = None) -> di
         
         # Construct prompt for Gemini with templates and focused instructions
         template_suggestions = "\n".join([f"- {t.format(subtopic=subtopic)}" for t in templates]) if templates else ""
+        
+        # Enhanced difficulty-specific focus areas
+        difficulty_focus = {
+            "easy": "basic concepts, definitions, and simple examples",
+            "medium": "practical applications, common use cases, and problem-solving",
+            "hard": "advanced concepts, optimizations, edge cases, and system design considerations"
+        }[difficulty_category]
         
         prompt = f"""Generate a technical interview question about {subtopic}.
 Target difficulty: {difficulty}/10 (where 1 is easiest and 10 is hardest)
@@ -496,7 +516,7 @@ The question should be:
 2. Appropriate for the difficulty level {difficulty}/10
 3. Include practical aspects and real-world scenarios when possible
 4. Follow the pattern of the suggested templates but with your own specific details
-5. For difficulty {difficulty}/10, focus on {'basic concepts and definitions' if difficulty <= 3 else 'application and problem-solving' if difficulty <= 7 else 'advanced concepts and edge cases'}
+5. For difficulty {difficulty}/10, focus on {difficulty_focus}
 
 Respond with ONLY a JSON object in this format:
 {{
@@ -613,7 +633,6 @@ def start_interview():
             'session_stats': {
                 'questions_asked': 0,
                 'average_performance': 0.0,
-                'max_questions': 10,
                 'topics': agent.topics,
                 'current_topic': topic,
                 'current_subtopic': subtopic
@@ -684,7 +703,7 @@ def save_interview_history(session_id, current_data):
         logger.error(f"Error saving interview history: {str(e)}")
 
 def save_final_interview_summary(session_id):
-    """Save final interview summary when interview is completed."""
+    """Save final interview summary with comprehensive statistics."""
     try:
         session = active_sessions.get(session_id)
         if not session:
@@ -693,24 +712,72 @@ def save_final_interview_summary(session_id):
         # Get the interview number from the last interaction
         interview_number = get_next_interview_number() - 1  # Use the same number as interactions
         
-        # Prepare final summary
+        # Get agent stats
+        agent = session['agent']
+        stats = agent.get_interview_stats()
+        
+        # Calculate topic-wise statistics
+        topic_stats = {}
+        for topic in agent.topics:
+            scores = agent.topic_performances.get(topic, [])
+            if scores:
+                topic_stats[topic] = {
+                    'average_score': float(sum(scores) / len(scores)),
+                    'max_score': float(max(scores)),
+                    'min_score': float(min(scores)),
+                    'questions_attempted': len(scores),
+                    'difficulty_progression': [float(d) for d in agent.topic_difficulty_history.get(topic, [])],
+                    'time_history': [float(t) for t in agent.topic_time_history.get(topic, [])]
+                }
+        
+        # Prepare final summary with enhanced metrics
         final_summary = {
             'interview_id': session_id,
             'completion_time': datetime.now().isoformat(),
-            'total_questions_answered': session['questions_asked'],
-            'final_score': session['total_score'],
-            'average_score': session['total_score'] / max(1, session['questions_asked']),
-            'agent_final_state': {
-                'question_history': session['agent'].question_history,
-                'topic_performances': session['agent'].topic_performances,
-                'final_difficulty': session['agent'].current_difficulty
+            'duration_stats': {
+                'total_questions_answered': session['questions_asked'],
+                'total_time': sum(sum(times) for times in agent.topic_time_history.values()),
+                'average_time_per_question': float(sum(sum(times) for times in agent.topic_time_history.values()) / max(1, session['questions_asked']))
             },
-            'performance_metrics': {
-                'time_efficiency': session['agent'].time_efficiency,
-                'topic_coverage': len([t for t, score in session['agent'].question_history.items() if score > 0]),
-                'difficulty_progression': session['agent'].current_difficulty
+            'performance_stats': {
+                'final_score': session['total_score'],
+                'average_score': session['total_score'] / max(1, session['questions_asked']),
+                'topic_wise_stats': topic_stats
+            },
+            'learning_metrics': {
+                'topic_coverage': len([t for t, score in agent.question_history.items() if score > 0]),
+                'learning_progress': stats['learning_progress'],
+                'difficulty_progression': {
+                    'final': float(agent.current_difficulty),
+                    'progression': [float(d) for topic in agent.topics for d in agent.topic_difficulty_history.get(topic, [])]
+                }
+            },
+            'efficiency_metrics': {
+                'time_efficiency': float(stats['time_efficiency']),
+                'topic_transitions': agent.topic_transition_count,
+                'warmup_phase_questions': agent.warmup_questions
             }
         }
+        
+        # Add strengths and areas for improvement
+        final_summary['recommendations'] = {
+            'strengths': [],
+            'areas_for_improvement': [],
+            'next_steps': []
+        }
+        
+        for topic, tstats in topic_stats.items():
+            if tstats['average_score'] >= 0.7:
+                final_summary['recommendations']['strengths'].append(
+                    f"Strong performance in {topic} with {tstats['average_score']*100:.1f}% average score"
+                )
+            elif tstats['average_score'] < 0.5:
+                final_summary['recommendations']['areas_for_improvement'].append(
+                    f"Need improvement in {topic} (current average: {tstats['average_score']*100:.1f}%)"
+                )
+                final_summary['recommendations']['next_steps'].append(
+                    f"Focus on foundational concepts in {topic} starting with difficulty level {max(1.0, tstats['min_score'] * 5):.1f}"
+                )
         
         # Save to file
         filename = f"{interview_number}_interview_summary_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
@@ -719,7 +786,7 @@ def save_final_interview_summary(session_id):
         with open(filepath, 'w') as f:
             json.dump(final_summary, f, indent=2)
             
-        logger.info(f"Saved final interview summary to {filepath}")
+        logger.info(f"Saved enhanced final interview summary to {filepath}")
         
     except Exception as e:
         logger.error(f"Error saving final interview summary: {str(e)}")
@@ -794,12 +861,17 @@ def submit_answer(interview_id):
             return add_cors_headers(jsonify({'error': 'Invalid session state'})), 500
             
         try:
-            agent.update_performance(
+            # Update agent with performance and get next difficulty
+            update_success = agent.update_performance(
                 topic=current_question['topic'],
                 subtopic=current_question['subtopic'],
                 performance_score=performance_score,
                 time_taken=time_taken
             )
+            
+            if not update_success:
+                logger.warning("Failed to update agent performance")
+                
         except Exception as e:
             logger.error(f"Error updating agent performance: {str(e)}")
             # Continue with the interview even if agent update fails
@@ -808,39 +880,13 @@ def submit_answer(interview_id):
         session['questions_asked'] += 1
         session['total_score'] += performance_score
         
-        # Check if interview should continue
-        if session['questions_asked'] >= 10:  # Maximum 10 questions per interview
-            session['interview_complete'] = True
-            stats = agent.get_interview_stats()
-            
-            return add_cors_headers(jsonify({
-                'evaluation': evaluation,
-                'current_state': {
-                    'current_question': current_question,
-                    'session_stats': {
-                        'questions_asked': session['questions_asked'],
-                        'average_performance': stats['average_score'],
-                        'current_topic': current_question['topic'],
-                        'current_subtopic': current_question['subtopic'],
-                        'max_questions': 10,
-                        'current_difficulty': stats['difficulty_level']
-                    }
-                },
-                'next_state': {
-                    'interview_complete': True
-                }
-            }))
-        
         # Get next topic based on agent's policy
         topic_weights = [1.0 / (1.0 + agent.question_history[t]) for t in agent.topics]
         topic = np.random.choice(agent.topics, p=np.array(topic_weights)/sum(topic_weights))
         
-        # Get next subtopic
-        subtopic = agent.select_subtopic(topic)
-        
-        # Get next question difficulty
+        # Get next question parameters from agent
         action_tuple = agent.get_next_question(topic)
-        difficulty = float(action_tuple[0]) if isinstance(action_tuple, (tuple, list)) else 5.0  # Use first element as difficulty
+        difficulty, subtopic = action_tuple
         
         # Generate next question
         next_question = generate_question(subtopic, difficulty, topic)
@@ -850,6 +896,9 @@ def submit_answer(interview_id):
         # Update session with new question
         session['current_question'] = next_question
         session['last_activity'] = time.time()
+        
+        # Get updated stats
+        stats = agent.get_interview_stats()
         
         # Prepare response in the format frontend expects
         response_data = {
@@ -863,11 +912,12 @@ def submit_answer(interview_id):
                 'current_question': current_question,
                 'session_stats': {
                     'questions_asked': session['questions_asked'],
-                    'average_performance': session['total_score'] / session['questions_asked'],
+                    'average_performance': stats['average_score'],
                     'current_topic': current_question['topic'],
                     'current_subtopic': current_question['subtopic'],
-                    'max_questions': 10,
-                    'current_difficulty': difficulty
+                    'current_difficulty': stats['difficulty_level'],
+                    'topic_performances': stats['topic_performances'],
+                    'learning_progress': stats['learning_progress']
                 }
             },
             'next_state': {
@@ -889,7 +939,7 @@ def submit_answer(interview_id):
 
 @app.route('/api/interview/end', methods=['POST'])
 def end_interview():
-    """End the interview session."""
+    """End the interview session with detailed performance analysis."""
     try:
         data = request.get_json()
         logger.info(f"Request JSON: {data}")
@@ -904,38 +954,88 @@ def end_interview():
         if session_id not in active_sessions:
             logger.error(f"Session {session_id} not found in active sessions")
             return jsonify({
-                'final_stats': {
-                    'questions_asked': 0,
-                    'average_performance': 0,
-                    'final_difficulty': 5.0
-                }
-            })
+                'error': 'Session not found',
+                'status': 'error'
+            }), 404
             
         session = active_sessions[session_id]
+        agent = session.get('agent')
+        
+        if not agent:
+            return jsonify({
+                'error': 'Agent not found in session',
+                'status': 'error'
+            }), 500
+        
+        # Get comprehensive statistics
+        stats = agent.get_interview_stats()
+        
+        # Calculate topic-wise performance
+        topic_stats = {}
+        for topic in agent.topics:
+            topic_scores = agent.topic_performances.get(topic, [])
+            if topic_scores:
+                avg_score = sum(topic_scores) / len(topic_scores)
+                max_score = max(topic_scores)
+                improvement = 0
+                if len(topic_scores) >= 2:
+                    first_half = topic_scores[:len(topic_scores)//2]
+                    second_half = topic_scores[len(topic_scores)//2:]
+                    improvement = sum(second_half)/len(second_half) - sum(first_half)/len(first_half)
+                
+                topic_stats[topic] = {
+                    'average_score': float(avg_score),
+                    'max_score': float(max_score),
+                    'questions_attempted': len(topic_scores),
+                    'improvement': float(improvement),
+                    'current_difficulty': float(agent.topic_current_difficulty.get(topic, 1.0))
+                }
+        
+        # Calculate overall statistics
+        total_questions = max(1, session['questions_asked'])
+        average_score = session['total_score'] / total_questions
+        
+        # Prepare final statistics
+        final_stats = {
+            'overall_performance': {
+                'total_questions': session['questions_asked'],
+                'average_score': float(average_score),
+                'final_difficulty': float(agent.current_difficulty),
+                'time_efficiency': float(stats['time_efficiency']),
+                'topic_coverage': float(stats['topic_coverage'])
+            },
+            'topic_wise_performance': topic_stats,
+            'learning_progress': stats['learning_progress'],
+            'strengths': [],
+            'areas_for_improvement': []
+        }
+        
+        # Identify strengths and areas for improvement
+        for topic, perf in topic_stats.items():
+            if perf['average_score'] >= 0.7:  # 70% or better
+                final_stats['strengths'].append(f"Strong performance in {topic} with {perf['average_score']*100:.1f}% average score")
+            elif perf['average_score'] < 0.5 and perf['questions_attempted'] > 0:  # Below 50%
+                final_stats['areas_for_improvement'].append(f"Consider focusing more on {topic} (current average: {perf['average_score']*100:.1f}%)")
         
         # Save final interview summary
         save_final_interview_summary(session_id)
-        
-        # Get final statistics
-        total_questions = max(1, session['questions_asked'])
-        stats = {
-            'questions_asked': session['questions_asked'],
-            'average_performance': session['total_score'] / total_questions,
-            'final_difficulty': session['agent'].current_difficulty
-        }
         
         # Clean up session
         del active_sessions[session_id]
         logger.info(f"Session {session_id} ended and removed. Remaining sessions: {list(active_sessions.keys())}")
         
         return jsonify({
-            'message': 'Interview session ended',
-            'final_stats': stats
+            'message': 'Interview session ended successfully',
+            'status': 'success',
+            'final_stats': final_stats
         })
         
     except Exception as e:
         logger.error(f"Error in end_interview: {str(e)}")
-        return jsonify({'error': str(e)}), 500
+        return jsonify({
+            'error': str(e),
+            'status': 'error'
+        }), 500
 
 @app.route('/api/interview/score-history', methods=['POST'])
 def save_score_history():

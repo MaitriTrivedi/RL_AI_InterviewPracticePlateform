@@ -1,0 +1,62 @@
+{
+  "interview_id": "7f1ba7f4-c2b6-4a07-92a1-845b04fe8cd7",
+  "timestamp": "2025-05-10T20:32:48.624193",
+  "total_questions": 7,
+  "total_score": 6.1000000000000005,
+  "current_interaction": {
+    "question": {
+      "id": "26bed6b3-869d-40d2-b50a-c20ff4f64f3f",
+      "topic": "oops",
+      "subtopic": "Abstraction",
+      "difficulty": 2.650645284691362,
+      "content": "Imagine you're building a system to manage different types of notifications (e.g., email, SMS, push notifications). You have a class `NotificationSender` with methods like `sendEmail(recipient, message)` and `sendSMS(phoneNumber, message)`.  How could you use abstraction to make this code more flexible and easier to maintain if you anticipate adding more notification types in the future?",
+      "follow_up_questions": [
+        "Can you provide a simple code example demonstrating your solution (using pseudocode or your preferred language)?",
+        "What are the benefits of using abstraction in this scenario, compared to directly adding more `sendXXX` methods to the `NotificationSender` class?"
+      ],
+      "evaluation_points": [
+        "Identification of common interface or abstract class.",
+        "Ability to describe how the abstract class/interface decouples the notification system from specific notification methods."
+      ],
+      "expected_time_minutes": 10
+    },
+    "answer": "don't know the answer",
+    "evaluation": {
+      "score": 0,
+      "feedback": "The candidate stated they do not know the answer. This indicates a lack of understanding of basic abstraction principles, which are fundamental to object-oriented design and software maintainability. The question explores a common design problem of decoupling code from concrete implementations. A solid understanding of interfaces or abstract classes is essential to answer this question successfully.",
+      "strengths": [],
+      "areas_for_improvement": [
+        "Understanding of abstraction principles.",
+        "Knowledge of interfaces or abstract classes in object-oriented programming.",
+        "Ability to apply design principles to solve practical problems."
+      ],
+      "follow_up_suggestions": [
+        "Review the concepts of abstraction, interfaces, and abstract classes in object-oriented programming. Focus on understanding how they can be used to decouple code.",
+        "Practice implementing similar scenarios involving different types of services or components using interfaces or abstract classes to promote flexibility and maintainability.",
+        "Explore design patterns such as the Strategy pattern, which heavily relies on abstraction for selecting different algorithms or behaviors at runtime."
+      ]
+    },
+    "time_taken": 408.231
+  },
+  "agent_state": {
+    "question_history": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    },
+    "topic_performances": {
+      "ds": [],
+      "algo": [],
+      "oops": [],
+      "dbms": [],
+      "os": [],
+      "cn": [],
+      "system_design": []
+    },
+    "current_difficulty": 2.0
+  }
+}

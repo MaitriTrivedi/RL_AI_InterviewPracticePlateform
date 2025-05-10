@@ -1,0 +1,33 @@
+{
+  "version": "model_v1_20250510_145740_reward_0.541",
+  "metrics": {
+    "actor_loss": NaN,
+    "value_loss": 494.9551414859914,
+    "entropy_loss": NaN,
+    "total_loss": 0.0,
+    "mean_reward": 0.5407477024639262,
+    "clip_fraction": NaN,
+    "approx_kl": NaN,
+    "difficulty_accuracy": 0.0,
+    "topic_diversity": 0.0,
+    "learning_rate": 0.00029615940884657866,
+    "policy_std": 1.018016309551919,
+    "exploration_factor": 1.0,
+    "value_clip_fraction": 0.9771718749999999,
+    "policy_momentum": 0.0,
+    "state_mean": 0.342426560107951,
+    "state_std": 0.07923989349211047,
+    "grad_norm": 0.0,
+    "noise_scale": 0.048469556580499125,
+    "topic_performance": {
+      "ds": 0.0,
+      "algo": 0.0,
+      "oops": 0.0,
+      "dbms": 0.0,
+      "os": 0.0,
+      "cn": 0.0,
+      "system_design": 0.0
+    }
+  },
+  "timestamp": "20250510_145740"
+}

@@ -1,0 +1,19 @@
+{
+  "interviewId": "e0f50a9e-8c53-4b3a-9bac-d7c56d6a5200",
+  "startTime": "2025-05-10T15:26:26.372Z",
+  "questions": [
+    {
+      "questionNumber": 1,
+      "difficulty": 3,
+      "score": 0.9,
+      "topic": "cn",
+      "timeTaken": 66.814,
+      "timestamp": "2025-05-10T15:26:26.372Z"
+    }
+  ],
+  "totalQuestions": 1,
+  "averageScore": 0.9,
+  "averageDifficulty": 3.0,
+  "totalTime": 66.814,
+  "lastUpdated": "2025-05-10T15:26:26.372Z"
+}
